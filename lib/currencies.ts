@@ -42,7 +42,7 @@ export const CURRENCY_OPTIONS: CurrencyOption[] = buildCurrencyOptions();
  */
 export function getCurrencySelectOptions(savedCode?: string | null): CurrencyOption[] {
   const trimmed = (savedCode || '').trim().toUpperCase();
-  if (!trimmed || !/^[A-Z]{3}$/.test(trimmed)) {
+  if (!trimmed || !/^[A-Z]{6}$/.test(trimmed)) {
     return CURRENCY_OPTIONS;
   }
   if (CURRENCY_OPTIONS.some((c) => c.code === trimmed)) {
