@@ -10,7 +10,7 @@ export type CurrencyOption = {
 };
 
 const FALLBACK_CURRENCIES: CurrencyOption[] = [
-  { code: 'YER', name: 'Yemeni Rial', symbol: '﷼' },
+  { code: 'Yemeni', name: 'Yemeni Rial', symbol: '﷼' },
 ];
 
 function narrowCurrencySymbol(code: string): string {
