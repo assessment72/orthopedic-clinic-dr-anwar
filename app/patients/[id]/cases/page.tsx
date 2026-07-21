@@ -7,16 +7,14 @@ import {
   ArrowLeft, 
   FileText, 
   Clock, 
-  CheckCircle, 
   AlertTriangle,
   Eye,
-  Edit,
   Trash2,
-  Filter,
   Search,
   Calendar,
   User,
-  Brain,
+  Bone,
+  Activity,
   Stethoscope,
   Pill
 } from 'lucide-react';
@@ -34,14 +32,13 @@ export default function PatientCasesPage() {
   const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
-    console.log('=== CASES PAGE LOADED ===');
+    console.log('=== ORTHOPEDIC CASES PAGE LOADED ===');
     console.log('Params:', params);
     console.log('Patient ID:', params.id);
     
     const fetchData = async () => {
       try {
         console.log('Fetching patient data...');
-        // Fetch patient data
         const patientResponse = await fetch(`/api/patients/${params.id}`);
         if (patientResponse.ok) {
           const patientData = await patientResponse.json();
@@ -50,17 +47,15 @@ export default function PatientCasesPage() {
         }
 
         console.log('Fetching workflows...');
-        // Fetch workflows for this patient
         const workflowsResponse = await fetch(`/api/workflows?patientId=${params.id}`);
         if (workflowsResponse.ok) {
           const workflowsData = await workflowsResponse.json();
           console.log('Workflows data:', workflowsData);
-          console.log('Individual workflows:', workflowsData.workflows);
           setWorkflows(workflowsData.workflows || []);
         }
       } catch (error) {
         console.error('Error fetching data:', error);
-        setError('Failed to fetch data');
+        setError('فشل في جلب البيانات الطبية');
       } finally {
         setLoading(false);
       }
@@ -94,78 +89,68 @@ export default function PatientCasesPage() {
     }
   };
 
+  // أيقونات مخصصة لتخصص العظام والمفاصل
   const getStepIcon = (step: string) => {
     switch (step) {
       case 'symptoms':
-        return <User className="w-4 h-4" />;
+        return <User className="w-4 h-4 text-amber-600" />;
       case 'analysis':
-        return <Brain className="w-4 h-4" />;
+        return <Bone className="w-4 h-4 text-blue-600" />; // الأشعة والتحاليل العظمية
       case 'diagnosis':
-        return <Stethoscope className="w-4 h-4" />;
+        return <Stethoscope className="w-4 h-4 text-purple-600" />; // الفحص السريري
       case 'treatment':
-        return <Pill className="w-4 h-4" />;
+        return <Activity className="w-4 h-4 text-emerald-600" />; // التأهيل والعلاج الطبيعي
       case 'prescription':
-        return <FileText className="w-4 h-4" />;
+        return <Pill className="w-4 h-4 text-rose-600" />; // الأدوية والمسكنات
       default:
-        return <Clock className="w-4 h-4" />;
+        return <Clock className="w-4 h-4 text-gray-500" />;
     }
   };
 
+  // مسميات الخطوات الطبية الخاصة بعيادة العظام
   const getStepLabel = (step: string) => {
     switch (step) {
       case 'symptoms':
-        return 'Patient Input';
+        return 'شكوى المريض (الألم والحركة)';
       case 'analysis':
-        return 'AI Analysis';
+        return 'مراجعة الأشعة (X-Ray / MRI)';
       case 'diagnosis':
-        return 'Doctor Diagnosis';
+        return 'تشخيص إصابة العظام والمفاصل';
       case 'treatment':
-        return 'Treatment Plan';
+        return 'الخطة العلاجية (تأهيل/حقن)';
       case 'prescription':
-        return 'Prescription';
+        return 'الوصفة الطبية والمسكنات';
       default:
         return step;
     }
   };
 
   const handleResumeWorkflow = (workflowId: string) => {
-    // Navigate to treatment recommendations page with workflow ID
     window.location.href = `/ai-treatment-recommendations?workflowId=${workflowId}`;
   };
 
   const handleDeleteWorkflow = async (workflowId: string) => {
-    if (confirm('Are you sure you want to delete this workflow?')) {
+    if (confirm('هل أنت متأكد من حذف هذه الحالة الطبية؟')) {
       try {
-        console.log('Deleting workflow with ID:', workflowId);
-        
         if (!workflowId) {
-          console.error('No workflow ID provided');
-          alert('Error: No workflow ID provided');
+          alert('خطأ: لم يتم تحديد معرف الحالة');
           return;
         }
         
-        const url = `/api/workflows/${workflowId}`;
-        console.log('Delete URL:', url);
-        
-        const response = await fetch(url, {
+        const response = await fetch(`/api/workflows/${workflowId}`, {
           method: 'DELETE'
         });
         
-        console.log('Delete response status:', response.status);
-        
         if (response.ok) {
-          const result = await response.json();
-          console.log('Delete result:', result);
           setWorkflows(workflows.filter(w => w.id !== workflowId));
-          alert('Workflow deleted successfully');
+          alert('تم حذف الحالة بنجاح');
         } else {
           const errorData = await response.json();
-          console.error('Delete failed:', errorData);
-          alert(`Failed to delete workflow: ${errorData.error || 'Unknown error'}`);
+          alert(`فشل في الحذف: ${errorData.error || 'خطأ غير معروف'}`);
         }
       } catch (error) {
         console.error('Error deleting workflow:', error);
-        alert('Error deleting workflow');
+        alert('حدث خطأ أثناء محاولة الحذف');
       }
     }
   };
@@ -174,8 +159,8 @@ export default function PatientCasesPage() {
     return (
       <ProtectedRoute>
         <SidebarLayout 
-          title="Patient Cases" 
-          description="View patient workflows and cases"
+          title="حالات العظام والمفاصل" 
+          description="عرض الحالات والملفات الطبية للمريض" 
           dense
         >
           <div className="flex min-h-[280px] items-center justify-center">
@@ -190,20 +175,20 @@ export default function PatientCasesPage() {
     return (
       <ProtectedRoute>
         <SidebarLayout 
-          title="Patient Cases" 
-          description="View patient workflows and cases"
+          title="حالات العظام والمفاصل" 
+          description="عرض الحالات والملفات الطبية للمريض" 
           dense
         >
           <div className="py-8 text-center">
             <AlertTriangle className="mx-auto mb-2 h-12 w-12 text-red-400" />
-            <h3 className="mb-1 text-sm font-semibold text-gray-900">Error</h3>
-            <p className="text-xs text-gray-600 sm:text-sm">{error || 'Patient not found'}</p>
+            <h3 className="mb-1 text-sm font-semibold text-gray-900">خطأ في التحميل</h3>
+            <p className="text-xs text-gray-600 sm:text-sm">{error || 'لم يتم العثور على بيانات المريض'}</p>
             <Link
               href="/patients"
               className="mt-4 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Patients
+              <ArrowLeft className="w-4 h-4 ml-2" />
+              العودة إلى قائمة المرضى
             </Link>
           </div>
         </SidebarLayout>
@@ -214,31 +199,31 @@ export default function PatientCasesPage() {
   return (
     <ProtectedRoute>
       <SidebarLayout 
-        title="Patient Cases" 
-        description={`Workflows and cases for ${patient.name}`}
+        title="حالات العظام والمفاصل" 
+        description={`الملفات والحالات الخاصة بالمريض: ${patient.name}`}
         dense
       >
-        <div className="mx-auto max-w-6xl space-y-3">
+        <div className="mx-auto max-w-6xl space-y-3" dir="rtl">
           {/* Header */}
           <div className="mb-2">
             <Link 
               href="/patients"
               className="mb-1 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
             >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Patients
+              <ArrowLeft className="ml-2 h-4 w-4" />
+              العودة إلى قائمة المرضى
             </Link>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <h1 className="text-lg font-bold text-gray-900 sm:text-xl">Cases for {patient.name}</h1>
-                <p className="text-xs text-gray-600 sm:text-sm">View and manage patient workflows and medical cases</p>
+                <h1 className="text-lg font-bold text-gray-900 sm:text-xl">حالات الدكتور أنور - {patient.name}</h1>
+                <p className="text-xs text-gray-600 sm:text-sm">إدارة ومتابعة صور الأشعة، الفحوصات الحركية، وخطط العلاج</p>
               </div>
               <Link
                 href={`/ai-treatment-recommendations?patientId=${patient._id}`}
                 className="inline-flex h-9 shrink-0 items-center gap-2 rounded-md bg-blue-600 px-3 text-sm font-medium text-white transition-colors hover:bg-blue-700"
               >
-                <FileText className="h-4 w-4" />
-                <span>New Case</span>
+                <Bone className="h-4 w-4" />
+                <span>+ فتح حالة عظام جديدة</span>
               </Link>
             </div>
           </div>
@@ -248,13 +233,13 @@ export default function PatientCasesPage() {
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
               <div className="min-w-0 flex-1">
                 <div className="relative">
-                  <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                  <Search className="absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                   <input
                     type="search"
-                    placeholder="Search workflows..."
+                    placeholder="البحث في الحالات أو خطوات العلاج..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="h-9 w-full rounded-md border border-gray-300 py-0 pl-9 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="h-9 w-full rounded-md border border-gray-300 py-0 pr-9 pl-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -264,10 +249,10 @@ export default function PatientCasesPage() {
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="h-9 rounded-md border border-gray-300 px-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="all">All Status</option>
-                  <option value="in-progress">In Progress</option>
-                  <option value="completed">Completed</option>
-                  <option value="pending">Pending</option>
+                  <option value="all">جميع الحالات</option>
+                  <option value="in-progress">قيد المتابعة</option>
+                  <option value="completed">مكتملة</option>
+                  <option value="pending">معلقة</option>
                 </select>
               </div>
             </div>
@@ -281,36 +266,36 @@ export default function PatientCasesPage() {
                   <div key={workflow.id} className="p-3 hover:bg-gray-50 sm:p-3.5">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
-                        <div className="flex items-center space-x-3 mb-2">
-                          <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-3 space-x-reverse mb-2">
+                          <div className="flex items-center space-x-2 space-x-reverse">
                             {getStepIcon(workflow.currentStep)}
                             <span className="text-sm font-medium text-gray-900">
                               {getStepLabel(workflow.currentStep)}
                             </span>
                           </div>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(workflow.status)}`}>
-                            {workflow.status}
+                            {workflow.status === 'completed' ? 'مكتملة' : workflow.status === 'in-progress' ? 'قيد المتابعة' : 'معلقة'}
                           </span>
                         </div>
                         
                         <div className="text-sm text-gray-600 mb-2">
-                          <div className="flex items-center space-x-4">
-                            <span className="flex items-center space-x-1">
+                          <div className="flex items-center space-x-4 space-x-reverse">
+                            <span className="flex items-center space-x-1 space-x-reverse">
                               <Calendar className="w-4 h-4" />
-                              <span>Created: {new Date(workflow.createdAt).toLocaleDateString()}</span>
+                              <span>تاريخ الإنشاء: {new Date(workflow.createdAt).toLocaleDateString('ar-EG')}</span>
                             </span>
-                            <span className="flex items-center space-x-1">
+                            <span className="flex items-center space-x-1 space-x-reverse">
                               <Clock className="w-4 h-4" />
-                              <span>Updated: {new Date(workflow.updatedAt).toLocaleDateString()}</span>
+                              <span>آخر تحديث: {new Date(workflow.updatedAt).toLocaleDateString('ar-EG')}</span>
                             </span>
                           </div>
                         </div>
 
                         {/* Workflow Progress */}
                         <div className="text-sm text-gray-600">
-                          <div className="flex items-center space-x-2">
-                            <span>Progress:</span>
-                            <div className="flex space-x-1">
+                          <div className="flex items-center space-x-2 space-x-reverse">
+                            <span>مراحل العلاج العظمي:</span>
+                            <div className="flex space-x-1 space-x-reverse">
                               {['symptoms', 'analysis', 'diagnosis', 'treatment', 'prescription'].map((step, index) => (
                                 <div
                                   key={step}
@@ -323,6 +308,7 @@ export default function PatientCasesPage() {
                                       ? 'bg-blue-500' 
                                       : 'bg-gray-300'
                                   }`}
+                                  title={getStepLabel(step)}
                                 />
                               ))}
                             </div>
@@ -330,24 +316,20 @@ export default function PatientCasesPage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center space-x-2">
+                      <div className="flex items-center space-x-2 space-x-reverse">
                         <button
                           onClick={() => handleResumeWorkflow(workflow.id)}
-                          className="inline-flex items-center space-x-1 px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md"
+                          className="inline-flex items-center space-x-1 space-x-reverse px-3 py-1 text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md"
                         >
                           <Eye className="w-4 h-4" />
-                          <span>Resume</span>
+                          <span>استكمال</span>
                         </button>
                         <button
-                          onClick={() => {
-                            console.log('Delete button clicked for workflow:', workflow);
-                            console.log('Workflow ID:', workflow.id);
-                            handleDeleteWorkflow(workflow.id);
-                          }}
-                          className="inline-flex items-center space-x-1 px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md"
+                          onClick={() => handleDeleteWorkflow(workflow.id)}
+                          className="inline-flex items-center space-x-1 space-x-reverse px-3 py-1 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-md"
                         >
                           <Trash2 className="w-4 h-4" />
-                          <span>Delete</span>
+                          <span>حذف</span>
                         </button>
                       </div>
                     </div>
@@ -356,19 +338,19 @@ export default function PatientCasesPage() {
               </div>
             ) : (
               <div className="py-8 text-center">
-                <FileText className="mx-auto mb-2 h-10 w-10 text-gray-400" />
-                <h3 className="mb-1 text-sm font-semibold text-gray-900">No Cases Found</h3>
+                <Bone className="mx-auto mb-2 h-10 w-10 text-gray-400" />
+                <h3 className="mb-1 text-sm font-semibold text-gray-900">لا توجد حالات عظام مسجلة</h3>
                 <p className="mb-4 text-xs text-gray-600 sm:text-sm">
                   {searchTerm || statusFilter !== 'all' 
-                    ? 'No workflows match your search criteria.' 
-                    : 'This patient has no medical cases or workflows yet.'}
+                    ? 'لا توجد نتائج مطابقة لخيارات البحث.' 
+                    : 'لم يقم هذا المريض بأي زيارة مسجلة أو تقييم عظمي حتى الآن.'}
                 </p>
                 <Link
                   href={`/ai-treatment-recommendations?patientId=${patient._id}`}
                   className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
                 >
-                  <FileText className="h-4 w-4" />
-                  <span>Create First Case</span>
+                  <Bone className="h-4 w-4" />
+                  <span>بدء الحالة الطبية الأولى</span>
                 </Link>
               </div>
             )}
