@@ -77,11 +77,11 @@ export default function PatientViewPage() {
           const data = await response.json();
           setPatient(data);
         } else {
-          setError('Patient not found');
+          setError(t('patients.newPatient.view.patientNotFound'));
         }
       } catch (error) {
         console.error('Error fetching patient:', error);
-        setError('Failed to fetch patient data');
+        setError(t('patients.newPatient.view.patientNotFound'));
       } finally {
         setLoading(false);
       }
@@ -269,8 +269,8 @@ export default function PatientViewPage() {
     return (
       <ProtectedRoute>
         <SidebarLayout 
-          title="Patient Details" 
-          description="View patient information"
+          title={t('patients.newPatient.view.patientDetails')}
+          description={t('patients.newPatient.view.viewAndManage')}
           dense
         >
           <div className="flex min-h-[280px] items-center justify-center">
@@ -285,15 +285,15 @@ export default function PatientViewPage() {
     return (
       <ProtectedRoute>
         <SidebarLayout 
-          title="Patient Not Found" 
-          description="The requested patient could not be found"
+          title={t('patients.newPatient.view.patientNotFound')}
+          description={t('patients.newPatient.view.notFoundDescription')}
           dense
         >
           <div className="py-8 text-center">
             <Users className="mx-auto h-10 w-10 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Patient not found</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('patients.newPatient.view.patientNotFound')}</h3>
             <p className="mt-1 text-xs text-gray-700 sm:text-sm">
-              The patient you're looking for doesn't exist or has been removed.
+              {t('patients.newPatient.view.notFoundDescription')}
             </p>
             <div className="mt-4">
               <Link
@@ -301,7 +301,7 @@ export default function PatientViewPage() {
                 className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm text-white transition-colors hover:bg-blue-700"
               >
                 <ArrowLeft className="h-4 w-4" />
-                <span>Back to Patients</span>
+                <span>{t('patients.newPatient.view.backToPatients')}</span>
               </Link>
             </div>
           </div>
@@ -346,25 +346,25 @@ export default function PatientViewPage() {
   };
 
   const tabs = [
-    { id: 'details', label: 'Patient Details', icon: User },
-    { id: 'appointments', label: 'Appointments', icon: Calendar, count: appointments.length },
-    { id: 'billing', label: 'Billing & Invoices', icon: CreditCard, count: invoices.length },
-    { id: 'lab-reports', label: 'Lab Reports', icon: FlaskConical, count: labTests.length },
-    { id: 'radiology', label: 'Radiology', icon: Radio, count: radiologyStudies.length },
-    { id: 'treatment-plan', label: 'Treatment Plans', icon: Pill, count: getAIResultsByType('treatment-plan').length },
-    { id: 'prescription', label: 'Prescriptions', icon: FileText, count: getAIResultsByType('prescription').length },
-    { id: 'drug-interaction', label: 'Drug Interactions', icon: Pill, count: getAIResultsByType('drug-interaction').length },
-    { id: 'image-analysis', label: 'Image Analysis', icon: Camera, count: getAIResultsByType('image-analysis').length },
-    { id: 'appointment-optimizer', label: 'Appointment Optimizer', icon: CalendarIcon, count: getAIResultsByType('appointment-optimizer').length },
-    { id: 'risk-assessment', label: 'Risk Assessment', icon: Shield, count: getAIResultsByType('risk-assessment').length },
-    { id: 'voice-transcription', label: 'Voice Transcriptions', icon: Mic, count: getAIResultsByType('voice-transcription').length },
+    { id: 'details', label: t('patients.newPatient.view.tabs.details'), icon: User },
+    { id: 'appointments', label: t('patients.newPatient.view.tabs.appointments'), icon: Calendar, count: appointments.length },
+    { id: 'billing', label: t('patients.newPatient.view.tabs.billing'), icon: CreditCard, count: invoices.length },
+    { id: 'lab-reports', label: t('patients.newPatient.view.tabs.labReports'), icon: FlaskConical, count: labTests.length },
+    { id: 'radiology', label: t('patients.newPatient.view.tabs.radiology'), icon: Radio, count: radiologyStudies.length },
+    { id: 'treatment-plan', label: t('patients.newPatient.view.tabs.treatmentPlan'), icon: Pill, count: getAIResultsByType('treatment-plan').length },
+    { id: 'prescription', label: t('patients.newPatient.view.tabs.prescription'), icon: FileText, count: getAIResultsByType('prescription').length },
+    { id: 'drug-interaction', label: t('patients.newPatient.view.tabs.drugInteraction'), icon: Pill, count: getAIResultsByType('drug-interaction').length },
+    { id: 'image-analysis', label: t('patients.newPatient.view.tabs.imageAnalysis'), icon: Camera, count: getAIResultsByType('image-analysis').length },
+    { id: 'appointment-optimizer', label: t('patients.newPatient.view.tabs.appointmentOptimizer'), icon: CalendarIcon, count: getAIResultsByType('appointment-optimizer').length },
+    { id: 'risk-assessment', label: t('patients.newPatient.view.tabs.riskAssessment'), icon: Shield, count: getAIResultsByType('risk-assessment').length },
+    { id: 'voice-transcription', label: t('patients.newPatient.view.tabs.voiceTranscription'), icon: Mic, count: getAIResultsByType('voice-transcription').length },
   ];
 
   return (
     <ProtectedRoute>
       <SidebarLayout 
-        title="Patient Details" 
-        description="View and manage patient information"
+        title={t('patients.newPatient.view.patientDetails')}
+        description={t('patients.newPatient.view.viewAndManage')}
         dense
       >
         <div className="mx-auto max-w-7xl">
@@ -375,7 +375,7 @@ export default function PatientViewPage() {
               className="mb-2 inline-flex items-center text-sm text-blue-600 hover:text-blue-800"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Patients
+              {t('patients.newPatient.view.backToPatients')}
             </Link>
             <div className="flex items-center justify-between">
               <h1 className="text-lg font-bold text-gray-900 sm:text-xl">{patient.name}</h1>
@@ -384,14 +384,14 @@ export default function PatientViewPage() {
                 className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700"
               >
                 <Edit className="h-4 w-4" />
-                <span>Edit Patient</span>
+                <span>{t('patients.newPatient.view.editPatient')}</span>
               </Link>
             </div>
 
             {/* Quick create — stay in client context (prefills ?patientId= on each form) */}
             <div className="mt-3 rounded-lg border border-slate-200 bg-slate-50 p-3">
               <p className="mb-2 text-[10px] font-semibold uppercase tracking-wide text-slate-500 sm:text-xs">
-                Quick create for this patient
+                {t('patients.newPatient.view.quickCreate')}
               </p>
               <div className="flex flex-wrap gap-1.5">
                 <Link
@@ -400,7 +400,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-blue-600 shrink-0" />
                   <Calendar className="h-4 w-4 text-blue-500 shrink-0" />
-                  Appointment
+                  {t('patients.newPatient.view.appointment')}
                 </Link>
                 <Link
                   href={`/billing/invoices/new?patientId=${patient._id}`}
@@ -408,7 +408,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-emerald-600 shrink-0" />
                   <Receipt className="h-4 w-4 text-emerald-500 shrink-0" />
-                  Invoice
+                  {t('patients.newPatient.view.invoice')}
                 </Link>
                 <Link
                   href={`/lab/new?patientId=${patient._id}`}
@@ -416,7 +416,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-cyan-600 shrink-0" />
                   <FlaskConical className="h-4 w-4 text-cyan-500 shrink-0" />
-                  Lab order
+                  {t('patients.newPatient.view.labOrder')}
                 </Link>
                 <Link
                   href={`/radiology/new?patientId=${patient._id}`}
@@ -424,7 +424,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-indigo-600 shrink-0" />
                   <Radio className="h-4 w-4 text-indigo-500 shrink-0" />
-                  Radiology
+                  {t('patients.newPatient.view.radiology')}
                 </Link>
                 <Link
                   href={`/reports/new?patientId=${patient._id}`}
@@ -432,7 +432,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-violet-600 shrink-0" />
                   <FileText className="h-4 w-4 text-violet-500 shrink-0" />
-                  Medical report
+                  {t('patients.newPatient.view.medicalReport')}
                 </Link>
                 <Link
                   href={`/documents/new?patientId=${patient._id}`}
@@ -440,7 +440,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-amber-600 shrink-0" />
                   <FilePlus className="h-4 w-4 text-amber-500 shrink-0" />
-                  Document
+                  {t('patients.newPatient.view.document')}
                 </Link>
                 <Link
                   href={`/emergency/new?patientId=${patient._id}`}
@@ -448,7 +448,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-red-600 shrink-0" />
                   <Siren className="h-4 w-4 text-red-500 shrink-0" />
-                  Emergency case
+                  {t('patients.newPatient.view.emergencyCase')}
                 </Link>
                 <Link
                   href={`/inpatient/admissions/new?patientId=${patient._id}`}
@@ -456,7 +456,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-purple-600 shrink-0" />
                   <Bed className="h-4 w-4 text-purple-500 shrink-0" />
-                  Admission
+                  {t('patients.newPatient.view.admission')}
                 </Link>
                 <Link
                   href={`/telemedicine/sessions/new?patientId=${patient._id}`}
@@ -464,7 +464,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-sky-600 shrink-0" />
                   <Video className="h-4 w-4 text-sky-500 shrink-0" />
-                  Telemedicine
+                  {t('patients.newPatient.view.telemedicine')}
                 </Link>
                 <Link
                   href={`/ambulance/bookings/new?patientId=${patient._id}`}
@@ -472,7 +472,7 @@ export default function PatientViewPage() {
                 >
                   <Plus className="h-4 w-4 text-orange-600 shrink-0" />
                   <Truck className="h-4 w-4 text-orange-500 shrink-0" />
-                  Ambulance
+                  {t('patients.newPatient.view.ambulance')}
                 </Link>
               </div>
             </div>
@@ -525,13 +525,13 @@ export default function PatientViewPage() {
                 <div className="space-y-3">
                   {/* Personal Information */}
                   <div>
-                    <h2 className="mb-2 text-sm font-semibold text-gray-900">Personal Information</h2>
+                    <h2 className="mb-2 text-sm font-semibold text-gray-900">{t('patients.newPatient.view.personalInfo')}</h2>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center space-x-3">
                     <User className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Full Name</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.fullName')}</p>
                       <p className="text-sm text-gray-900">{patient.name}</p>
                     </div>
                   </div>
@@ -539,7 +539,7 @@ export default function PatientViewPage() {
                   <div className="flex items-center space-x-3">
                     <User className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Patient ID</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.patientId')}</p>
                       <p className="text-sm text-gray-900 font-mono">{patient.patientId || patient._id}</p>
                     </div>
                   </div>
@@ -547,7 +547,7 @@ export default function PatientViewPage() {
                   <div className="flex items-center space-x-3">
                     <Mail className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Email</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.email')}</p>
                       <p className="text-sm text-gray-900">{patient.email}</p>
                     </div>
                   </div>
@@ -555,7 +555,7 @@ export default function PatientViewPage() {
                   <div className="flex items-center space-x-3">
                     <Phone className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Phone</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.phone')}</p>
                       <p className="text-sm text-gray-900">{patient.phone}</p>
                     </div>
                   </div>
@@ -563,9 +563,9 @@ export default function PatientViewPage() {
                   <div className="flex items-center space-x-3">
                     <Calendar className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Date of Birth</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.dateOfBirth')}</p>
                       <p className="text-sm text-gray-900">
-                        {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : 'Not specified'}
+                        {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString() : t('patients.newPatient.view.notSpecified')}
                       </p>
                     </div>
                   </div>
@@ -575,33 +575,33 @@ export default function PatientViewPage() {
                   <div className="flex items-center space-x-3">
                     <MapPin className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Address</p>
-                      <p className="text-sm text-gray-900">{patient.address || 'Not specified'}</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.address')}</p>
+                      <p className="text-sm text-gray-900">{patient.address || t('patients.newPatient.view.notSpecified')}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-3">
                     <Heart className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Blood Type</p>
-                      <p className="text-sm text-gray-900">{patient.bloodType || 'Not specified'}</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.bloodType')}</p>
+                      <p className="text-sm text-gray-900">{patient.bloodType || t('patients.newPatient.view.notSpecified')}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-3">
                     <Users className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Assigned Doctor</p>
-                      <p className="text-sm text-gray-900">{patient.assignedDoctor || 'Not assigned'}</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.assignedDoctor')}</p>
+                      <p className="text-sm text-gray-900">{patient.assignedDoctor || t('patients.newPatient.view.notAssigned')}</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-3">
                     <Calendar className="h-5 w-5 text-gray-400" />
                     <div>
-                      <p className="text-sm font-medium text-gray-500">Registration Date</p>
+                      <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.registrationDate')}</p>
                       <p className="text-sm text-gray-900">
-                        {patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : 'Not specified'}
+                        {patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : t('patients.newPatient.view.notSpecified')}
                       </p>
                   </div>
                 </div>
@@ -612,18 +612,18 @@ export default function PatientViewPage() {
           {/* Emergency Contact */}
           {patient.emergencyContact && (
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-900 mb-4">Emergency Contact</h2>
+                      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('patients.newPatient.view.emergencyContact')}</h2>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Name</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.name')}</p>
                     <p className="text-sm text-gray-900">{patient.emergencyContact.name}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Relationship</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.relationship')}</p>
                     <p className="text-sm text-gray-900">{patient.emergencyContact.relationship}</p>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Phone</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.phone')}</p>
                     <p className="text-sm text-gray-900">{patient.emergencyContact.phone}</p>
                 </div>
               </div>
@@ -633,7 +633,7 @@ export default function PatientViewPage() {
           {/* Medical History */}
           {patient.medicalHistory && (
                     <div>
-                      <h2 className="text-lg font-semibold text-gray-900 mb-4">Medical History</h2>
+                      <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('patients.newPatient.view.medicalHistory')}</h2>
                       <p className="text-sm text-gray-900">{patient.medicalHistory}</p>
                     </div>
                   )}
@@ -641,77 +641,77 @@ export default function PatientViewPage() {
           {/* Orthopedic Information */}
           {(patient.orthopedicHistory || patient.chiefComplaint || patient.injurySite || patient.injuryType || patient.affectedJoint || patient.painLevel || patient.splintOrCast || patient.surgicalOperations || patient.physicalTherapy || patient.diagnosis || patient.treatmentPlan || patient.imagingStudies) && (
             <div className="mt-6 border-t pt-6">
-              <h2 className="mb-4 text-lg font-semibold text-gray-900">معلومات جراحة العظام</h2>
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('patients.newPatient.view.orthopedicInfo')}</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 {patient.orthopedicHistory && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">تاريخ جراحة العظام</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.orthopedicHistory')}</p>
                     <p className="text-sm text-gray-900">{patient.orthopedicHistory.join(', ')}</p>
                   </div>
                 )}
                 {patient.chiefComplaint && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">سبب الزيارة</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.chiefComplaint')}</p>
                     <p className="text-sm text-gray-900">{patient.chiefComplaint}</p>
                   </div>
                 )}
                 {patient.injurySite && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">موضع الإصابة</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.injurySite')}</p>
                     <p className="text-sm text-gray-900">{patient.injurySite}</p>
                   </div>
                 )}
                 {patient.injuryType && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">نوع الكسر أو الإصابة</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.injuryType')}</p>
                     <p className="text-sm text-gray-900">{patient.injuryType}</p>
                   </div>
                 )}
                 {patient.affectedJoint && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">المفصل المصاب</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.affectedJoint')}</p>
                     <p className="text-sm text-gray-900">{patient.affectedJoint}</p>
                   </div>
                 )}
                 {patient.painLevel !== undefined && patient.painLevel !== null && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">مستوى الألم</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.painLevel')}</p>
                     <p className="text-sm text-gray-900">{patient.painLevel}/10</p>
                   </div>
                 )}
                 {patient.splintOrCast && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">الجبيرة أو الجبس</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.splintOrCast')}</p>
                     <p className="text-sm text-gray-900">{patient.splintOrCast}</p>
                   </div>
                 )}
                 {patient.surgicalOperations && patient.surgicalOperations.length > 0 && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">العمليات الجراحية</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.surgicalOperations')}</p>
                     <p className="text-sm text-gray-900">{patient.surgicalOperations.join(', ')}</p>
                   </div>
                 )}
                 {patient.physicalTherapy && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">العلاج الطبيعي</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.physicalTherapy')}</p>
                     <p className="text-sm text-gray-900">{patient.physicalTherapy}</p>
                   </div>
                 )}
                 {patient.diagnosis && patient.diagnosis.length > 0 && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">التشخيص</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.diagnosis')}</p>
                     <p className="text-sm text-gray-900">{patient.diagnosis.join(', ')}</p>
                   </div>
                 )}
                 {patient.treatmentPlan && patient.treatmentPlan.length > 0 && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">خطة العلاج</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.treatmentPlan')}</p>
                     <p className="text-sm text-gray-900">{patient.treatmentPlan.join(', ')}</p>
                   </div>
                 )}
                 {patient.imagingStudies && patient.imagingStudies.length > 0 && (
                   <div>
-                    <p className="text-sm font-medium text-gray-500">الأشعات</p>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.imagingStudies')}</p>
                     <div className="space-y-1">
                       {patient.imagingStudies.map((study: any, index: number) => (
                         <p key={index} className="text-sm text-gray-900">
@@ -731,7 +731,7 @@ export default function PatientViewPage() {
             {/* Appointments Tab */}
             {activeTab === 'appointments' && (
               <div className="p-3">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Appointments</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('patients.newPatient.view.tabs.appointments')}</h2>
                 {loadingAppointments ? (
                   <div className="flex items-center justify-center py-8">
                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -739,7 +739,7 @@ export default function PatientViewPage() {
                 ) : appointments.length === 0 ? (
                   <div className="text-center py-8">
                     <Calendar className="mx-auto h-12 w-12 text-gray-400" />
-                    <p className="mt-2 text-sm text-gray-500">No appointments found for this patient</p>
+                    <p className="mt-2 text-sm text-gray-500">{t('patients.noAppointmentsFound') || 'لم يتم العثور على مواعيد'}</p>
                   </div>
                 ) : (
                   <div className="overflow-x-auto">
@@ -798,13 +798,13 @@ export default function PatientViewPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
                     <CreditCard className="h-5 w-5" />
-                    <span>Billing & Invoices</span>
+                    <span>{t('patients.newPatient.view.tabs.billing')}</span>
                   </h2>
                   <Link
                     href="/billing"
                     className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
                   >
-                    <span>View All</span>
+                    <span>{t('common.viewAll') || 'عرض الكل'}</span>
                     <ExternalLink className="h-4 w-4" />
                   </Link>
                 </div>
@@ -923,13 +923,13 @@ export default function PatientViewPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
                     <FlaskConical className="h-5 w-5" />
-                    <span>Lab Reports</span>
+                    <span>{t('patients.newPatient.view.tabs.labReports')}</span>
                   </h2>
                   <Link
                     href="/lab"
                     className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
                   >
-                    <span>View All</span>
+                    <span>{t('common.viewAll') || 'عرض الكل'}</span>
                     <ExternalLink className="h-4 w-4" />
                   </Link>
                 </div>
@@ -1026,13 +1026,13 @@ export default function PatientViewPage() {
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-lg font-semibold text-gray-900 flex items-center space-x-2">
                     <Radio className="h-5 w-5" />
-                    <span>Radiology Studies</span>
+                    <span>{t('patients.newPatient.view.tabs.radiology')}</span>
                   </h2>
                   <Link
                     href="/radiology"
                     className="text-sm text-blue-600 hover:text-blue-800 flex items-center space-x-1"
                   >
-                    <span>View All</span>
+                    <span>{t('common.viewAll') || 'عرض الكل'}</span>
                     <ExternalLink className="h-4 w-4" />
                   </Link>
                 </div>
@@ -1080,7 +1080,7 @@ export default function PatientViewPage() {
                               {study.bodyPart || 'N/A'}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                              {study.radiologistName || 'Not assigned'}
+                              {study.radiologistName || t('patients.newPatient.view.notAssigned')}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                               {study.performedDate ? new Date(study.performedDate).toLocaleDateString() : 
@@ -1130,7 +1130,7 @@ export default function PatientViewPage() {
               <div className="p-3">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
                   <Pill className="h-5 w-5" />
-                  <span>Treatment Plans</span>
+                  <span>{t('patients.newPatient.view.tabs.treatmentPlan')}</span>
                 </h2>
                 {loadingAiResults ? (
                   <div className="flex items-center justify-center py-8">
@@ -1233,7 +1233,7 @@ export default function PatientViewPage() {
               <div className="p-3">
                 <h2 className="text-lg font-semibold text-gray-900 mb-4 flex items-center space-x-2">
                   <FileText className="h-5 w-5" />
-                  <span>Prescriptions</span>
+                  <span>{t('patients.newPatient.view.tabs.prescription')}</span>
                 </h2>
                 {loadingAiResults ? (
                   <div className="flex items-center justify-center py-8">
@@ -1325,12 +1325,12 @@ export default function PatientViewPage() {
                   const typeResults = getAIResultsByType(activeTab);
                   const getTypeLabel = () => {
                     switch (activeTab) {
-                      case 'prescription': return 'Prescriptions';
-                      case 'drug-interaction': return 'Drug Interactions';
-                      case 'image-analysis': return 'Image Analysis';
-                      case 'appointment-optimizer': return 'Appointment Optimizer';
-                      case 'risk-assessment': return 'Risk Assessment';
-                      case 'voice-transcription': return 'Voice Transcriptions';
+                      case 'prescription': return t('patients.newPatient.view.tabs.prescription');
+                      case 'drug-interaction': return t('patients.newPatient.view.tabs.drugInteraction');
+                      case 'image-analysis': return t('patients.newPatient.view.tabs.imageAnalysis');
+                      case 'appointment-optimizer': return t('patients.newPatient.view.tabs.appointmentOptimizer');
+                      case 'risk-assessment': return t('patients.newPatient.view.tabs.riskAssessment');
+                      case 'voice-transcription': return t('patients.newPatient.view.tabs.voiceTranscription');
                       default: return 'AI Analysis';
                     }
                   };
@@ -1539,7 +1539,7 @@ export default function PatientViewPage() {
                   onClick={() => setShowModal(false)}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 >
-                  Close
+                  {t('common.close') || 'إغلاق'}
                 </button>
               </div>
             </div>
@@ -1586,7 +1586,7 @@ export default function PatientViewPage() {
                     >
                       <div className="flex items-center space-x-2">
                         <Brain className="h-4 w-4" />
-                        <span>Symptoms</span>
+                        <span>{t('ai.treatmentRecommendations.symptoms') || 'الأعراض'}</span>
                       </div>
                     </button>
                   )}
@@ -1600,7 +1600,7 @@ export default function PatientViewPage() {
                   >
                     <div className="flex items-center space-x-2">
                       <Pill className="h-4 w-4" />
-                      <span>Treatment</span>
+                      <span>{t('ai.treatmentRecommendations.treatment') || 'العلاج'}</span>
                     </div>
                   </button>
                 </nav>
@@ -1667,11 +1667,11 @@ export default function PatientViewPage() {
               </div>
 
               <div className="mt-4 flex justify-end">
-                <button
-                  onClick={() => setShowTreatmentPlanModal(false)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                    <button
+                    onClick={() => setShowTreatmentPlanModal(false)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
                 >
-                  Close
+                  {t('common.close') || 'إغلاق'}
                 </button>
               </div>
             </div>
@@ -1719,11 +1719,11 @@ export default function PatientViewPage() {
                 </div>
               )}
               <div className="mt-4 flex justify-end">
-                <button
+                    <button
                   onClick={() => setShowSymptomModal(false)}
                   className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700"
                 >
-                  Close
+                  {t('common.close') || 'إغلاق'}
                 </button>
               </div>
             </div>

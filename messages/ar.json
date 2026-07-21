@@ -1464,19 +1464,19 @@
     "logout": "تسجيل الخروج"
   },
   "patients": {
-    "title": "مرضى",
-    "description": "إدارة سجلات المرضى والمعلومات الخاصة بك",
+    "title": "المرضى",
+    "description": "إدارة سجلات المرضى في عيادة الدكتور أنور لجراحة العظام والمفاصل",
     "addNewPatient": "إضافة مريض جديد",
-    "searchPatients": "البحث عن المرضى بالاسم أو البريد الإلكتروني...",
+    "searchPatients": "البحث عن المرضى بالاسم أو رقم الهاتف...",
     "allPatients": "جميع المرضى",
-    "patient": "مريض",
-    "contact": "اتصال",
-    "status": "حالة",
+    "patient": "المريض",
+    "contact": "بيانات الاتصال",
+    "status": "الحالة",
     "registrationDate": "تاريخ التسجيل",
     "assignedDoctor": "الطبيب المعين",
     "actions": "الإجراءات",
     "viewDetails": "عرض التفاصيل",
-    "editPatient": "تحرير المريض",
+    "editPatient": "تعديل بيانات المريض",
     "deletePatient": "حذف المريض",
     "cases": "حالات",
     "noPatientsFound": "لم يتم العثور على مرضى",
@@ -1489,8 +1489,9 @@
       "backToPatients": "العودة إلى المرضى",
       "sections": {
         "personal": "معلومات شخصية",
-        "login": "معلومات تسجيل دخول المستخدم",
+        "login": "معلومات تسجيل الدخول",
         "medical": "المعلومات الطبية",
+        "orthopedic": "معلومات جراحة العظام",
         "emergency": "الاتصال في حالات الطوارئ"
       },
       "fields": {
@@ -1541,7 +1542,9 @@
         "followUpDate": "موعد المراجعة",
         "emergencyName": "اسم جهة اتصال الطوارئ",
         "emergencyPhone": "هاتف الاتصال في حالات الطوارئ",
-        "emergencyRelationship": "العلاقة بالمريض"
+        "emergencyRelationship": "العلاقة بالمريض",
+        "diagnosis": "التشخيص",
+        "treatmentPlan": "خطة العلاج"
       },
       "placeholders": {
         "allergies": "على سبيل المثال، البنسلين والفول السوداني",
@@ -1556,12 +1559,14 @@
         "splintOrCast": "نوع الجبيرة أو مدة وضع الجبس",
         "surgicalOperations": "العمليات الجراحية التي أجريت أو المخطط لها",
         "physicalTherapy": "تفاصيل جلسات العلاج الطبيعي",
-        "emergencyRelationship": "على سبيل المثال، الزوج، الوالد، الطفل"
+        "emergencyRelationship": "على سبيل المثال، الزوج، الوالد، الطفل",
+        "diagnosis": "أدخل التشخيص الطبي",
+        "treatmentPlan": "أدخل خطة العلاج المقترحة"
       },
       "buttons": {
-        "cancel": "يلغي",
-        "savePatient": "حفظ المريض",
-        "saving": "توفير..."
+        "cancel": "إلغاء",
+        "savePatient": "حفظ بيانات المريض",
+        "saving": "جاري الحفظ..."
       },
       "validation": {
         "requiredFields": "يرجى ملء كافة الحقول المطلوبة"
@@ -1572,6 +1577,104 @@
       "errors": {
         "addPatientError": "خطأ في إضافة المريض: {error}",
         "genericError": "خطأ في إضافة المريض. يرجى المحاولة مرة أخرى."
+      },
+      "edit": {
+        "title": "تعديل بيانات المريض",
+        "description": "تعديل معلومات المريض",
+        "personalInfo": "المعلومات الشخصية",
+        "emergencyContact": "جهة الاتصال في حالات الطوارئ",
+        "additionalInfo": "معلومات إضافية",
+        "medicalInfo": "المعلومات الطبية",
+        "orthopedicInfo": "معلومات جراحة العظام",
+        "backToPatient": "العودة إلى بيانات المريض",
+        "backToPatients": "العودة إلى قائمة المرضى",
+        "patientNotFound": "لم يتم العثور على المريض",
+        "notFoundDescription": "المريض الذي تبحث عنه غير موجود أو تم حذفه.",
+        "saveChanges": "حفظ التغييرات",
+        "saving": "جاري الحفظ...",
+        "updatedSuccessfully": "تم تحديث بيانات المريض بنجاح!",
+        "updateFailed": "فشل في تحديث بيانات المريض",
+        "errorOccurred": "حدث خطأ. يرجى المحاولة مرة أخرى.",
+        "editPatient": "تعديل المريض",
+        "genderSelect": "اختر الجنس",
+        "bloodTypeSelect": "اختر فصيلة الدم",
+        "cancel": "إلغاء",
+        "fullName": "الاسم الكامل",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "dateOfBirth": "تاريخ الميلاد",
+        "gender": "الجنس",
+        "address": "العنوان",
+        "bloodType": "فصيلة الدم",
+        "assignedDoctor": "الطبيب المعين",
+        "assignedDoctorPlaceholder": "مثال: الدكتور أنور",
+        "medicalHistory": "التاريخ الطبي",
+        "medicalHistoryPlaceholder": "أدخل أي تاريخ طبي ذي صلة...",
+        "contactName": "اسم جهة الاتصال",
+        "relationship": "صلة القرابة",
+        "contactPhone": "رقم هاتف جهة الاتصال"
+      },
+      "view": {
+        "patientDetails": "بيانات المريض",
+        "viewAndManage": "عرض وإدارة معلومات المريض",
+        "patientNotFound": "لم يتم العثور على المريض",
+        "notFoundDescription": "المريض الذي تبحث عنه غير موجود أو تم حذفه.",
+        "backToPatients": "العودة إلى قائمة المرضى",
+        "editPatient": "تعديل بيانات المريض",
+        "quickCreate": "إجراءات سريعة للمريض",
+        "appointment": "موعد",
+        "invoice": "فاتورة",
+        "labOrder": "تحاليل",
+        "radiology": "أشعة",
+        "medicalReport": "تقرير طبي",
+        "document": "مستند",
+        "emergencyCase": "حالة طوارئ",
+        "admission": "دخول مستشفى",
+        "telemedicine": "استشارة عن بعد",
+        "ambulance": "إسعاف",
+        "personalInfo": "المعلومات الشخصية",
+        "fullName": "الاسم الكامل",
+        "patientId": "رقم المريض",
+        "email": "البريد الإلكتروني",
+        "phone": "رقم الهاتف",
+        "dateOfBirth": "تاريخ الميلاد",
+        "address": "العنوان",
+        "bloodType": "فصيلة الدم",
+        "assignedDoctor": "الطبيب المعين",
+        "registrationDate": "تاريخ التسجيل",
+        "notSpecified": "غير محدد",
+        "notAssigned": "غير معين",
+        "emergencyContact": "جهة الاتصال في حالات الطوارئ",
+        "name": "الاسم",
+        "relationship": "صلة القرابة",
+        "medicalHistory": "التاريخ الطبي",
+        "orthopedicInfo": "معلومات جراحة العظام",
+        "orthopedicHistory": "تاريخ جراحة العظام",
+        "chiefComplaint": "سبب الزيارة",
+        "injurySite": "موضع الإصابة",
+        "injuryType": "نوع الكسر أو الإصابة",
+        "affectedJoint": "المفصل المصاب",
+        "painLevel": "مستوى الألم",
+        "splintOrCast": "الجبيرة أو الجبس",
+        "surgicalOperations": "العمليات الجراحية",
+        "physicalTherapy": "العلاج الطبيعي",
+        "diagnosis": "التشخيص",
+        "treatmentPlan": "خطة العلاج",
+        "imagingStudies": "الأشعات",
+        "tabs": {
+          "details": "تفاصيل المريض",
+          "appointments": "المواعيد",
+          "billing": "الفواتير",
+          "labReports": "التحاليل",
+          "radiology": "الأشعة",
+          "treatmentPlan": "خطط العلاج",
+          "prescription": "الوصفات الطبية",
+          "drugInteraction": "التفاعلات الدوائية",
+          "imageAnalysis": "تحليل الصور",
+          "appointmentOptimizer": "تحسين المواعيد",
+          "riskAssessment": "تقييم المخاطر",
+          "voiceTranscription": "التفريغ الصوتي"
+        }
       }
     }
   },
@@ -3570,4 +3673,4 @@
     "issuedUnits": "وحدات الدم الصادرة",
     "fetchError": "فشل في جلب البيانات"
   }
-    }
+}

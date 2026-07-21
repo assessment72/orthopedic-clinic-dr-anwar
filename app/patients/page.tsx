@@ -47,7 +47,7 @@ export default function PatientsPage() {
   const filteredPatients = patients.filter((patient) => {
     const matchesSearch =
       patient.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      patient.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      patient.phone?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       patient.patientId?.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesSearch;
   });
@@ -237,16 +237,16 @@ export default function PatientsPage() {
                                 ID: {patient.patientId || patient._id}
                               </div>
                               <div className="mt-0.5 flex flex-wrap items-center gap-x-2 text-[11px] text-gray-600 md:hidden">
-                                {patient.email && (
-                                  <span className="flex min-w-0 items-center gap-0.5">
-                                    <Mail className="h-3 w-3 shrink-0" />
-                                    <span className="truncate">{patient.email}</span>
-                                  </span>
-                                )}
                                 {patient.phone && (
                                   <span className="flex items-center gap-0.5">
                                     <Phone className="h-3 w-3 shrink-0" />
                                     {patient.phone}
+                                  </span>
+                                )}
+                                {patient.email && (
+                                  <span className="flex min-w-0 items-center gap-0.5">
+                                    <Mail className="h-3 w-3 shrink-0" />
+                                    <span className="truncate">{patient.email}</span>
                                   </span>
                                 )}
                               </div>
@@ -254,8 +254,8 @@ export default function PatientsPage() {
                           </div>
                         </td>
                         <td className="hidden whitespace-nowrap px-3 py-2 md:table-cell lg:px-4">
-                          <div className="text-xs text-gray-900 sm:text-sm">{patient.email}</div>
-                          <div className="text-xs text-gray-600">{patient.phone}</div>
+                          <div className="text-xs text-gray-900 sm:text-sm">{patient.phone || '-'}</div>
+                          <div className="text-xs text-gray-600">{patient.email || '-'}</div>
                         </td>
                         <td className="px-3 py-2 lg:px-4">
                           <span
@@ -265,10 +265,10 @@ export default function PatientsPage() {
                           </span>
                         </td>
                         <td className="hidden whitespace-nowrap px-3 py-2 text-xs text-gray-900 lg:table-cell lg:px-4">
-                          {patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : 'N/A'}
+                          {patient.createdAt ? new Date(patient.createdAt).toLocaleDateString() : '-'}
                         </td>
                         <td className="hidden max-w-[140px] truncate px-3 py-2 text-xs text-gray-900 xl:table-cell lg:px-4">
-                          {patient.assignedDoctor || t('common.no')}
+                          {patient.assignedDoctor || '-'}
                         </td>
                         <td className="whitespace-nowrap px-3 py-2 text-right text-xs sm:text-sm lg:px-4">
                           <div

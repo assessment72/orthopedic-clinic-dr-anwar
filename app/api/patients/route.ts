@@ -74,6 +74,57 @@ export async function POST(request: NextRequest) {
         cleanedData.emergencyContact = emergencyContact;
       }
     }
+
+    // Orthopedic fields
+    if (body.orthopedicHistory) {
+      cleanedData.orthopedicHistory = Array.isArray(body.orthopedicHistory)
+        ? body.orthopedicHistory
+        : [body.orthopedicHistory];
+    }
+    if (body.chiefComplaint) {
+      cleanedData.chiefComplaint = body.chiefComplaint;
+    }
+    if (body.injurySite) {
+      cleanedData.injurySite = body.injurySite;
+    }
+    if (body.injuryType) {
+      cleanedData.injuryType = body.injuryType;
+    }
+    if (body.affectedJoint) {
+      cleanedData.affectedJoint = body.affectedJoint;
+    }
+    if (body.painLevel !== undefined && body.painLevel !== null) {
+      cleanedData.painLevel = parseInt(body.painLevel);
+    }
+    if (body.splintOrCast) {
+      cleanedData.splintOrCast = body.splintOrCast;
+    }
+    if (body.surgicalOperations) {
+      cleanedData.surgicalOperations = Array.isArray(body.surgicalOperations)
+        ? body.surgicalOperations
+        : [body.surgicalOperations];
+    }
+    if (body.physicalTherapy) {
+      cleanedData.physicalTherapy = body.physicalTherapy;
+    }
+    if (body.diagnosis) {
+      cleanedData.diagnosis = Array.isArray(body.diagnosis)
+        ? body.diagnosis
+        : [body.diagnosis];
+    }
+    if (body.treatmentPlan) {
+      cleanedData.treatmentPlan = Array.isArray(body.treatmentPlan)
+        ? body.treatmentPlan
+        : [body.treatmentPlan];
+    }
+    if (body.imagingStudies) {
+      cleanedData.imagingStudies = body.imagingStudies;
+    }
+    if (body.followUpAppointments) {
+      cleanedData.followUpAppointments = Array.isArray(body.followUpAppointments)
+        ? body.followUpAppointments
+        : [body.followUpAppointments];
+    }
     
     // Generate patient ID if not provided
     if (!cleanedData.patientId) {

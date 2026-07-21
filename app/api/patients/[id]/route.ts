@@ -96,6 +96,75 @@ export async function PUT(
       };
     }
 
+    // Orthopedic fields
+    if (typeof body.orthopedicHistory === 'string') {
+      patient.orthopedicHistory = body.orthopedicHistory
+        .split('\n')
+        .map((line: string) => line.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(body.orthopedicHistory)) {
+      patient.orthopedicHistory = body.orthopedicHistory.map(String).map((s: string) => s.trim()).filter(Boolean);
+    }
+    if (typeof body.chiefComplaint === 'string') {
+      patient.chiefComplaint = body.chiefComplaint.trim() || undefined;
+    }
+    if (typeof body.injurySite === 'string') {
+      patient.injurySite = body.injurySite.trim() || undefined;
+    }
+    if (typeof body.injuryType === 'string') {
+      patient.injuryType = body.injuryType.trim() || undefined;
+    }
+    if (typeof body.affectedJoint === 'string') {
+      patient.affectedJoint = body.affectedJoint.trim() || undefined;
+    }
+    if (body.painLevel !== undefined && body.painLevel !== null) {
+      const pl = Number(body.painLevel);
+      if (!Number.isNaN(pl) && pl >= 0 && pl <= 10) {
+        patient.painLevel = pl;
+      }
+    }
+    if (typeof body.splintOrCast === 'string') {
+      patient.splintOrCast = body.splintOrCast.trim() || undefined;
+    }
+    if (typeof body.surgicalOperations === 'string') {
+      patient.surgicalOperations = body.surgicalOperations
+        .split('\n')
+        .map((line: string) => line.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(body.surgicalOperations)) {
+      patient.surgicalOperations = body.surgicalOperations.map(String).map((s: string) => s.trim()).filter(Boolean);
+    }
+    if (typeof body.physicalTherapy === 'string') {
+      patient.physicalTherapy = body.physicalTherapy.trim() || undefined;
+    }
+    if (typeof body.diagnosis === 'string') {
+      patient.diagnosis = body.diagnosis
+        .split('\n')
+        .map((line: string) => line.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(body.diagnosis)) {
+      patient.diagnosis = body.diagnosis.map(String).map((s: string) => s.trim()).filter(Boolean);
+    }
+    if (typeof body.treatmentPlan === 'string') {
+      patient.treatmentPlan = body.treatmentPlan
+        .split('\n')
+        .map((line: string) => line.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(body.treatmentPlan)) {
+      patient.treatmentPlan = body.treatmentPlan.map(String).map((s: string) => s.trim()).filter(Boolean);
+    }
+    if (typeof body.imagingStudies === 'object' && body.imagingStudies !== null && Array.isArray(body.imagingStudies)) {
+      patient.imagingStudies = body.imagingStudies;
+    }
+    if (typeof body.followUpAppointments === 'string') {
+      patient.followUpAppointments = body.followUpAppointments
+        .split('\n')
+        .map((line: string) => line.trim())
+        .filter(Boolean);
+    } else if (Array.isArray(body.followUpAppointments)) {
+      patient.followUpAppointments = body.followUpAppointments.map(String).map((s: string) => s.trim()).filter(Boolean);
+    }
+
     await patient.save();
 
     return NextResponse.json(patient);

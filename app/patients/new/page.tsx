@@ -254,7 +254,7 @@ export default function NewPatientPage() {
     { id: 'personal', label: t('patients.newPatient.sections.personal'), icon: Users },
     { id: 'login', label: t('patients.newPatient.sections.login'), icon: Lock },
     { id: 'medical', label: t('patients.newPatient.sections.medical'), icon: FileText },
-    { id: 'orthopedic', label: 'معلومات العظام', icon: AlertCircle },
+    { id: 'orthopedic', label: t('patients.newPatient.sections.orthopedic'), icon: AlertCircle },
     { id: 'emergency', label: t('patients.newPatient.sections.emergency'), icon: Phone }
   ];
 
@@ -403,45 +403,6 @@ export default function NewPatientPage() {
                     />
                   </div>
                 </div>
-                <div>
-                  <label htmlFor="city" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.city')}
-                  </label>
-                  <input
-                    type="text"
-                    id="city"
-                    name="city"
-                    value={formData.city}
-                    onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="state" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.state')}
-                  </label>
-                  <input
-                    type="text"
-                    id="state"
-                    name="state"
-                    value={formData.state}
-                    onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="zipCode" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.zipCode')}
-                  </label>
-                  <input
-                    type="text"
-                    id="zipCode"
-                    name="zipCode"
-                    value={formData.zipCode}
-                    onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
               </div>
             </div>
           )}
@@ -471,7 +432,7 @@ export default function NewPatientPage() {
                     />
                   </div>
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="password" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.password')}
                   </label>
@@ -507,29 +468,29 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">{t('patients.newPatient.fields.bloodTypeOptions.select')}</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
+                    <option value="none">{t('patients.newPatient.fields.bloodTypeOptions.select')}</option>
+                    <option value="A+">{t('patients.newPatient.fields.bloodTypeOptions.A+')}</option>
+                    <option value="A-">{t('patients.newPatient.fields.bloodTypeOptions.A-')}</option>
+                    <option value="B+">{t('patients.newPatient.fields.bloodTypeOptions.B+')}</option>
+                    <option value="B-">{t('patients.newPatient.fields.bloodTypeOptions.B-')}</option>
+                    <option value="AB+">{t('patients.newPatient.fields.bloodTypeOptions.AB+')}</option>
+                    <option value="AB-">{t('patients.newPatient.fields.bloodTypeOptions.AB-')}</option>
+                    <option value="O+">{t('patients.newPatient.fields.bloodTypeOptions.O+')}</option>
+                    <option value="O-">{t('patients.newPatient.fields.bloodTypeOptions.O-')}</option>
                     <option value="none">{t('patients.newPatient.fields.bloodTypeOptions.none')}</option>
                   </select>
                 </div>
-                <div className="md:col-span-2">
+                <div>
                   <label htmlFor="allergies" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.allergies')}
                   </label>
-                  <textarea
+                  <input
+                    type="text"
                     id="allergies"
                     name="allergies"
                     value={formData.allergies}
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.allergies')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -537,13 +498,13 @@ export default function NewPatientPage() {
                   <label htmlFor="medications" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.currentMedications')}
                   </label>
-                  <textarea
+                  <input
+                    type="text"
                     id="medications"
                     name="medications"
                     value={formData.medications}
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.medications')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -584,7 +545,7 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <AlertCircle className="mr-2 h-4 w-4 text-blue-600" />
-                معلومات جراحة العظام
+                {t('patients.newPatient.sections.orthopedic')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div className="md:col-span-2">
@@ -716,28 +677,28 @@ export default function NewPatientPage() {
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="diagnosis" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    التشخيص
+                    {t('patients.newPatient.fields.diagnosis')}
                   </label>
                   <textarea
                     id="diagnosis"
                     name="diagnosis"
                     value={formData.diagnosis}
                     onChange={handleInputChange}
-                    placeholder="أدخل التشخيص الطبي"
+                    placeholder={t('patients.newPatient.placeholders.diagnosis')}
                     rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="treatmentPlan" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    خطة العلاج
+                    {t('patients.newPatient.fields.treatmentPlan')}
                   </label>
                   <textarea
                     id="treatmentPlan"
                     name="treatmentPlan"
                     value={formData.treatmentPlan}
                     onChange={handleInputChange}
-                    placeholder="أدخل خطة العلاج المقترحة"
+                    placeholder={t('patients.newPatient.placeholders.treatmentPlan')}
                     rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
@@ -753,7 +714,7 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">اختر نوع الأشعة</option>
+                    <option value="">{t('patients.newPatient.fields.imagingOptions.select')}</option>
                     <option value="X-Ray">X-Ray</option>
                     <option value="MRI">MRI</option>
                     <option value="CT Scan">CT Scan</option>
