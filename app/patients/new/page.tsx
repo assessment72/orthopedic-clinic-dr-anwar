@@ -111,7 +111,7 @@ export default function NewPatientPage() {
           previousSurgeries: formData.previousSurgeries,
           currentPain: formData.currentPain,
           mobilityStatus: formData.mobilityStatus,
-          clinic: 'عيادة الدكتور أنور - تخصص العظام'
+          clinic: '{t('patients.newPatient.clinicName')}'
         }
       };
       
@@ -447,7 +447,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="affectedArea" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.state')} المصابة *
+                    {t('patients.newPatient.orthopedic.fields.affectedArea')}
                   </label>
                   <select
                     id="affectedArea"
@@ -457,7 +457,7 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر {t('patients.newPatient.fields.state')} --</option>
+                    <option value="">{t('patients.newPatient.orthopedic.placeholders.affectedArea')}</option>
                     <option value="head">{t("patients.newPatient.orthopedic.options.affectedArea.head")}</option>
                     <option value="neck">{t("patients.newPatient.orthopedic.options.affectedArea.neck")}</option>
                     <option value="shoulder">{t("patients.newPatient.orthopedic.options.affectedArea.shoulder")}</option>
@@ -538,7 +538,7 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.previousSurgeries}
                     onChange={handleInputChange}
-                    placeholder="ا{t('publicAppointment.portalGenderMale')} أي عمليات جراحية سابقة في العظام أو المفاصل"
+                    placeholder="{t('patients.newPatient.orthopedic.placeholders.previousSurgeries')}"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -601,7 +601,7 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.medications}
                     onChange={handleInputChange}
-                    placeholder="ا{t('publicAppointment.portalGenderMale')} جميع الأدوية التي يتناولها المريض حالياً"
+                    placeholder="{t('patients.newPatient.placeholders.medications')}"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -615,13 +615,13 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.medicalHistory}
                     onChange={handleInputChange}
-                    placeholder="ا{t('publicAppointment.portalGenderMale')} الأمراض السابقة والحالات الطبية المهمة"
+                    placeholder="{t('patients.newPatient.placeholders.medicalHistory')}"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="familyHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.sections.medical')} للعائلة
+                    {t('patients.newPatient.sections.medical')}  {t('patients.newPatient.fields.familyHistory')}
                   </label>
                   <textarea
                     id="familyHistory"
@@ -629,7 +629,7 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.familyHistory}
                     onChange={handleInputChange}
-                    placeholder="ا{t('publicAppointment.portalGenderMale')} أي أمراض وراثية أو حالات طبية في العائلة"
+                    placeholder="{t('patients.newPatient.placeholders.familyHistory')}"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -647,7 +647,7 @@ export default function NewPatientPage() {
               <div className="space-y-2">
                 <div className="mb-3 rounded-md border border-blue-200 bg-blue-50 p-2">
                   <p className="text-xs text-blue-800">
-                    <strong>ملاحظة:</strong> إضافة {t('patients.newPatient.sections.login')} ستنشئ حساب مستخدم للمريض، مما يسمح له بالوصول إلى بوابة المريض.
+                    <strong>{t('common.info')}:</strong> {t('patients.newPatient.loginNote')}
                   </p>
                 </div>
                 <div>
