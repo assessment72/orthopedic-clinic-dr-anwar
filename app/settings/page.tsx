@@ -38,6 +38,7 @@ const timezones = [
   'Asia/Shanghai',
   'Asia/Kolkata',
   'Asia/Dubai',
+  'Asia/Riyadh', // 🇸🇦 Saudi Arabia
   'Australia/Sydney',
   'Australia/Melbourne',
   'Pacific/Auckland',
