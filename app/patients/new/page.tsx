@@ -83,7 +83,7 @@ export default function NewPatientPage() {
     
     // If password is provided, validate it
     if (formData.password && formData.password.length < 6) {
-      alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
+      alert(t('patients.newPatient.errors.passwordShort'));
       setIsSubmitting(false);
       return;
     }
@@ -151,7 +151,7 @@ export default function NewPatientPage() {
       });
 
       if (response.ok) {
-        alert('تم إضافة المريض بنجاح');
+        alert(t('patients.newPatient.success.patientAdded'));
         // Reset form
         setFormData({
           firstName: '',
@@ -185,20 +185,20 @@ export default function NewPatientPage() {
         window.location.href = '/patients';
       } else {
         // Try to parse error response
-        let errorMessage = 'فشل إنشاء المريض';
+        let errorMessage = t('patients.newPatient.errors.createFailed');
         try {
           const errorText = await response.text();
           if (errorText) {
             const errorData = JSON.parse(errorText);
             errorMessage = errorData.details || errorData.error || errorMessage;
           } else {
-            errorMessage = `خطأ في الخادم: ${response.status} ${response.statusText}`;
+            errorMessage = `${t('patients.newPatient.errors.serverError')}: ${response.status} ${response.statusText}`;
           }
         } catch (parseError) {
-          errorMessage = `خطأ في الخادم: ${response.status} ${response.statusText}`;
+          errorMessage = `${t('patients.newPatient.errors.serverError')}: ${response.status} ${response.statusText}`;
         }
         console.error('Error response status:', response.status, 'Message:', errorMessage);
-        alert(`خطأ: ${errorMessage}`);
+        alert(`${t('common.error')}: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error adding patient:', error);
@@ -209,18 +209,18 @@ export default function NewPatientPage() {
   };
 
   const sections = [
-    { id: 'personal', label: 'المعلومات الشخصية', icon: Users },
-    { id: 'orthopedic', label: 'معلومات العظام', icon: Bone },
-    { id: 'medical', label: 'السجل الطبي', icon: FileText },
-    { id: 'login', label: 'بيانات الدخول', icon: Lock },
-    { id: 'emergency', label: 'جهة الاتصال الطارئة', icon: Phone }
+    { id: 'personal', label: t('patients.newPatient.sections.personal'), icon: Users },
+    { id: 'orthopedic', label: t('patients.newPatient.sections.orthopedic'), icon: Bone },
+    { id: 'medical', label: t('patients.newPatient.sections.medical'), icon: FileText },
+    { id: 'login', label: t('patients.newPatient.sections.login'), icon: Lock },
+    { id: 'emergency', label: t('patients.newPatient.sections.emergency'), icon: Phone }
   ];
 
   return (
     <ProtectedRoute>
       <SidebarLayout
-        title="تسجيل مريض جديد - عيادة الدكتور أنور (العظام)"
-        description="إضافة مريض جديد إلى نظام عيادة الدكتور أنور المتخصصة في أمراض العظام"
+        title={t("patients.newPatient.title")}
+        description={t("patients.newPatient.description")}
         dense
       >
         {/* Header */}
@@ -231,12 +231,12 @@ export default function NewPatientPage() {
               className="inline-flex items-center gap-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>العودة إلى قائمة المرضى</span>
+              <span>{t('patients.newPatient.backToPatients')}</span>
             </Link>
           </div>
           <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
             <Bone className="h-4 w-4" />
-            <span>عيادة الدكتور أنور - تخصص العظام</span>
+            <span>{t('patients.newPatient.clinicName')}</span>
           </div>
         </div>
 
@@ -268,12 +268,12 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Users className="mr-2 h-4 w-4 text-blue-600" />
-                المعلومات الشخصية
+                {t('patients.newPatient.sections.personal')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="firstName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    الاسم الأول *
+                    {t('patients.newPatient.fields.firstName')}
                   </label>
                   <input
                     type="text"
@@ -287,7 +287,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="lastName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    اسم العائلة *
+                    {t('patients.newPatient.fields.lastName')}
                   </label>
                   <input
                     type="text"
@@ -301,7 +301,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="dateOfBirth" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    تاريخ الميلاد *
+                    {t('patients.newPatient.fields.dateOfBirth')}
                   </label>
                   <input
                     type="date"
@@ -315,7 +315,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="gender" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    الجنس *
+                    {t('patients.newPatient.fields.gender')}
                   </label>
                   <select
                     id="gender"
@@ -325,16 +325,16 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر --</option>
-                    <option value="male">ذكر</option>
-                    <option value="female">أنثى</option>
-                    <option value="other">آخر</option>
-                    <option value="prefer-not-to-say">أفضل عدم الإفصاح</option>
+                    <option value="">{t('patients.newPatient.placeholders.select')}</option>
+                    <option value="male">{t('publicAppointment.portalGenderMale')}</option>
+                    <option value="female">{t('publicAppointment.portalGenderFemale')}</option>
+                    <option value="other">{t('publicAppointment.portalGenderOther')}</option>
+                    <option value="prefer-not-to-say">{t('patients.newPatient.fields.genderOptions.preferNotToSay')}</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="phone" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    رقم الهاتف *
+                    {t('patients.newPatient.fields.phone')}
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -351,7 +351,7 @@ export default function NewPatientPage() {
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="address" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    العنوان
+                    {t('patients.newPatient.fields.address')}
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -367,7 +367,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="city" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    المدينة
+                    {t('patients.newPatient.fields.city')}
                   </label>
                   <input
                     type="text"
@@ -380,7 +380,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="state" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    المنطقة
+                    {t('patients.newPatient.fields.state')}
                   </label>
                   <input
                     type="text"
@@ -393,7 +393,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="zipCode" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    الرمز البريدي
+                    {t('patients.newPatient.fields.zipCode')}
                   </label>
                   <input
                     type="text"
@@ -413,17 +413,17 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-blue-100 bg-blue-50 p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Bone className="mr-2 h-4 w-4 text-blue-600" />
-                معلومات العظام والإصابات
+                {t('patients.newPatient.orthopedic.title')}
               </h3>
               <div className="mb-3 rounded-md border border-blue-200 bg-white p-2">
                 <p className="text-xs text-blue-800">
-                  <strong>ملاحظة:</strong> يرجى ملء جميع المعلومات المتعلقة بالإصابة أو الحالة العظمية للمريض
+                  <strong>{t('common.info')}:</strong> {t('patients.newPatient.orthopedic.note')}
                 </p>
               </div>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="injuryType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    نوع الإصابة *
+                    {t('patients.newPatient.orthopedic.fields.injuryType')}
                   </label>
                   <select
                     id="injuryType"
@@ -433,21 +433,21 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر نوع الإصابة --</option>
-                    <option value="fracture">كسر</option>
-                    <option value="sprain">التواء</option>
-                    <option value="strain">شد عضلي</option>
-                    <option value="arthritis">التهاب المفاصل</option>
-                    <option value="osteoporosis">هشاشة العظام</option>
-                    <option value="dislocation">خلع</option>
-                    <option value="tendonitis">التهاب الأوتار</option>
-                    <option value="bursitis">التهاب الجراب</option>
-                    <option value="other">أخرى</option>
+                    <option value="">{t('patients.newPatient.orthopedic.placeholders.injuryType')}</option>
+                    <option value="fracture">{t("patients.newPatient.orthopedic.options.injuryType.fracture")}</option>
+                    <option value="sprain">{t("patients.newPatient.orthopedic.options.injuryType.sprain")}</option>
+                    <option value="strain">{t("patients.newPatient.orthopedic.options.injuryType.strain")}</option>
+                    <option value="arthritis">{t("patients.newPatient.orthopedic.options.injuryType.arthritis")}</option>
+                    <option value="osteoporosis">{t("patients.newPatient.orthopedic.options.injuryType.osteoporosis")}</option>
+                    <option value="dislocation">{t("patients.newPatient.orthopedic.options.injuryType.dislocation")}</option>
+                    <option value="tendonitis">{t("patients.newPatient.orthopedic.options.injuryType.tendonitis")}</option>
+                    <option value="bursitis">{t("patients.newPatient.orthopedic.options.injuryType.bursitis")}</option>
+                    <option value="other">{t("patients.newPatient.orthopedic.options.injuryType.other")}</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="affectedArea" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    المنطقة المصابة *
+                    {t('patients.newPatient.fields.state')} المصابة *
                   </label>
                   <select
                     id="affectedArea"
@@ -457,30 +457,30 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر المنطقة --</option>
-                    <option value="head">الرأس</option>
-                    <option value="neck">الرقبة</option>
-                    <option value="shoulder">الكتف</option>
-                    <option value="upper-arm">الذراع العليا</option>
-                    <option value="elbow">الكوع</option>
-                    <option value="forearm">الساعد</option>
-                    <option value="wrist">المعصم</option>
-                    <option value="hand">اليد</option>
-                    <option value="spine">العمود الفقري</option>
-                    <option value="chest">الصدر</option>
-                    <option value="abdomen">البطن</option>
-                    <option value="hip">الورك</option>
-                    <option value="thigh">الفخذ</option>
-                    <option value="knee">الركبة</option>
-                    <option value="shin">الساق</option>
-                    <option value="ankle">الكاحل</option>
-                    <option value="foot">القدم</option>
-                    <option value="multiple">متعددة</option>
+                    <option value="">-- اختر {t('patients.newPatient.fields.state')} --</option>
+                    <option value="head">{t("patients.newPatient.orthopedic.options.affectedArea.head")}</option>
+                    <option value="neck">{t("patients.newPatient.orthopedic.options.affectedArea.neck")}</option>
+                    <option value="shoulder">{t("patients.newPatient.orthopedic.options.affectedArea.shoulder")}</option>
+                    <option value="upper-arm">{t("patients.newPatient.orthopedic.options.affectedArea.upperArm")}</option>
+                    <option value="elbow">{t("patients.newPatient.orthopedic.options.affectedArea.elbow")}</option>
+                    <option value="forearm">{t("patients.newPatient.orthopedic.options.affectedArea.forearm")}</option>
+                    <option value="wrist">{t("patients.newPatient.orthopedic.options.affectedArea.wrist")}</option>
+                    <option value="hand">{t("patients.newPatient.orthopedic.options.affectedArea.hand")}</option>
+                    <option value="spine">{t("patients.newPatient.orthopedic.options.affectedArea.spine")}</option>
+                    <option value="chest">{t("patients.newPatient.orthopedic.options.affectedArea.chest")}</option>
+                    <option value="abdomen">{t("patients.newPatient.orthopedic.options.affectedArea.abdomen")}</option>
+                    <option value="hip">{t("patients.newPatient.orthopedic.options.affectedArea.hip")}</option>
+                    <option value="thigh">{t("patients.newPatient.orthopedic.options.affectedArea.thigh")}</option>
+                    <option value="knee">{t("patients.newPatient.orthopedic.options.affectedArea.knee")}</option>
+                    <option value="shin">{t("patients.newPatient.orthopedic.options.affectedArea.shin")}</option>
+                    <option value="ankle">{t("patients.newPatient.orthopedic.options.affectedArea.ankle")}</option>
+                    <option value="foot">{t("patients.newPatient.orthopedic.options.affectedArea.foot")}</option>
+                    <option value="multiple">{t("patients.newPatient.orthopedic.options.affectedArea.multiple")}</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="injuryDate" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    تاريخ الإصابة
+                    {t('patients.newPatient.orthopedic.fields.injuryDate')}
                   </label>
                   <input
                     type="date"
@@ -493,7 +493,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="currentPain" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    مستوى الألم الحالي
+                    {t('patients.newPatient.orthopedic.fields.currentPain')}
                   </label>
                   <select
                     id="currentPain"
@@ -502,17 +502,17 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر --</option>
-                    <option value="none">لا يوجد ألم</option>
-                    <option value="mild">خفيف</option>
-                    <option value="moderate">متوسط</option>
-                    <option value="severe">شديد</option>
-                    <option value="very-severe">شديد جداً</option>
+                    <option value="">{t('patients.newPatient.placeholders.select')}</option>
+                    <option value="none">{t("patients.newPatient.orthopedic.options.painLevel.none")}</option>
+                    <option value="mild">{t("patients.newPatient.orthopedic.options.painLevel.mild")}</option>
+                    <option value="moderate">{t("patients.newPatient.orthopedic.options.painLevel.moderate")}</option>
+                    <option value="severe">{t("patients.newPatient.orthopedic.options.painLevel.severe")}</option>
+                    <option value="very-severe">{t("patients.newPatient.orthopedic.options.painLevel.verySevere")}</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="mobilityStatus" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    حالة الحركة
+                    {t('patients.newPatient.orthopedic.fields.mobilityStatus')}
                   </label>
                   <select
                     id="mobilityStatus"
@@ -521,16 +521,16 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر --</option>
-                    <option value="full">حركة كاملة</option>
-                    <option value="limited">حركة محدودة</option>
-                    <option value="very-limited">حركة محدودة جداً</option>
-                    <option value="immobilized">مثبتة</option>
+                    <option value="">{t('patients.newPatient.placeholders.select')}</option>
+                    <option value="full">{t("patients.newPatient.orthopedic.options.mobility.full")}</option>
+                    <option value="limited">{t("patients.newPatient.orthopedic.options.mobility.limited")}</option>
+                    <option value="very-limited">{t("patients.newPatient.orthopedic.options.mobility.veryLimited")}</option>
+                    <option value="immobilized">{t("patients.newPatient.orthopedic.options.mobility.immobilized")}</option>
                   </select>
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="previousSurgeries" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    العمليات الجراحية السابقة
+                    {t('patients.newPatient.orthopedic.fields.previousSurgeries')}
                   </label>
                   <textarea
                     id="previousSurgeries"
@@ -538,7 +538,7 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.previousSurgeries}
                     onChange={handleInputChange}
-                    placeholder="اذكر أي عمليات جراحية سابقة في العظام أو المفاصل"
+                    placeholder="ا{t('publicAppointment.portalGenderMale')} أي عمليات جراحية سابقة في العظام أو المفاصل"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -551,12 +551,12 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <FileText className="mr-2 h-4 w-4 text-green-600" />
-                السجل الطبي
+                {t('patients.newPatient.sections.medical')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="bloodType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    فصيلة الدم
+                    {t('patients.newPatient.fields.bloodType')}
                   </label>
                   <select
                     id="bloodType"
@@ -565,7 +565,7 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">-- اختر --</option>
+                    <option value="">{t('patients.newPatient.placeholders.select')}</option>
                     <option value="A+">A+</option>
                     <option value="A-">A-</option>
                     <option value="B+">B+</option>
@@ -574,12 +574,12 @@ export default function NewPatientPage() {
                     <option value="AB-">AB-</option>
                     <option value="O+">O+</option>
                     <option value="O-">O-</option>
-                    <option value="none">غير معروفة</option>
+                    <option value="none">{t('patients.newPatient.placeholders.bloodTypeNone')}</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="allergies" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    الحساسيات
+                    {t('patients.newPatient.fields.allergies')}
                   </label>
                   <input
                     type="text"
@@ -587,13 +587,13 @@ export default function NewPatientPage() {
                     name="allergies"
                     value={formData.allergies}
                     onChange={handleInputChange}
-                    placeholder="مثال: البنسلين، المسكنات"
+                    placeholder={t("patients.newPatient.placeholders.allergies")}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="medications" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    الأدوية الحالية
+                    {t('patients.newPatient.fields.medications')}
                   </label>
                   <textarea
                     id="medications"
@@ -601,13 +601,13 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.medications}
                     onChange={handleInputChange}
-                    placeholder="اذكر جميع الأدوية التي يتناولها المريض حالياً"
+                    placeholder="ا{t('publicAppointment.portalGenderMale')} جميع الأدوية التي يتناولها المريض حالياً"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="medicalHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    السجل الطبي
+                    {t('patients.newPatient.sections.medical')}
                   </label>
                   <textarea
                     id="medicalHistory"
@@ -615,13 +615,13 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.medicalHistory}
                     onChange={handleInputChange}
-                    placeholder="اذكر الأمراض السابقة والحالات الطبية المهمة"
+                    placeholder="ا{t('publicAppointment.portalGenderMale')} الأمراض السابقة والحالات الطبية المهمة"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="familyHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    السجل الطبي للعائلة
+                    {t('patients.newPatient.sections.medical')} للعائلة
                   </label>
                   <textarea
                     id="familyHistory"
@@ -629,7 +629,7 @@ export default function NewPatientPage() {
                     rows={3}
                     value={formData.familyHistory}
                     onChange={handleInputChange}
-                    placeholder="اذكر أي أمراض وراثية أو حالات طبية في العائلة"
+                    placeholder="ا{t('publicAppointment.portalGenderMale')} أي أمراض وراثية أو حالات طبية في العائلة"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -642,17 +642,17 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Lock className="mr-2 h-4 w-4 text-purple-600" />
-                بيانات الدخول
+                {t('patients.newPatient.sections.login')}
               </h3>
               <div className="space-y-2">
                 <div className="mb-3 rounded-md border border-blue-200 bg-blue-50 p-2">
                   <p className="text-xs text-blue-800">
-                    <strong>ملاحظة:</strong> إضافة بيانات الدخول ستنشئ حساب مستخدم للمريض، مما يسمح له بالوصول إلى بوابة المريض.
+                    <strong>ملاحظة:</strong> إضافة {t('patients.newPatient.sections.login')} ستنشئ حساب مستخدم للمريض، مما يسمح له بالوصول إلى بوابة المريض.
                   </p>
                 </div>
                 <div>
                   <label htmlFor="email" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    البريد الإلكتروني *
+                    {t('patients.newPatient.fields.email')}
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -667,11 +667,11 @@ export default function NewPatientPage() {
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">سيتم استخدام هذا البريد لدخول المريض إذا تم تعيين كلمة مرور</p>
+                  <p className="mt-1 text-xs text-gray-500">{t('patients.newPatient.fields.emailNote')}</p>
                 </div>
                 <div>
                   <label htmlFor="password" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    كلمة المرور {formData.password && <span className="text-red-500">*</span>}
+                    {t('patients.newPatient.fields.password')} {formData.password && <span className="text-red-500">*</span>}
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -681,15 +681,15 @@ export default function NewPatientPage() {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="اترك فارغاً إذا لم يكن للمريض وصول للدخول"
+                      placeholder={t("patients.newPatient.fields.passwordHint")}
                       minLength={6}
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <p className="mt-1 text-xs text-gray-500">
                     {formData.password 
-                      ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل. سيتم إنشاء حساب مستخدم للمريض.'
-                      : 'اختياري: عيّن كلمة مرور لإنشاء حساب مستخدم للوصول إلى بوابة المريض'
+                      ? '{t('patients.newPatient.fields.passwordRequirement')}'
+                      : '{t('patients.newPatient.fields.passwordOptional')}'
                     }
                   </p>
                 </div>
@@ -702,12 +702,12 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Phone className="mr-2 h-4 w-4 text-red-600" />
-                جهة الاتصال الطارئة
+                {t('patients.newPatient.sections.emergency')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="emergencyName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    اسم جهة الاتصال
+                    {t('patients.newPatient.fields.emergencyName')}
                   </label>
                   <input
                     type="text"
@@ -720,7 +720,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="emergencyPhone" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    رقم الهاتف
+                    {t('patients.newPatient.fields.emergencyPhone')}
                   </label>
                   <input
                     type="tel"
@@ -733,7 +733,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="emergencyRelationship" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    العلاقة
+                    {t('patients.newPatient.fields.emergencyRelationship')}
                   </label>
                   <input
                     type="text"
@@ -741,7 +741,7 @@ export default function NewPatientPage() {
                     name="emergencyRelationship"
                     value={formData.emergencyRelationship}
                     onChange={handleInputChange}
-                    placeholder="مثال: الأب، الأم، الزوج/الزوجة"
+                    placeholder={t("patients.newPatient.placeholders.emergencyRelationship")}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -772,7 +772,7 @@ export default function NewPatientPage() {
                 href="/patients"
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
               >
-                إلغاء
+                {t('patients.newPatient.buttons.cancel')}
               </Link>
               <button
                 type="submit"
@@ -784,7 +784,7 @@ export default function NewPatientPage() {
                 ) : (
                   <Save className="h-4 w-4" />
                 )}
-                <span>{isSubmitting ? 'جاري الحفظ...' : 'حفظ المريض'}</span>
+                <span>{isSubmitting ? t('patients.newPatient.buttons.saving') : t('patients.newPatient.buttons.savePatient')}</span>
               </button>
             </div>
           </div>
