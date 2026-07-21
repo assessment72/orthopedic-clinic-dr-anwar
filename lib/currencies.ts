@@ -1,6 +1,6 @@
 /**
  * ISO 4217 currency options for Settings and other pickers.
- * Uses Intl when available so the list stays aligned with the runtime (typically ~160 codes).
+ * Currently limited to Yemeni Rial (YER).
  */
 
 export type CurrencyOption = {
@@ -10,7 +10,7 @@ export type CurrencyOption = {
 };
 
 const FALLBACK_CURRENCIES: CurrencyOption[] = [
-  { code: 'Yemeni', name: 'Yemeni Rial', symbol: '﷼' },
+  { code: 'YER', name: 'Yemeni Rial', symbol: '﷼' },
 ];
 
 function narrowCurrencySymbol(code: string): string {
@@ -20,6 +20,7 @@ function narrowCurrencySymbol(code: string): string {
       currency: code,
       currencyDisplay: 'narrowSymbol',
     }).formatToParts(0);
+
     return parts.find((p) => p.type === 'currency')?.value ?? code;
   } catch {
     return code;
@@ -27,27 +28,31 @@ function narrowCurrencySymbol(code: string): string {
 }
 
 function buildCurrencyOptions(): CurrencyOption[] {
-  // Always return only Yemeni Rial as per user request
-  return [
-    { code: 'Yemeni', name: 'Yemeni Rial', symbol: '﷼' },
-  ];
+  // Always return only Yemeni Rial
+  return [...FALLBACK_CURRENCIES];
 }
 
-/** All currencies supported by the environment, sorted by English name */
+/** Available currencies */
 export const CURRENCY_OPTIONS: CurrencyOption[] = buildCurrencyOptions();
 
 /**
- * Options for a <select>, ensuring `savedCode` appears even if missing from the built list
- * (e.g. data from an older client or typo — still selectable).
+ * Options for a <select>, ensuring `savedCode` appears even if missing
+ * from the built list.
  */
-export function getCurrencySelectOptions(savedCode?: string | null): CurrencyOption[] {
+export function getCurrencySelectOptions(
+  savedCode?: string | null
+): CurrencyOption[] {
   const trimmed = (savedCode || '').trim().toUpperCase();
-  if (!trimmed || !/^[A-Z]{6}$/.test(trimmed)) {
+
+  // ISO 4217 currency codes are always 3 letters.
+  if (!trimmed || !/^[A-Z]{3}$/.test(trimmed)) {
     return CURRENCY_OPTIONS;
   }
+
   if (CURRENCY_OPTIONS.some((c) => c.code === trimmed)) {
     return CURRENCY_OPTIONS;
   }
+
   return [
     {
       code: trimmed,
