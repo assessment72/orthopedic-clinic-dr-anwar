@@ -1484,128 +1484,75 @@
     "getStartedAdding": "ابدأ بإضافة مريضك الأول.",
     "patientsCount": "{count} مرضى",
     "newPatient": {
-      "title": "تسجيل مريض جديد - عيادة الدكتور أنور (العظام)",
-      "description": "إضافة مريض جديد إلى نظام عيادة الدكتور أنور المتخصصة في أمراض العظام",
-      "clinicName": "عيادة الدكتور أنور - تخصص العظام",
-      "backToPatients": "العودة إلى قائمة المرضى",
+      "title": "إضافة مريض جديد",
+      "description": "تسجيل مريض جديد في النظام",
+      "backToPatients": "العودة إلى المرضى",
       "sections": {
-        "personal": "المعلومات الشخصية",
-        "orthopedic": "معلومات العظام",
-        "medical": "السجل الطبي",
-        "login": "بيانات الدخول",
-        "emergency": "جهة الاتصال الطارئة"
+        "personal": "معلومات شخصية",
+        "login": "معلومات تسجيل دخول المستخدم",
+        "medical": "المعلومات الطبية",
+        "emergency": "الاتصال في حالات الطوارئ"
       },
       "fields": {
-        "firstName": "الاسم الأول *",
-        "lastName": "اسم العائلة *",
-        "dateOfBirth": "تاريخ الميلاد *",
-        "gender": "الجنس *",
-        "phone": "رقم الهاتف *",
-        "address": "العنوان",
-        "city": "المدينة",
-        "state": "المنطقة",
+        "firstName": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "dateOfBirth": "تاريخ الميلاد",
+        "gender": "جنس",
+        "genderOptions": {
+          "select": "حدد الجنس",
+          "male": "ذكر",
+          "female": "أنثى",
+          "other": "آخر",
+          "preferNotToSay": "يفضل عدم القول"
+        },
+        "email": "عنوان البريد الإلكتروني",
+        "phone": "رقم التليفون",
+        "address": "عنوان الشارع",
+        "city": "مدينة",
+        "state": "ولاية",
         "zipCode": "الرمز البريدي",
-        "email": "البريد الإلكتروني *",
-        "password": "كلمة المرور",
-        "passwordHint": "اترك فارغاً إذا لم يكن للمريض وصول للدخول",
-        "passwordRequirement": "كلمة المرور يجب أن تكون 6 أحرف على الأقل. سيتم إنشاء حساب مستخدم للمريض.",
-        "passwordOptional": "اختياري: عيّن كلمة مرور لإنشاء حساب مستخدم للوصول إلى بوابة المريض",
-        "emailNote": "سيتم استخدام هذا البريد لدخول المريض إذا تم تعيين كلمة مرور",
         "bloodType": "فصيلة الدم",
-        "allergies": "الحساسيات",
-        "medications": "الأدوية الحالية",
-        "medicalHistory": "السجل الطبي",
-        "familyHistory": "السجل الطبي للعائلة",
-        "emergencyName": "اسم جهة الاتصال",
-        "emergencyPhone": "رقم الهاتف",
-        "emergencyRelationship": "العلاقة"
+        "bloodTypeOptions": {
+          "select": "حدد فصيلة الدم",
+          "A+": "أ+",
+          "A-": "أ-",
+          "B+": "ب+",
+          "B-": "ب-",
+          "AB+": "أب+",
+          "AB-": "أب-",
+          "O+": "يا+",
+          "O-": "س-",
+          "none": "لا يوجد/غير معروف"
+        },
+        "allergies": "الحساسية",
+        "currentMedications": "الأدوية الحالية",
+        "medicalHistory": "التاريخ الطبي",
+        "familyHistory": "التاريخ الطبي للعائلة",
+        "emergencyName": "اسم جهة اتصال الطوارئ",
+        "emergencyPhone": "هاتف الاتصال في حالات الطوارئ",
+        "emergencyRelationship": "العلاقة بالمريض"
       },
       "placeholders": {
-        "select": "-- اختر --",
-        "bloodTypeNone": "غير معروفة",
-        "allergies": "مثال: البنسلين، المسكنات",
-        "medications": "اذكر جميع الأدوية التي يتناولها المريض حالياً",
-        "medicalHistory": "اذكر الأمراض السابقة والحالات الطبية المهمة",
-        "familyHistory": "اذكر أي أمراض وراثية أو حالات طبية في العائلة",
-        "emergencyRelationship": "مثال: الأب، الأم، الزوج/الزوجة"
+        "allergies": "على سبيل المثال، البنسلين والفول السوداني",
+        "medications": "قم بإدراج الأدوية الحالية والجرعات والتكرار",
+        "medicalHistory": "العمليات الجراحية السابقة، الحالات المزمنة، الأمراض الكبرى",
+        "familyHistory": "الحالات الطبية العائلية ذات الصلة",
+        "emergencyRelationship": "على سبيل المثال، الزوج، الوالد، الطفل"
       },
-      "orthopedic": {
-        "title": "معلومات العظام والإصابات",
-        "note": "ملاحظة: يرجى ملء جميع المعلومات المتعلقة بالإصابة أو الحالة العظمية للمريض",
-        "fields": {
-          "injuryType": "نوع الإصابة *",
-          "affectedArea": "المنطقة المصابة *",
-          "injuryDate": "تاريخ الإصابة",
-          "currentPain": "مستوى الألم الحالي",
-          "mobilityStatus": "حالة الحركة",
-          "previousSurgeries": "العمليات الجراحية السابقة"
-        },
-        "placeholders": {
-          "injuryType": "-- اختر نوع الإصابة --",
-          "affectedArea": "-- اختر المنطقة --",
-          "previousSurgeries": "اذكر أي عمليات جراحية سابقة في العظام أو المفاصل"
-        },
-        "options": {
-          "injuryType": {
-            "fracture": "كسر",
-            "sprain": "التواء",
-            "strain": "شد عضلي",
-            "arthritis": "التهاب المفاصل",
-            "osteoporosis": "هشاشة العظام",
-            "dislocation": "خلع",
-            "tendonitis": "التهاب الأوتار",
-            "bursitis": "التهاب الجراب",
-            "other": "أخرى"
-          },
-          "affectedArea": {
-            "head": "الرأس",
-            "neck": "الرقبة",
-            "shoulder": "الكتف",
-            "upperArm": "الذراع العليا",
-            "elbow": "الكوع",
-            "forearm": "الساعد",
-            "wrist": "المعصم",
-            "hand": "اليد",
-            "spine": "العمود الفقري",
-            "chest": "الصدر",
-            "abdomen": "البطن",
-            "hip": "الورك",
-            "thigh": "الفخذ",
-            "knee": "الركبة",
-            "shin": "الساق",
-            "ankle": "الكاحل",
-            "foot": "القدم",
-            "multiple": "متعددة"
-          },
-          "painLevel": {
-            "none": "لا يوجد ألم",
-            "mild": "خفيف",
-            "moderate": "متوسط",
-            "severe": "شديد",
-            "verySevere": "شديد جداً"
-          },
-          "mobility": {
-            "full": "حركة كاملة",
-            "limited": "حركة محدودة",
-            "veryLimited": "حركة محدودة جداً",
-            "immobilized": "مثبتة"
-          }
-        }
-      },
-      "loginNote": "ملاحظة: إضافة بيانات الدخول ستنشئ حساب مستخدم للمريض، مما يسمح له بالوصول إلى بوابة المريض.",
       "buttons": {
-        "cancel": "إلغاء",
+        "cancel": "يلغي",
         "savePatient": "حفظ المريض",
-        "saving": "جاري الحفظ..."
+        "saving": "توفير..."
+      },
+      "validation": {
+        "requiredFields": "يرجى ملء كافة الحقول المطلوبة"
       },
       "success": {
-        "patientAdded": "تم إضافة المريض بنجاح"
+        "patientAdded": "تمت إضافة المريض بنجاح!"
       },
       "errors": {
-        "passwordShort": "كلمة المرور يجب أن تكون 6 أحرف على الأقل",
-        "serverError": "خطأ في الخادم",
-        "createFailed": "فشل إنشاء المريض",
-        "genericError": "حدث خطأ ما، يرجى المحاولة مرة أخرى"
+        "addPatientError": "خطأ في إضافة المريض: {error}",
+        "genericError": "خطأ في إضافة المريض. يرجى المحاولة مرة أخرى."
       }
     }
   },
@@ -3604,4 +3551,4 @@
     "issuedUnits": "وحدات الدم الصادرة",
     "fetchError": "فشل في جلب البيانات"
   }
-}
+    }
