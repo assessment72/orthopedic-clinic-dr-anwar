@@ -29,7 +29,7 @@ function narrowCurrencySymbol(code: string): string {
 function buildCurrencyOptions(): CurrencyOption[] {
   // Always return only Yemeni Rial as per user request
   return [
-    { code: 'YER', name: 'Yemeni Rial', symbol: '﷼' },
+    { code: 'Yemeni', name: 'Yemeni Rial', symbol: '﷼' },
   ];
 }
 
