@@ -10,16 +10,7 @@ export type CurrencyOption = {
 };
 
 const FALLBACK_CURRENCIES: CurrencyOption[] = [
-  { code: 'USD', name: 'US Dollar', symbol: '$' },
-  { code: 'EUR', name: 'Euro', symbol: '€' },
-  { code: 'GBP', name: 'British Pound', symbol: '£' },
-  { code: 'CAD', name: 'Canadian Dollar', symbol: 'C$' },
-  { code: 'AUD', name: 'Australian Dollar', symbol: 'A$' },
-  { code: 'JPY', name: 'Japanese Yen', symbol: '¥' },
-  { code: 'CHF', name: 'Swiss Franc', symbol: 'CHF' },
-  { code: 'CNY', name: 'Chinese Yuan', symbol: '¥' },
-  { code: 'INR', name: 'Indian Rupee', symbol: '₹' },
-  { code: 'BRL', name: 'Brazilian Real', symbol: 'R$' },
+  { code: 'YER', name: 'Yemeni Rial', symbol: '﷼' },
 ];
 
 function narrowCurrencySymbol(code: string): string {
@@ -36,32 +27,17 @@ function narrowCurrencySymbol(code: string): string {
 }
 
 function buildCurrencyOptions(): CurrencyOption[] {
-  try {
-    const intl = Intl as typeof Intl & {
-      supportedValuesOf?: (key: 'currency') => string[];
-    };
-    if (typeof Intl === 'undefined' || typeof intl.supportedValuesOf !== 'function') {
-      return FALLBACK_CURRENCIES;
-    }
-    const codes = intl.supportedValuesOf('currency');
-    const displayNames = new Intl.DisplayNames(['en'], { type: 'currency' });
-    return codes
-      .map((code) => ({
-        code,
-        name: displayNames.of(code) ?? code,
-        symbol: narrowCurrencySymbol(code),
-      }))
-      .sort((a, b) => a.name.localeCompare(b.name, 'en'));
-  } catch {
-    return FALLBACK_CURRENCIES;
-  }
+  // Always return only Yemeni Rial as per user request
+  return [
+    { code: 'YER', name: 'Yemeni Rial', symbol: '﷼' },
+  ];
 }
 
 /** All currencies supported by the environment, sorted by English name */
 export const CURRENCY_OPTIONS: CurrencyOption[] = buildCurrencyOptions();
 
 /**
- * Options for a &lt;select&gt;, ensuring `savedCode` appears even if missing from the built list
+ * Options for a <select>, ensuring `savedCode` appears even if missing from the built list
  * (e.g. data from an older client or typo — still selectable).
  */
 export function getCurrencySelectOptions(savedCode?: string | null): CurrencyOption[] {
