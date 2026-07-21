@@ -12,7 +12,8 @@ import {
   MapPin,
   Calendar,
   FileText,
-  Lock
+  Lock,
+  Bone
 } from 'lucide-react';
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
@@ -36,12 +37,20 @@ export default function NewPatientPage() {
     email: '',
     password: '',
     
-    // Medical Information
+    // Orthopedic Medical Information
     bloodType: '',
     allergies: '',
     medications: '',
     medicalHistory: '',
     familyHistory: '',
+    
+    // Orthopedic Specific Fields
+    injuryType: '',
+    affectedArea: '',
+    injuryDate: '',
+    previousSurgeries: '',
+    currentPain: '',
+    mobilityStatus: '',
     
     // Emergency Contact
     emergencyName: '',
@@ -65,8 +74,8 @@ export default function NewPatientPage() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Validate required fields: name, email, birthdate, phone, and gender
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.dateOfBirth || !formData.phone || !formData.gender) {
+    // Validate required fields: name, email, birthdate, phone, gender, and orthopedic specific fields
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.dateOfBirth || !formData.phone || !formData.gender || !formData.injuryType || !formData.affectedArea) {
       alert(t('patients.newPatient.validation.requiredFields'));
       setIsSubmitting(false);
       return;
@@ -74,7 +83,7 @@ export default function NewPatientPage() {
     
     // If password is provided, validate it
     if (formData.password && formData.password.length < 6) {
-      alert('Password must be at least 6 characters long');
+      alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
       setIsSubmitting(false);
       return;
     }
@@ -88,11 +97,22 @@ export default function NewPatientPage() {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         phone: formData.phone,
-        dateOfBirth: formData.dateOfBirth, // Send as ISO string, API will convert to Date
+        dateOfBirth: formData.dateOfBirth,
         gender: formData.gender,
         medicalHistory: formData.medicalHistory ? [formData.medicalHistory] : [],
         allergies: formData.allergies ? [formData.allergies] : [],
         currentMedications: formData.medications ? [formData.medications] : [],
+        
+        // Orthopedic specific data
+        orthopedicInfo: {
+          injuryType: formData.injuryType,
+          affectedArea: formData.affectedArea,
+          injuryDate: formData.injuryDate,
+          previousSurgeries: formData.previousSurgeries,
+          currentPain: formData.currentPain,
+          mobilityStatus: formData.mobilityStatus,
+          clinic: 'عيادة الدكتور أنور - تخصص العظام'
+        }
       };
       
       // Add password if provided (for patient login)
@@ -120,7 +140,7 @@ export default function NewPatientPage() {
 
       // Debug: Log the data being sent
       console.log('Form data being sent:', patientData);
-      console.log('Emergency contact data:', patientData.emergencyContact);
+      console.log('Orthopedic info:', patientData.orthopedicInfo);
 
       const response = await fetch('/api/patients', {
         method: 'POST',
@@ -131,7 +151,7 @@ export default function NewPatientPage() {
       });
 
       if (response.ok) {
-        alert(t('patients.newPatient.success.patientAdded'));
+        alert('تم إضافة المريض بنجاح');
         // Reset form
         setFormData({
           firstName: '',
@@ -150,6 +170,12 @@ export default function NewPatientPage() {
           medications: '',
           medicalHistory: '',
           familyHistory: '',
+          injuryType: '',
+          affectedArea: '',
+          injuryDate: '',
+          previousSurgeries: '',
+          currentPain: '',
+          mobilityStatus: '',
           emergencyName: '',
           emergencyPhone: '',
           emergencyRelationship: ''
@@ -159,20 +185,20 @@ export default function NewPatientPage() {
         window.location.href = '/patients';
       } else {
         // Try to parse error response
-        let errorMessage = 'Failed to create patient';
+        let errorMessage = 'فشل إنشاء المريض';
         try {
           const errorText = await response.text();
           if (errorText) {
             const errorData = JSON.parse(errorText);
             errorMessage = errorData.details || errorData.error || errorMessage;
           } else {
-            errorMessage = `Server error: ${response.status} ${response.statusText}`;
+            errorMessage = `خطأ في الخادم: ${response.status} ${response.statusText}`;
           }
         } catch (parseError) {
-          errorMessage = `Server error: ${response.status} ${response.statusText}`;
+          errorMessage = `خطأ في الخادم: ${response.status} ${response.statusText}`;
         }
         console.error('Error response status:', response.status, 'Message:', errorMessage);
-        alert(`Error: ${errorMessage}`);
+        alert(`خطأ: ${errorMessage}`);
       }
     } catch (error) {
       console.error('Error adding patient:', error);
@@ -183,17 +209,18 @@ export default function NewPatientPage() {
   };
 
   const sections = [
-    { id: 'personal', label: t('patients.newPatient.sections.personal'), icon: Users },
-    { id: 'login', label: t('patients.newPatient.sections.login'), icon: Lock },
-    { id: 'medical', label: t('patients.newPatient.sections.medical'), icon: FileText },
-    { id: 'emergency', label: t('patients.newPatient.sections.emergency'), icon: Phone }
+    { id: 'personal', label: 'المعلومات الشخصية', icon: Users },
+    { id: 'orthopedic', label: 'معلومات العظام', icon: Bone },
+    { id: 'medical', label: 'السجل الطبي', icon: FileText },
+    { id: 'login', label: 'بيانات الدخول', icon: Lock },
+    { id: 'emergency', label: 'جهة الاتصال الطارئة', icon: Phone }
   ];
 
   return (
     <ProtectedRoute>
       <SidebarLayout
-        title={t('patients.newPatient.title')}
-        description={t('patients.newPatient.description')}
+        title="تسجيل مريض جديد - عيادة الدكتور أنور (العظام)"
+        description="إضافة مريض جديد إلى نظام عيادة الدكتور أنور المتخصصة في أمراض العظام"
         dense
       >
         {/* Header */}
@@ -204,8 +231,12 @@ export default function NewPatientPage() {
               className="inline-flex items-center gap-1.5 text-sm text-gray-600 transition-colors hover:text-gray-900"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>{t('patients.newPatient.backToPatients')}</span>
+              <span>العودة إلى قائمة المرضى</span>
             </Link>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-blue-600 font-medium">
+            <Bone className="h-4 w-4" />
+            <span>عيادة الدكتور أنور - تخصص العظام</span>
           </div>
         </div>
 
@@ -237,12 +268,12 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Users className="mr-2 h-4 w-4 text-blue-600" />
-                {t('patients.newPatient.sections.personal')}
+                المعلومات الشخصية
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="firstName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.firstName')} *
+                    الاسم الأول *
                   </label>
                   <input
                     type="text"
@@ -256,7 +287,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="lastName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.lastName')} *
+                    اسم العائلة *
                   </label>
                   <input
                     type="text"
@@ -270,7 +301,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="dateOfBirth" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.dateOfBirth')} *
+                    تاريخ الميلاد *
                   </label>
                   <input
                     type="date"
@@ -284,7 +315,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="gender" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.gender')} *
+                    الجنس *
                   </label>
                   <select
                     id="gender"
@@ -294,16 +325,16 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
-                    <option value="">{t('patients.newPatient.fields.genderOptions.select')}</option>
-                    <option value="male">{t('patients.newPatient.fields.genderOptions.male')}</option>
-                    <option value="female">{t('patients.newPatient.fields.genderOptions.female')}</option>
-                    <option value="other">{t('patients.newPatient.fields.genderOptions.other')}</option>
-                    <option value="prefer-not-to-say">{t('patients.newPatient.fields.genderOptions.preferNotToSay')}</option>
+                    <option value="">-- اختر --</option>
+                    <option value="male">ذكر</option>
+                    <option value="female">أنثى</option>
+                    <option value="other">آخر</option>
+                    <option value="prefer-not-to-say">أفضل عدم الإفصاح</option>
                   </select>
                 </div>
                 <div>
                   <label htmlFor="phone" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.phone')} *
+                    رقم الهاتف *
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -320,7 +351,7 @@ export default function NewPatientPage() {
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="address" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.address')}
+                    العنوان
                   </label>
                   <div className="relative">
                     <MapPin className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -336,7 +367,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="city" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.city')}
+                    المدينة
                   </label>
                   <input
                     type="text"
@@ -349,7 +380,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="state" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.state')}
+                    المنطقة
                   </label>
                   <input
                     type="text"
@@ -362,7 +393,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="zipCode" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.zipCode')}
+                    الرمز البريدي
                   </label>
                   <input
                     type="text"
@@ -377,22 +408,251 @@ export default function NewPatientPage() {
             </div>
           )}
 
+          {/* Orthopedic Information Section */}
+          {activeSection === 'orthopedic' && (
+            <div className="rounded-lg border border-blue-100 bg-blue-50 p-3 shadow-sm">
+              <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
+                <Bone className="mr-2 h-4 w-4 text-blue-600" />
+                معلومات العظام والإصابات
+              </h3>
+              <div className="mb-3 rounded-md border border-blue-200 bg-white p-2">
+                <p className="text-xs text-blue-800">
+                  <strong>ملاحظة:</strong> يرجى ملء جميع المعلومات المتعلقة بالإصابة أو الحالة العظمية للمريض
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
+                <div>
+                  <label htmlFor="injuryType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    نوع الإصابة *
+                  </label>
+                  <select
+                    id="injuryType"
+                    name="injuryType"
+                    required
+                    value={formData.injuryType}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- اختر نوع الإصابة --</option>
+                    <option value="fracture">كسر</option>
+                    <option value="sprain">التواء</option>
+                    <option value="strain">شد عضلي</option>
+                    <option value="arthritis">التهاب المفاصل</option>
+                    <option value="osteoporosis">هشاشة العظام</option>
+                    <option value="dislocation">خلع</option>
+                    <option value="tendonitis">التهاب الأوتار</option>
+                    <option value="bursitis">التهاب الجراب</option>
+                    <option value="other">أخرى</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="affectedArea" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    المنطقة المصابة *
+                  </label>
+                  <select
+                    id="affectedArea"
+                    name="affectedArea"
+                    required
+                    value={formData.affectedArea}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- اختر المنطقة --</option>
+                    <option value="head">الرأس</option>
+                    <option value="neck">الرقبة</option>
+                    <option value="shoulder">الكتف</option>
+                    <option value="upper-arm">الذراع العليا</option>
+                    <option value="elbow">الكوع</option>
+                    <option value="forearm">الساعد</option>
+                    <option value="wrist">المعصم</option>
+                    <option value="hand">اليد</option>
+                    <option value="spine">العمود الفقري</option>
+                    <option value="chest">الصدر</option>
+                    <option value="abdomen">البطن</option>
+                    <option value="hip">الورك</option>
+                    <option value="thigh">الفخذ</option>
+                    <option value="knee">الركبة</option>
+                    <option value="shin">الساق</option>
+                    <option value="ankle">الكاحل</option>
+                    <option value="foot">القدم</option>
+                    <option value="multiple">متعددة</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="injuryDate" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    تاريخ الإصابة
+                  </label>
+                  <input
+                    type="date"
+                    id="injuryDate"
+                    name="injuryDate"
+                    value={formData.injuryDate}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="currentPain" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    مستوى الألم الحالي
+                  </label>
+                  <select
+                    id="currentPain"
+                    name="currentPain"
+                    value={formData.currentPain}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- اختر --</option>
+                    <option value="none">لا يوجد ألم</option>
+                    <option value="mild">خفيف</option>
+                    <option value="moderate">متوسط</option>
+                    <option value="severe">شديد</option>
+                    <option value="very-severe">شديد جداً</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="mobilityStatus" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    حالة الحركة
+                  </label>
+                  <select
+                    id="mobilityStatus"
+                    name="mobilityStatus"
+                    value={formData.mobilityStatus}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- اختر --</option>
+                    <option value="full">حركة كاملة</option>
+                    <option value="limited">حركة محدودة</option>
+                    <option value="very-limited">حركة محدودة جداً</option>
+                    <option value="immobilized">مثبتة</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="previousSurgeries" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    العمليات الجراحية السابقة
+                  </label>
+                  <textarea
+                    id="previousSurgeries"
+                    name="previousSurgeries"
+                    rows={3}
+                    value={formData.previousSurgeries}
+                    onChange={handleInputChange}
+                    placeholder="اذكر أي عمليات جراحية سابقة في العظام أو المفاصل"
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Medical Information Section */}
+          {activeSection === 'medical' && (
+            <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+              <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
+                <FileText className="mr-2 h-4 w-4 text-green-600" />
+                السجل الطبي
+              </h3>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
+                <div>
+                  <label htmlFor="bloodType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    فصيلة الدم
+                  </label>
+                  <select
+                    id="bloodType"
+                    name="bloodType"
+                    value={formData.bloodType}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">-- اختر --</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                    <option value="none">غير معروفة</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="allergies" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    الحساسيات
+                  </label>
+                  <input
+                    type="text"
+                    id="allergies"
+                    name="allergies"
+                    value={formData.allergies}
+                    onChange={handleInputChange}
+                    placeholder="مثال: البنسلين، المسكنات"
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="medications" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    الأدوية الحالية
+                  </label>
+                  <textarea
+                    id="medications"
+                    name="medications"
+                    rows={3}
+                    value={formData.medications}
+                    onChange={handleInputChange}
+                    placeholder="اذكر جميع الأدوية التي يتناولها المريض حالياً"
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="medicalHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    السجل الطبي
+                  </label>
+                  <textarea
+                    id="medicalHistory"
+                    name="medicalHistory"
+                    rows={3}
+                    value={formData.medicalHistory}
+                    onChange={handleInputChange}
+                    placeholder="اذكر الأمراض السابقة والحالات الطبية المهمة"
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="familyHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    السجل الطبي للعائلة
+                  </label>
+                  <textarea
+                    id="familyHistory"
+                    name="familyHistory"
+                    rows={3}
+                    value={formData.familyHistory}
+                    onChange={handleInputChange}
+                    placeholder="اذكر أي أمراض وراثية أو حالات طبية في العائلة"
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* User Login Information Section */}
           {activeSection === 'login' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Lock className="mr-2 h-4 w-4 text-purple-600" />
-                {t('patients.newPatient.sections.login')}
+                بيانات الدخول
               </h3>
               <div className="space-y-2">
                 <div className="mb-3 rounded-md border border-blue-200 bg-blue-50 p-2">
                   <p className="text-xs text-blue-800">
-                    <strong>Note:</strong> Adding login credentials will create a user account for this patient, allowing them to access the patient portal.
+                    <strong>ملاحظة:</strong> إضافة بيانات الدخول ستنشئ حساب مستخدم للمريض، مما يسمح له بالوصول إلى بوابة المريض.
                   </p>
                 </div>
                 <div>
                   <label htmlFor="email" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.email')} *
+                    البريد الإلكتروني *
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -407,11 +667,11 @@ export default function NewPatientPage() {
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">This email will be used for patient login if a password is set</p>
+                  <p className="mt-1 text-xs text-gray-500">سيتم استخدام هذا البريد لدخول المريض إذا تم تعيين كلمة مرور</p>
                 </div>
                 <div>
                   <label htmlFor="password" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    Password {formData.password && <span className="text-red-500">*</span>}
+                    كلمة المرور {formData.password && <span className="text-red-500">*</span>}
                   </label>
                   <div className="relative">
                     <Lock className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -421,108 +681,17 @@ export default function NewPatientPage() {
                       name="password"
                       value={formData.password}
                       onChange={handleInputChange}
-                      placeholder="Leave blank if patient won't have login access"
+                      placeholder="اترك فارغاً إذا لم يكن للمريض وصول للدخول"
                       minLength={6}
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
                   <p className="mt-1 text-xs text-gray-500">
                     {formData.password 
-                      ? 'Password must be at least 6 characters. A user account will be created for this patient.'
-                      : 'Optional: Set a password to create a user account for patient portal access'
+                      ? 'كلمة المرور يجب أن تكون 6 أحرف على الأقل. سيتم إنشاء حساب مستخدم للمريض.'
+                      : 'اختياري: عيّن كلمة مرور لإنشاء حساب مستخدم للوصول إلى بوابة المريض'
                     }
                   </p>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Medical Information Section */}
-          {activeSection === 'medical' && (
-            <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
-              <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
-                <FileText className="mr-2 h-4 w-4 text-green-600" />
-                {t('patients.newPatient.sections.medical')}
-              </h3>
-              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
-                <div>
-                  <label htmlFor="bloodType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.bloodType')}
-                  </label>
-                  <select
-                    id="bloodType"
-                    name="bloodType"
-                    value={formData.bloodType}
-                    onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  >
-                    <option value="">{t('patients.newPatient.fields.bloodTypeOptions.select')}</option>
-                    <option value="A+">{t('patients.newPatient.fields.bloodTypeOptions.A+')}</option>
-                    <option value="A-">{t('patients.newPatient.fields.bloodTypeOptions.A-')}</option>
-                    <option value="B+">{t('patients.newPatient.fields.bloodTypeOptions.B+')}</option>
-                    <option value="B-">{t('patients.newPatient.fields.bloodTypeOptions.B-')}</option>
-                    <option value="AB+">{t('patients.newPatient.fields.bloodTypeOptions.AB+')}</option>
-                    <option value="AB-">{t('patients.newPatient.fields.bloodTypeOptions.AB-')}</option>
-                    <option value="O+">{t('patients.newPatient.fields.bloodTypeOptions.O+')}</option>
-                    <option value="O-">{t('patients.newPatient.fields.bloodTypeOptions.O-')}</option>
-                    <option value="none">{t('patients.newPatient.fields.bloodTypeOptions.none')}</option>
-                  </select>
-                </div>
-                <div>
-                  <label htmlFor="allergies" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.allergies')}
-                  </label>
-                  <input
-                    type="text"
-                    id="allergies"
-                    name="allergies"
-                    value={formData.allergies}
-                    onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.allergies')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label htmlFor="medications" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.currentMedications')}
-                  </label>
-                  <textarea
-                    id="medications"
-                    name="medications"
-                    rows={3}
-                    value={formData.medications}
-                    onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.medications')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label htmlFor="medicalHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.medicalHistory')}
-                  </label>
-                  <textarea
-                    id="medicalHistory"
-                    name="medicalHistory"
-                    rows={3}
-                    value={formData.medicalHistory}
-                    onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.medicalHistory')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label htmlFor="familyHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.familyHistory')}
-                  </label>
-                  <textarea
-                    id="familyHistory"
-                    name="familyHistory"
-                    rows={3}
-                    value={formData.familyHistory}
-                    onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.familyHistory')}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
                 </div>
               </div>
             </div>
@@ -533,12 +702,12 @@ export default function NewPatientPage() {
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
                 <Phone className="mr-2 h-4 w-4 text-red-600" />
-                {t('patients.newPatient.sections.emergency')}
+                جهة الاتصال الطارئة
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="emergencyName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.emergencyName')}
+                    اسم جهة الاتصال
                   </label>
                   <input
                     type="text"
@@ -551,7 +720,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="emergencyPhone" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.emergencyPhone')}
+                    رقم الهاتف
                   </label>
                   <input
                     type="tel"
@@ -564,7 +733,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="emergencyRelationship" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.emergencyRelationship')}
+                    العلاقة
                   </label>
                   <input
                     type="text"
@@ -572,15 +741,13 @@ export default function NewPatientPage() {
                     name="emergencyRelationship"
                     value={formData.emergencyRelationship}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.emergencyRelationship')}
+                    placeholder="مثال: الأب، الأم، الزوج/الزوجة"
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
             </div>
           )}
-
-
 
           {/* Form Actions */}
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -605,7 +772,7 @@ export default function NewPatientPage() {
                 href="/patients"
                 className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
               >
-                {t('patients.newPatient.buttons.cancel')}
+                إلغاء
               </Link>
               <button
                 type="submit"
@@ -617,7 +784,7 @@ export default function NewPatientPage() {
                 ) : (
                   <Save className="h-4 w-4" />
                 )}
-                <span>{isSubmitting ? t('patients.newPatient.buttons.saving') : t('patients.newPatient.buttons.savePatient')}</span>
+                <span>{isSubmitting ? 'جاري الحفظ...' : 'حفظ المريض'}</span>
               </button>
             </div>
           </div>
