@@ -23,7 +23,14 @@ export interface IPatient {
   assignedDoctor?: string; // الطبيب المعالج
   // إضافة حقول خاصة بعيادة العظام
   orthopedicHistory?: string[]; // تاريخ طبي خاص بالعظام (كسور سابقة، عمليات، أمراض مزمنة بالعظام)
-  chiefComplaint?: string; // الشكوى الرئيسية الحالية للمريض (مهمة لعيادة العظام)
+  chiefComplaint?: string; // الشكوى الرئيسية الحالية للمريض (سبب الزيارة)
+  injurySite?: string; // موضع الإصابة
+  injuryType?: string; // نوع الكسر أو الإصابة
+  affectedJoint?: string; // المفصل المصاب
+  painLevel?: number; // مستوى الألم (0-10)
+  splintOrCast?: string; // الجبيرة أو الجبس
+  surgicalOperations?: string[]; // العمليات الجراحية
+  physicalTherapy?: string; // العلاج الطبيعي
   diagnosis?: string[]; // التشخيصات المتعلقة بحالة العظام
   treatmentPlan?: string[]; // خطة العلاج المقترحة (جراحة، علاج طبيعي، أدوية، جبائر)
   imagingStudies?: Array<{ // فحوصات التصوير (أشعة سينية، رنين مغناطيسي، مقطعية)
@@ -134,7 +141,36 @@ const patientSchema = new mongoose.Schema<IPatient>(
     }],
     chiefComplaint: {
       type: String,
-      required: false, // يمكن أن يكون اختياريًا في بعض الحالات ولكن يفضل أن يكون موجودًا
+      required: false,
+      trim: true,
+    },
+    injurySite: {
+      type: String,
+      trim: true,
+    },
+    injuryType: {
+      type: String,
+      trim: true,
+    },
+    affectedJoint: {
+      type: String,
+      trim: true,
+    },
+    painLevel: {
+      type: Number,
+      min: 0,
+      max: 10,
+    },
+    splintOrCast: {
+      type: String,
+      trim: true,
+    },
+    surgicalOperations: [{
+      type: String,
+      trim: true,
+    }],
+    physicalTherapy: {
+      type: String,
       trim: true,
     },
     diagnosis: [{

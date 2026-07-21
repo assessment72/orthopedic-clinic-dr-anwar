@@ -637,6 +637,93 @@ export default function PatientViewPage() {
                       <p className="text-sm text-gray-900">{patient.medicalHistory}</p>
                     </div>
                   )}
+
+          {/* Orthopedic Information */}
+          {(patient.orthopedicHistory || patient.chiefComplaint || patient.injurySite || patient.injuryType || patient.affectedJoint || patient.painLevel || patient.splintOrCast || patient.surgicalOperations || patient.physicalTherapy || patient.diagnosis || patient.treatmentPlan || patient.imagingStudies) && (
+            <div className="mt-6 border-t pt-6">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">معلومات جراحة العظام</h2>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {patient.orthopedicHistory && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">تاريخ جراحة العظام</p>
+                    <p className="text-sm text-gray-900">{patient.orthopedicHistory.join(', ')}</p>
+                  </div>
+                )}
+                {patient.chiefComplaint && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">سبب الزيارة</p>
+                    <p className="text-sm text-gray-900">{patient.chiefComplaint}</p>
+                  </div>
+                )}
+                {patient.injurySite && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">موضع الإصابة</p>
+                    <p className="text-sm text-gray-900">{patient.injurySite}</p>
+                  </div>
+                )}
+                {patient.injuryType && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">نوع الكسر أو الإصابة</p>
+                    <p className="text-sm text-gray-900">{patient.injuryType}</p>
+                  </div>
+                )}
+                {patient.affectedJoint && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">المفصل المصاب</p>
+                    <p className="text-sm text-gray-900">{patient.affectedJoint}</p>
+                  </div>
+                )}
+                {patient.painLevel !== undefined && patient.painLevel !== null && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">مستوى الألم</p>
+                    <p className="text-sm text-gray-900">{patient.painLevel}/10</p>
+                  </div>
+                )}
+                {patient.splintOrCast && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">الجبيرة أو الجبس</p>
+                    <p className="text-sm text-gray-900">{patient.splintOrCast}</p>
+                  </div>
+                )}
+                {patient.surgicalOperations && patient.surgicalOperations.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">العمليات الجراحية</p>
+                    <p className="text-sm text-gray-900">{patient.surgicalOperations.join(', ')}</p>
+                  </div>
+                )}
+                {patient.physicalTherapy && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">العلاج الطبيعي</p>
+                    <p className="text-sm text-gray-900">{patient.physicalTherapy}</p>
+                  </div>
+                )}
+                {patient.diagnosis && patient.diagnosis.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">التشخيص</p>
+                    <p className="text-sm text-gray-900">{patient.diagnosis.join(', ')}</p>
+                  </div>
+                )}
+                {patient.treatmentPlan && patient.treatmentPlan.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">خطة العلاج</p>
+                    <p className="text-sm text-gray-900">{patient.treatmentPlan.join(', ')}</p>
+                  </div>
+                )}
+                {patient.imagingStudies && patient.imagingStudies.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">الأشعات</p>
+                    <div className="space-y-1">
+                      {patient.imagingStudies.map((study: any, index: number) => (
+                        <p key={index} className="text-sm text-gray-900">
+                          {study.type} - {new Date(study.date).toLocaleDateString()}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
                 </div>
               </div>
             )}

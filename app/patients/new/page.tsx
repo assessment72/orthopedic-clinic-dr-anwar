@@ -12,7 +12,8 @@ import {
   MapPin,
   Calendar,
   FileText,
-  Lock
+  Lock,
+  AlertCircle
 } from 'lucide-react';
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
@@ -42,6 +43,21 @@ export default function NewPatientPage() {
     medications: '',
     medicalHistory: '',
     familyHistory: '',
+    
+    // Orthopedic Information
+    orthopedicHistory: '',
+    chiefComplaint: '',
+    injurySite: '',
+    injuryType: '',
+    affectedJoint: '',
+    painLevel: '',
+    splintOrCast: '',
+    surgicalOperations: '',
+    physicalTherapy: '',
+    diagnosis: '',
+    treatmentPlan: '',
+    imaging: '',
+    followUpDate: '',
     
     // Emergency Contact
     emergencyName: '',
@@ -88,7 +104,7 @@ export default function NewPatientPage() {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
         phone: formData.phone,
-        dateOfBirth: formData.dateOfBirth, // Send as ISO string, API will convert to Date
+        dateOfBirth: formData.dateOfBirth,
         gender: formData.gender,
         medicalHistory: formData.medicalHistory ? [formData.medicalHistory] : [],
         allergies: formData.allergies ? [formData.allergies] : [],
@@ -118,9 +134,48 @@ export default function NewPatientPage() {
         patientData.bloodType = formData.bloodType;
       }
 
-      // Debug: Log the data being sent
+      // Add orthopedic fields
+      if (formData.orthopedicHistory) {
+        patientData.orthopedicHistory = [formData.orthopedicHistory];
+      }
+      if (formData.chiefComplaint) {
+        patientData.chiefComplaint = formData.chiefComplaint;
+      }
+      if (formData.injurySite) {
+        patientData.injurySite = formData.injurySite;
+      }
+      if (formData.injuryType) {
+        patientData.injuryType = formData.injuryType;
+      }
+      if (formData.affectedJoint) {
+        patientData.affectedJoint = formData.affectedJoint;
+      }
+      if (formData.painLevel) {
+        patientData.painLevel = parseInt(formData.painLevel);
+      }
+      if (formData.splintOrCast) {
+        patientData.splintOrCast = formData.splintOrCast;
+      }
+      if (formData.surgicalOperations) {
+        patientData.surgicalOperations = [formData.surgicalOperations];
+      }
+      if (formData.physicalTherapy) {
+        patientData.physicalTherapy = formData.physicalTherapy;
+      }
+      if (formData.diagnosis) {
+        patientData.diagnosis = [formData.diagnosis];
+      }
+      if (formData.treatmentPlan) {
+        patientData.treatmentPlan = [formData.treatmentPlan];
+      }
+      if (formData.imaging) {
+        patientData.imagingStudies = [{
+          type: formData.imaging,
+          date: new Date().toISOString()
+        }];
+      }
+
       console.log('Form data being sent:', patientData);
-      console.log('Emergency contact data:', patientData.emergencyContact);
 
       const response = await fetch('/api/patients', {
         method: 'POST',
@@ -150,6 +205,19 @@ export default function NewPatientPage() {
           medications: '',
           medicalHistory: '',
           familyHistory: '',
+          orthopedicHistory: '',
+          chiefComplaint: '',
+          injurySite: '',
+          injuryType: '',
+          affectedJoint: '',
+          painLevel: '',
+          splintOrCast: '',
+          surgicalOperations: '',
+          physicalTherapy: '',
+          diagnosis: '',
+          treatmentPlan: '',
+          imaging: '',
+          followUpDate: '',
           emergencyName: '',
           emergencyPhone: '',
           emergencyRelationship: ''
@@ -186,6 +254,7 @@ export default function NewPatientPage() {
     { id: 'personal', label: t('patients.newPatient.sections.personal'), icon: Users },
     { id: 'login', label: t('patients.newPatient.sections.login'), icon: Lock },
     { id: 'medical', label: t('patients.newPatient.sections.medical'), icon: FileText },
+    { id: 'orthopedic', label: 'معلومات العظام', icon: AlertCircle },
     { id: 'emergency', label: t('patients.newPatient.sections.emergency'), icon: Phone }
   ];
 
@@ -377,20 +446,15 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          {/* User Login Information Section */}
+          {/* Login Information Section */}
           {activeSection === 'login' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
-                <Lock className="mr-2 h-4 w-4 text-purple-600" />
+                <Lock className="mr-2 h-4 w-4 text-blue-600" />
                 {t('patients.newPatient.sections.login')}
               </h3>
-              <div className="space-y-2">
-                <div className="mb-3 rounded-md border border-blue-200 bg-blue-50 p-2">
-                  <p className="text-xs text-blue-800">
-                    <strong>Note:</strong> Adding login credentials will create a user account for this patient, allowing them to access the patient portal.
-                  </p>
-                </div>
-                <div>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
+                <div className="md:col-span-2">
                   <label htmlFor="email" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.email')} *
                   </label>
@@ -403,35 +467,22 @@ export default function NewPatientPage() {
                       required
                       value={formData.email}
                       onChange={handleInputChange}
-                      placeholder="patient@example.com"
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
-                  <p className="mt-1 text-xs text-gray-500">This email will be used for patient login if a password is set</p>
                 </div>
                 <div>
                   <label htmlFor="password" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    Password {formData.password && <span className="text-red-500">*</span>}
+                    {t('patients.newPatient.fields.password')}
                   </label>
-                  <div className="relative">
-                    <Lock className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-                    <input
-                      type="password"
-                      id="password"
-                      name="password"
-                      value={formData.password}
-                      onChange={handleInputChange}
-                      placeholder="Leave blank if patient won't have login access"
-                      minLength={6}
-                      className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                    />
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">
-                    {formData.password 
-                      ? 'Password must be at least 6 characters. A user account will be created for this patient.'
-                      : 'Optional: Set a password to create a user account for patient portal access'
-                    }
-                  </p>
+                  <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
                 </div>
               </div>
             </div>
@@ -441,7 +492,7 @@ export default function NewPatientPage() {
           {activeSection === 'medical' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
-                <FileText className="mr-2 h-4 w-4 text-green-600" />
+                <FileText className="mr-2 h-4 w-4 text-blue-600" />
                 {t('patients.newPatient.sections.medical')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
@@ -457,28 +508,28 @@ export default function NewPatientPage() {
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   >
                     <option value="">{t('patients.newPatient.fields.bloodTypeOptions.select')}</option>
-                    <option value="A+">{t('patients.newPatient.fields.bloodTypeOptions.A+')}</option>
-                    <option value="A-">{t('patients.newPatient.fields.bloodTypeOptions.A-')}</option>
-                    <option value="B+">{t('patients.newPatient.fields.bloodTypeOptions.B+')}</option>
-                    <option value="B-">{t('patients.newPatient.fields.bloodTypeOptions.B-')}</option>
-                    <option value="AB+">{t('patients.newPatient.fields.bloodTypeOptions.AB+')}</option>
-                    <option value="AB-">{t('patients.newPatient.fields.bloodTypeOptions.AB-')}</option>
-                    <option value="O+">{t('patients.newPatient.fields.bloodTypeOptions.O+')}</option>
-                    <option value="O-">{t('patients.newPatient.fields.bloodTypeOptions.O-')}</option>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
                     <option value="none">{t('patients.newPatient.fields.bloodTypeOptions.none')}</option>
                   </select>
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="allergies" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.allergies')}
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     id="allergies"
                     name="allergies"
                     value={formData.allergies}
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.allergies')}
+                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -489,10 +540,10 @@ export default function NewPatientPage() {
                   <textarea
                     id="medications"
                     name="medications"
-                    rows={3}
                     value={formData.medications}
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.medications')}
+                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -503,10 +554,10 @@ export default function NewPatientPage() {
                   <textarea
                     id="medicalHistory"
                     name="medicalHistory"
-                    rows={3}
                     value={formData.medicalHistory}
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.medicalHistory')}
+                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -517,10 +568,208 @@ export default function NewPatientPage() {
                   <textarea
                     id="familyHistory"
                     name="familyHistory"
-                    rows={3}
                     value={formData.familyHistory}
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.familyHistory')}
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Orthopedic Information Section */}
+          {activeSection === 'orthopedic' && (
+            <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
+              <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
+                <AlertCircle className="mr-2 h-4 w-4 text-blue-600" />
+                معلومات جراحة العظام
+              </h3>
+              <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
+                <div className="md:col-span-2">
+                  <label htmlFor="orthopedicHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.orthopedicHistory')}
+                  </label>
+                  <textarea
+                    id="orthopedicHistory"
+                    name="orthopedicHistory"
+                    value={formData.orthopedicHistory}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.orthopedicHistory')}
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="chiefComplaint" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.chiefComplaint')}
+                  </label>
+                  <textarea
+                    id="chiefComplaint"
+                    name="chiefComplaint"
+                    value={formData.chiefComplaint}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.chiefComplaint')}
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="injurySite" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.injurySite')}
+                  </label>
+                  <input
+                    type="text"
+                    id="injurySite"
+                    name="injurySite"
+                    value={formData.injurySite}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.injurySite')}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="injuryType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.injuryType')}
+                  </label>
+                  <input
+                    type="text"
+                    id="injuryType"
+                    name="injuryType"
+                    value={formData.injuryType}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.injuryType')}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="affectedJoint" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.affectedJoint')}
+                  </label>
+                  <input
+                    type="text"
+                    id="affectedJoint"
+                    name="affectedJoint"
+                    value={formData.affectedJoint}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.affectedJoint')}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="painLevel" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.painLevel')}
+                  </label>
+                  <input
+                    type="number"
+                    id="painLevel"
+                    name="painLevel"
+                    min="0"
+                    max="10"
+                    value={formData.painLevel}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="splintOrCast" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.splintOrCast')}
+                  </label>
+                  <input
+                    type="text"
+                    id="splintOrCast"
+                    name="splintOrCast"
+                    value={formData.splintOrCast}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.splintOrCast')}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="surgicalOperations" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.surgicalOperations')}
+                  </label>
+                  <textarea
+                    id="surgicalOperations"
+                    name="surgicalOperations"
+                    value={formData.surgicalOperations}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.surgicalOperations')}
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="physicalTherapy" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.physicalTherapy')}
+                  </label>
+                  <textarea
+                    id="physicalTherapy"
+                    name="physicalTherapy"
+                    value={formData.physicalTherapy}
+                    onChange={handleInputChange}
+                    placeholder={t('patients.newPatient.placeholders.physicalTherapy')}
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="diagnosis" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    التشخيص
+                  </label>
+                  <textarea
+                    id="diagnosis"
+                    name="diagnosis"
+                    value={formData.diagnosis}
+                    onChange={handleInputChange}
+                    placeholder="أدخل التشخيص الطبي"
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label htmlFor="treatmentPlan" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    خطة العلاج
+                  </label>
+                  <textarea
+                    id="treatmentPlan"
+                    name="treatmentPlan"
+                    value={formData.treatmentPlan}
+                    onChange={handleInputChange}
+                    placeholder="أدخل خطة العلاج المقترحة"
+                    rows={2}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="imaging" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.imaging')}
+                  </label>
+                  <select
+                    id="imaging"
+                    name="imaging"
+                    value={formData.imaging}
+                    onChange={handleInputChange}
+                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                  >
+                    <option value="">اختر نوع الأشعة</option>
+                    <option value="X-Ray">X-Ray</option>
+                    <option value="MRI">MRI</option>
+                    <option value="CT Scan">CT Scan</option>
+                    <option value="Ultrasound">Ultrasound</option>
+                  </select>
+                </div>
+                <div>
+                  <label htmlFor="followUpDate" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                    {t('patients.newPatient.fields.followUpDate')}
+                  </label>
+                  <input
+                    type="date"
+                    id="followUpDate"
+                    name="followUpDate"
+                    value={formData.followUpDate}
+                    onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
@@ -532,7 +781,7 @@ export default function NewPatientPage() {
           {activeSection === 'emergency' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
-                <Phone className="mr-2 h-4 w-4 text-red-600" />
+                <Phone className="mr-2 h-4 w-4 text-blue-600" />
                 {t('patients.newPatient.sections.emergency')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
@@ -553,16 +802,19 @@ export default function NewPatientPage() {
                   <label htmlFor="emergencyPhone" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.emergencyPhone')}
                   </label>
-                  <input
-                    type="tel"
-                    id="emergencyPhone"
-                    name="emergencyPhone"
-                    value={formData.emergencyPhone}
-                    onChange={handleInputChange}
-                    className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  <div className="relative">
+                    <Phone className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                    <input
+                      type="tel"
+                      id="emergencyPhone"
+                      name="emergencyPhone"
+                      value={formData.emergencyPhone}
+                      onChange={handleInputChange}
+                      className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    />
+                  </div>
                 </div>
-                <div>
+                <div className="md:col-span-2">
                   <label htmlFor="emergencyRelationship" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.emergencyRelationship')}
                   </label>
@@ -580,46 +832,22 @@ export default function NewPatientPage() {
             </div>
           )}
 
-
-
-          {/* Form Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap gap-1">
-              {sections.map((section, index) => (
-                <button
-                  key={section.id}
-                  type="button"
-                  onClick={() => setActiveSection(section.id)}
-                  className={`rounded-md px-2 py-1 text-xs font-medium transition-colors sm:text-sm ${
-                    activeSection === section.id
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'text-gray-700 hover:text-gray-900'
-                  }`}
-                >
-                  {index + 1}. {section.label}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <Link
-                href="/patients"
-                className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-700 transition-colors hover:bg-gray-50"
-              >
-                {t('patients.newPatient.buttons.cancel')}
-              </Link>
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-1.5 text-sm font-medium text-white transition-colors hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {isSubmitting ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                ) : (
-                  <Save className="h-4 w-4" />
-                )}
-                <span>{isSubmitting ? t('patients.newPatient.buttons.saving') : t('patients.newPatient.buttons.savePatient')}</span>
-              </button>
-            </div>
+          {/* Action Buttons */}
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700 disabled:bg-gray-400"
+            >
+              <Save className="h-4 w-4" />
+              {isSubmitting ? t('patients.newPatient.buttons.saving') : t('patients.newPatient.buttons.savePatient')}
+            </button>
+            <Link
+              href="/patients"
+              className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-300"
+            >
+              {t('patients.newPatient.buttons.cancel')}
+            </Link>
           </div>
         </form>
       </SidebarLayout>
