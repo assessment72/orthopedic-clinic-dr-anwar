@@ -4,7 +4,7 @@ export interface IPatient {
   _id: string;
   patientId: string;
   name: string;
-  email: string;
+  email?: string; // جعل البريد الإلكتروني اختياريًا
   phone: string;
   dateOfBirth: Date;
   gender: 'male' | 'female' | 'other' | 'prefer-not-to-say';
@@ -14,13 +14,29 @@ export interface IPatient {
     phone: string;
     relationship: string;
   };
-  medicalHistory: string[];
+  medicalHistory: string[]; // تاريخ طبي عام
   allergies: string[];
   currentMedications: string[];
   bloodType?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
   insuranceProvider?: string;
   insuranceNumber?: string;
-  assignedDoctor?: string;
+  assignedDoctor?: string; // الطبيب المعالج
+  // إضافة حقول خاصة بعيادة العظام
+  orthopedicHistory?: string[]; // تاريخ طبي خاص بالعظام (كسور سابقة، عمليات، أمراض مزمنة بالعظام)
+  chiefComplaint?: string; // الشكوى الرئيسية الحالية للمريض (مهمة لعيادة العظام)
+  diagnosis?: string[]; // التشخيصات المتعلقة بحالة العظام
+  treatmentPlan?: string[]; // خطة العلاج المقترحة (جراحة، علاج طبيعي، أدوية، جبائر)
+  imagingStudies?: Array<{ // فحوصات التصوير (أشعة سينية، رنين مغناطيسي، مقطعية)
+    type: string; // نوع الفحص (مثلاً: X-ray, MRI, CT Scan)
+    date: Date;
+    resultsSummary?: string; // ملخص النتائج
+    imageUrl?: string; // رابط للصورة أو التقرير إذا كان مخزنًا خارجيًا
+  }>;
+  followUpAppointments?: Array<{ // مواعيد المتابعة
+    date: Date;
+    notes?: string;
+  }>;
+  referredBy?: string; // الجهة التي أحالت المريض (مثلاً: طبيب آخر، مستشفى)
   password?: string; // For patient login
   createdAt: Date;
   updatedAt: Date;
@@ -31,7 +47,7 @@ const patientSchema = new mongoose.Schema<IPatient>(
     patientId: {
       type: String,
       unique: true,
-      required: false, // Will be auto-generated in pre-save hook
+      required: false, // سيتم إنشاؤه تلقائيًا في خطاف ما قبل الحفظ إذا لم يتم توفيره
       trim: true,
     },
     name: {
@@ -41,8 +57,9 @@ const patientSchema = new mongoose.Schema<IPatient>(
     },
     email: {
       type: String,
-      required: true,
+      required: false, // جعل البريد الإلكتروني اختياريًا
       unique: true,
+      sparse: true, // يسمح بقيم فارغة مع الحفاظ على التفرد للقيم غير الفارغة
       trim: true,
       lowercase: true,
     },
@@ -107,6 +124,42 @@ const patientSchema = new mongoose.Schema<IPatient>(
       trim: true,
     },
     assignedDoctor: {
+      type: String,
+      trim: true,
+    },
+    // إضافة حقول خاصة بعيادة العظام
+    orthopedicHistory: [{
+      type: String,
+      trim: true,
+    }],
+    chiefComplaint: {
+      type: String,
+      required: false, // يمكن أن يكون اختياريًا في بعض الحالات ولكن يفضل أن يكون موجودًا
+      trim: true,
+    },
+    diagnosis: [{
+      type: String,
+      trim: true,
+    }],
+    treatmentPlan: [{
+      type: String,
+      trim: true,
+    }],
+    imagingStudies: [{
+      type: new mongoose.Schema({
+        type: { type: String, required: true, trim: true },
+        date: { type: Date, required: true },
+        resultsSummary: { type: String, trim: true },
+        imageUrl: { type: String, trim: true },
+      }),
+    }],
+    followUpAppointments: [{
+      type: new mongoose.Schema({
+        date: { type: Date, required: true },
+        notes: { type: String, trim: true },
+      }),
+    }],
+    referredBy: {
       type: String,
       trim: true,
     },
