@@ -1829,6 +1829,7 @@
       "generatePlan": "إنشاء خطة العلاج",
       "patientInfo": "معلومات المريض",
       "symptoms": "أعراض",
+      "treatment": "العلاج",
       "medicalHistory": "التاريخ الطبي",
       "currentMedications": "الأدوية الحالية",
       "allergies": "الحساسية",

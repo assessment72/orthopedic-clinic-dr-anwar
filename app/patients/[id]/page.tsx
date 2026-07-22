@@ -41,11 +41,13 @@ import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
 import FormattedAIResult from '../../components/FormattedAIResult';
 import { useFormatCurrency } from '../../hooks/useFormatCurrency';
+import { useTranslations } from '../../hooks/useTranslations';
 
 export default function PatientViewPage() {
   const params = useParams();
   const router = useRouter();
   const { formatCurrency } = useFormatCurrency();
+  const { t } = useTranslations();
   const [patient, setPatient] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
