@@ -18,93 +18,57 @@ interface SkeletonMapProps {
   lang: 'ar' | 'en';
 }
 
-const regionsData = {
-  front: [
-    { id: 'skull', label: 'الجمجمة', path: 'M120,50 Q140,30 160,50 L170,80 L130,80 Z' },
-    { id: 'jaw', label: 'الفك', path: 'M130,80 L170,80 L165,100 L135,100 Z' },
-    { id: 'neck', label: 'الرقبة', path: 'M140,100 L160,100 L165,130 L135,130 Z' },
-    { id: 'shoulderRight', label: 'الكتف الأيمن', path: 'M180,130 L210,130 L220,160 L190,160 Z' },
-    { id: 'shoulderLeft', label: 'الكتف الأيسر', path: 'M90,130 L120,130 L110,160 L80,160 Z' },
-    { id: 'armRight', label: 'العضد الأيمن', path: 'M210,160 L225,160 L230,210 L215,210 Z' },
-    { id: 'armLeft', label: 'العضد الأيسر', path: 'M75,160 L90,160 L85,210 L70,210 Z' },
-    { id: 'elbowRight', label: 'المرفق الأيمن', path: 'M215,210 L230,210 L225,235 L210,235 Z' },
-    { id: 'elbowLeft', label: 'المرفق الأيسر', path: 'M70,210 L85,210 L80,235 L65,235 Z' },
-    { id: 'forearmRight', label: 'الساعد الأيمن', path: 'M210,235 L225,235 L220,270 L205,270 Z' },
-    { id: 'forearmLeft', label: 'الساعد الأيسر', path: 'M65,235 L80,235 L75,270 L60,270 Z' },
-    { id: 'wristRight', label: 'الرسغ الأيمن', path: 'M205,270 L220,270 L215,285 L200,285 Z' },
-    { id: 'wristLeft', label: 'الرسغ الأيسر', path: 'M60,270 L75,270 L70,285 L55,285 Z' },
-    { id: 'handRight', label: 'اليد اليمنى', path: 'M200,285 L215,285 L210,310 L195,310 Z' },
-    { id: 'handLeft', label: 'اليد اليسرى', path: 'M55,285 L70,285 L65,310 L50,310 Z' },
-    { id: 'fingersRight', label: 'أصابع اليد اليمنى', path: 'M195,310 L210,310 L205,330 L190,330 Z' },
-    { id: 'fingersLeft', label: 'أصابع اليد اليسرى', path: 'M50,310 L65,310 L60,330 L45,330 Z' },
-    { id: 'cervicalSpine', label: 'العمود الفقري العنقي', path: 'M150,130 L160,130 L160,160 L150,160 Z' },
-    { id: 'thoracicSpine', label: 'العمود الفقري الصدري', path: 'M150,160 L160,160 L160,220 L150,220 Z' },
-    { id: 'lumbarSpine', label: 'العمود الفقري القطني', path: 'M150,220 L160,220 L160,260 L150,260 Z' },
-    { id: 'pelvis', label: 'الحوض', path: 'M130,260 L170,260 L180,290 L120,290 Z' },
-    { id: 'hipRight', label: 'الورك الأيمن', path: 'M180,290 L200,290 L210,320 L190,320 Z' },
-    { id: 'hipLeft', label: 'الورك الأيسر', path: 'M120,290 L100,290 L90,320 L110,320 Z' },
-    { id: 'thighRight', label: 'الفخذ الأيمن', path: 'M190,320 L210,320 L215,370 L195,370 Z' },
-    { id: 'thighLeft', label: 'الفخذ الأيسر', path: 'M110,320 L90,320 L85,370 L105,370 Z' },
-    { id: 'kneeRight', label: 'الركبة اليمنى', path: 'M195,370 L215,370 L210,390 L190,390 Z' },
-    { id: 'kneeLeft', label: 'الركبة اليسرى', path: 'M105,370 L85,370 L90,390 L110,390 Z' },
-    { id: 'legRight', label: 'الساق الأيمن', path: 'M190,390 L210,390 L200,440 L180,440 Z' },
-    { id: 'legLeft', label: 'الساق الأيسر', path: 'M110,390 L90,390 L100,440 L120,440 Z' },
-    { id: 'ankleRight', label: 'الكاحل الأيمن', path: 'M180,440 L200,440 L195,460 L185,460 Z' },
-    { id: 'ankleLeft', label: 'الكاحل الأيسر', path: 'M120,440 L100,440 L105,460 L115,460 Z' },
-    { id: 'footRight', label: 'القدم اليمنى', path: 'M185,460 L195,460 L200,490 L180,490 Z' },
-    { id: 'footLeft', label: 'القدم اليسرى', path: 'M115,460 L105,460 L100,490 L120,490 Z' },
-    { id: 'toesRight', label: 'أصابع القدم اليمنى', path: 'M180,490 L200,490 L195,510 L185,510 Z' },
-    { id: 'toesLeft', label: 'أصابع القدم اليسرى', path: 'M120,490 L100,490 L105,510 L115,510 Z' },
-  ],
-  back: [
-    // مؤقتاً نفس المسارات، يمكنك استبدالها بمسارات خلفية حقيقية لاحقاً
-    { id: 'skull', label: 'الجمجمة', path: 'M120,50 Q140,30 160,50 L170,80 L130,80 Z' },
-    { id: 'jaw', label: 'الفك', path: 'M130,80 L170,80 L165,100 L135,100 Z' },
-    { id: 'neck', label: 'الرقبة', path: 'M140,100 L160,100 L165,130 L135,130 Z' },
-    { id: 'shoulderRight', label: 'الكتف الأيمن', path: 'M180,130 L210,130 L220,160 L190,160 Z' },
-    { id: 'shoulderLeft', label: 'الكتف الأيسر', path: 'M90,130 L120,130 L110,160 L80,160 Z' },
-    { id: 'armRight', label: 'العضد الأيمن', path: 'M210,160 L225,160 L230,210 L215,210 Z' },
-    { id: 'armLeft', label: 'العضد الأيسر', path: 'M75,160 L90,160 L85,210 L70,210 Z' },
-    { id: 'elbowRight', label: 'المرفق الأيمن', path: 'M215,210 L230,210 L225,235 L210,235 Z' },
-    { id: 'elbowLeft', label: 'المرفق الأيسر', path: 'M70,210 L85,210 L80,235 L65,235 Z' },
-    { id: 'forearmRight', label: 'الساعد الأيمن', path: 'M210,235 L225,235 L220,270 L205,270 Z' },
-    { id: 'forearmLeft', label: 'الساعد الأيسر', path: 'M65,235 L80,235 L75,270 L60,270 Z' },
-    { id: 'wristRight', label: 'الرسغ الأيمن', path: 'M205,270 L220,270 L215,285 L200,285 Z' },
-    { id: 'wristLeft', label: 'الرسغ الأيسر', path: 'M60,270 L75,270 L70,285 L55,285 Z' },
-    { id: 'handRight', label: 'اليد اليمنى', path: 'M200,285 L215,285 L210,310 L195,310 Z' },
-    { id: 'handLeft', label: 'اليد اليسرى', path: 'M55,285 L70,285 L65,310 L50,310 Z' },
-    { id: 'fingersRight', label: 'أصابع اليد اليمنى', path: 'M195,310 L210,310 L205,330 L190,330 Z' },
-    { id: 'fingersLeft', label: 'أصابع اليد اليسرى', path: 'M50,310 L65,310 L60,330 L45,330 Z' },
-    { id: 'cervicalSpine', label: 'العمود الفقري العنقي', path: 'M150,130 L160,130 L160,160 L150,160 Z' },
-    { id: 'thoracicSpine', label: 'العمود الفقري الصدري', path: 'M150,160 L160,160 L160,220 L150,220 Z' },
-    { id: 'lumbarSpine', label: 'العمود الفقري القطني', path: 'M150,220 L160,220 L160,260 L150,260 Z' },
-    { id: 'pelvis', label: 'الحوض', path: 'M130,260 L170,260 L180,290 L120,290 Z' },
-    { id: 'hipRight', label: 'الورك الأيمن', path: 'M180,290 L200,290 L210,320 L190,320 Z' },
-    { id: 'hipLeft', label: 'الورك الأيسر', path: 'M120,290 L100,290 L90,320 L110,320 Z' },
-    { id: 'thighRight', label: 'الفخذ الأيمن', path: 'M190,320 L210,320 L215,370 L195,370 Z' },
-    { id: 'thighLeft', label: 'الفخذ الأيسر', path: 'M110,320 L90,320 L85,370 L105,370 Z' },
-    { id: 'kneeRight', label: 'الركبة اليمنى', path: 'M195,370 L215,370 L210,390 L190,390 Z' },
-    { id: 'kneeLeft', label: 'الركبة اليسرى', path: 'M105,370 L85,370 L90,390 L110,390 Z' },
-    { id: 'legRight', label: 'الساق الأيمن', path: 'M190,390 L210,390 L200,440 L180,440 Z' },
-    { id: 'legLeft', label: 'الساق الأيسر', path: 'M110,390 L90,390 L100,440 L120,440 Z' },
-    { id: 'ankleRight', label: 'الكاحل الأيمن', path: 'M180,440 L200,440 L195,460 L185,460 Z' },
-    { id: 'ankleLeft', label: 'الكاحل الأيسر', path: 'M120,440 L100,440 L105,460 L115,460 Z' },
-    { id: 'footRight', label: 'القدم اليمنى', path: 'M185,460 L195,460 L200,490 L180,490 Z' },
-    { id: 'footLeft', label: 'القدم اليسرى', path: 'M115,460 L105,460 L100,490 L120,490 Z' },
-    { id: 'toesRight', label: 'أصابع القدم اليمنى', path: 'M180,490 L200,490 L195,510 L185,510 Z' },
-    { id: 'toesLeft', label: 'أصابع القدم اليسرى', path: 'M120,490 L100,490 L105,510 L115,510 Z' },
-  ]
-};
+// تعريف المناطق مع إحداثيات نسبية (بالنسبة المئوية)
+const regions = [
+  { id: 'skull', label: 'الجمجمة', x: 40, y: 5, w: 20, h: 12 },
+  { id: 'neck', label: 'الرقبة', x: 45, y: 18, w: 10, h: 8 },
+  { id: 'shoulderRight', label: 'الكتف الأيمن', x: 70, y: 22, w: 15, h: 10 },
+  { id: 'shoulderLeft', label: 'الكتف الأيسر', x: 15, y: 22, w: 15, h: 10 },
+  { id: 'armRight', label: 'العضد الأيمن', x: 75, y: 32, w: 8, h: 15 },
+  { id: 'armLeft', label: 'العضد الأيسر', x: 17, y: 32, w: 8, h: 15 },
+  { id: 'elbowRight', label: 'المرفق الأيمن', x: 78, y: 47, w: 10, h: 6 },
+  { id: 'elbowLeft', label: 'المرفق الأيسر', x: 12, y: 47, w: 10, h: 6 },
+  { id: 'forearmRight', label: 'الساعد الأيمن', x: 76, y: 53, w: 8, h: 12 },
+  { id: 'forearmLeft', label: 'الساعد الأيسر', x: 16, y: 53, w: 8, h: 12 },
+  { id: 'wristRight', label: 'الرسغ الأيمن', x: 77, y: 65, w: 8, h: 6 },
+  { id: 'wristLeft', label: 'الرسغ الأيسر', x: 15, y: 65, w: 8, h: 6 },
+  { id: 'handRight', label: 'اليد اليمنى', x: 75, y: 71, w: 10, h: 8 },
+  { id: 'handLeft', label: 'اليد اليسرى', x: 15, y: 71, w: 10, h: 8 },
+  { id: 'fingersRight', label: 'أصابع اليد اليمنى', x: 73, y: 79, w: 12, h: 6 },
+  { id: 'fingersLeft', label: 'أصابع اليد اليسرى', x: 15, y: 79, w: 12, h: 6 },
+  { id: 'cervicalSpine', label: 'العمود الفقري العنقي', x: 47, y: 18, w: 6, h: 8 },
+  { id: 'thoracicSpine', label: 'العمود الفقري الصدري', x: 47, y: 26, w: 6, h: 15 },
+  { id: 'lumbarSpine', label: 'العمود الفقري القطني', x: 47, y: 41, w: 6, h: 12 },
+  { id: 'pelvis', label: 'الحوض', x: 38, y: 53, w: 24, h: 10 },
+  { id: 'hipRight', label: 'الورك الأيمن', x: 62, y: 55, w: 12, h: 10 },
+  { id: 'hipLeft', label: 'الورك الأيسر', x: 26, y: 55, w: 12, h: 10 },
+  { id: 'thighRight', label: 'الفخذ الأيمن', x: 60, y: 65, w: 10, h: 15 },
+  { id: 'thighLeft', label: 'الفخذ الأيسر', x: 30, y: 65, w: 10, h: 15 },
+  { id: 'kneeRight', label: 'الركبة اليمنى', x: 58, y: 80, w: 12, h: 6 },
+  { id: 'kneeLeft', label: 'الركبة اليسرى', x: 30, y: 80, w: 12, h: 6 },
+  { id: 'legRight', label: 'الساق الأيمن', x: 60, y: 86, w: 8, h: 12 },
+  { id: 'legLeft', label: 'الساق الأيسر', x: 32, y: 86, w: 8, h: 12 },
+  { id: 'ankleRight', label: 'الكاحل الأيمن', x: 60, y: 98, w: 10, h: 5 },
+  { id: 'ankleLeft', label: 'الكاحل الأيسر', x: 30, y: 98, w: 10, h: 5 },
+  { id: 'footRight', label: 'القدم اليمنى', x: 55, y: 103, w: 18, h: 8 },
+  { id: 'footLeft', label: 'القدم اليسرى', x: 27, y: 103, w: 18, h: 8 },
+  { id: 'toesRight', label: 'أصابع القدم اليمنى', x: 53, y: 111, w: 20, h: 5 },
+  { id: 'toesLeft', label: 'أصابع القدم اليسرى', x: 27, y: 111, w: 20, h: 5 },
+];
 
-export default function SkeletonMap({ selectedRegions, onSelectRegion, onDeselectRegion, onClearAll, onUpdateRegionNotes, lang }: SkeletonMapProps) {
-  const [view, setView] = useState<'front' | 'back'>('front');
+export default function SkeletonMap({
+  selectedRegions,
+  onSelectRegion,
+  onDeselectRegion,
+  onClearAll,
+  onUpdateRegionNotes,
+  lang,
+}: SkeletonMapProps) {
   const [hoveredRegion, setHoveredRegion] = useState<string | null>(null);
   const [popupRegion, setPopupRegion] = useState<SelectedRegion | null>(null);
   const [tempNotes, setTempNotes] = useState('');
 
-  const currentRegions = view === 'front' ? regionsData.front : regionsData.back;
-
-  const handleRegionClick = (region: { id: string; label: string; path: string }) => {
+  const handleRegionClick = (region: any) => {
     const existing = selectedRegions.find(r => r.id === region.id);
     if (existing) {
       setPopupRegion(existing);
@@ -122,63 +86,94 @@ export default function SkeletonMap({ selectedRegions, onSelectRegion, onDeselec
   };
 
   const getLabel = (id: string) => {
-    const r = currentRegions.find(r => r.id === id);
+    const r = regions.find(r => r.id === id);
     return r ? r.label : id;
   };
 
   return (
     <div className="w-full bg-white p-4 rounded-lg shadow relative">
+      {/* أزرار التحكم */}
       <div className="flex justify-center gap-3 mb-4">
-        <button onClick={() => setView('front')} className={`px-4 py-2 rounded ${view === 'front' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
-          {lang === 'ar' ? 'أمامي' : 'Front'}
-        </button>
-        <button onClick={() => setView('back')} className={`px-4 py-2 rounded ${view === 'back' ? 'bg-blue-600 text-white' : 'bg-gray-200'}`}>
-          {lang === 'ar' ? 'خلفي' : 'Back'}
-        </button>
         <button onClick={onClearAll} className="px-4 py-2 bg-red-500 text-white rounded">
           {lang === 'ar' ? 'مسح الكل' : 'Clear All'}
         </button>
       </div>
 
+      {/* صورة الهيكل العظمي مع المناطق التفاعلية */}
       <div className="relative w-full max-w-md mx-auto">
-        <svg viewBox="0 0 300 550" className="w-full h-auto">
-          {currentRegions.map((region) => {
+        {/* صورة الهيكل العظمي */}
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Human_skeleton_front_en.svg/500px-Human_skeleton_front_en.svg.png"
+          alt="Skeleton"
+          className="w-full h-auto"
+          style={{ pointerEvents: 'none' }}
+        />
+
+        {/* المناطق التفاعلية (شفافة فوق الصورة) */}
+        <div className="absolute inset-0">
+          {regions.map((region) => {
             const isSelected = selectedRegions.some(r => r.id === region.id);
             const isHovered = hoveredRegion === region.id;
             return (
-              <g key={region.id}>
-                <path
-                  d={region.path}
-                  fill={isSelected ? '#3b82f6' : isHovered ? '#93c5fd' : '#cbd5e1'}
-                  stroke="#1e293b"
-                  strokeWidth="2"
-                  className="cursor-pointer transition-colors"
-                  onClick={() => handleRegionClick(region)}
-                  onMouseEnter={() => setHoveredRegion(region.id)}
-                  onMouseLeave={() => setHoveredRegion(null)}
-                />
+              <div
+                key={region.id}
+                className="absolute cursor-pointer transition-colors duration-200"
+                style={{
+                  left: `${region.x}%`,
+                  top: `${region.y}%`,
+                  width: `${region.w}%`,
+                  height: `${region.h}%`,
+                  backgroundColor: isSelected
+                    ? 'rgba(59, 130, 246, 0.4)'
+                    : isHovered
+                    ? 'rgba(147, 197, 253, 0.3)'
+                    : 'rgba(0,0,0,0)',
+                  border: isSelected ? '2px solid #3b82f6' : 'none',
+                  borderRadius: '4px',
+                  transition: 'all 0.2s',
+                }}
+                onClick={() => handleRegionClick(region)}
+                onMouseEnter={() => setHoveredRegion(region.id)}
+                onMouseLeave={() => setHoveredRegion(null)}
+              >
+                {/* عرض اسم المنطقة عند التمرير */}
                 {isHovered && (
-                  <foreignObject x="10" y="10" width="120" height="30">
-                    <div className="bg-black text-white text-xs p-1 rounded shadow">{region.label}</div>
-                  </foreignObject>
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+                    {region.label}
+                  </div>
                 )}
-              </g>
+              </div>
             );
           })}
-        </svg>
+        </div>
       </div>
 
+      {/* عرض البطاقات */}
       <div className="flex flex-wrap gap-2 mt-4 justify-center">
         {selectedRegions.map((sel) => (
-          <span key={sel.id} className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+          <span
+            key={sel.id}
+            className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+          >
             {getLabel(sel.id)}
             {sel.notes && <span className="text-xs text-gray-600">📝</span>}
-            <button onClick={() => { setPopupRegion(sel); setTempNotes(sel.notes || ''); }} className="text-blue-600">✏️</button>
-            <button onClick={() => onDeselectRegion(sel.id)} className="text-red-500">✕</button>
+            <button
+              onClick={() => {
+                setPopupRegion(sel);
+                setTempNotes(sel.notes || '');
+              }}
+              className="text-blue-600"
+            >
+              ✏️
+            </button>
+            <button onClick={() => onDeselectRegion(sel.id)} className="text-red-500">
+              ✕
+            </button>
           </span>
         ))}
       </div>
 
+      {/* نافذة منبثقة لإضافة ملاحظات */}
       {popupRegion && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
@@ -186,12 +181,27 @@ export default function SkeletonMap({ selectedRegions, onSelectRegion, onDeselec
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium">ملاحظات</label>
-                <textarea value={tempNotes} onChange={(e) => setTempNotes(e.target.value)} className="w-full border rounded p-2" rows={3} />
+                <textarea
+                  value={tempNotes}
+                  onChange={(e) => setTempNotes(e.target.value)}
+                  className="w-full border rounded p-2"
+                  rows={3}
+                />
               </div>
             </div>
             <div className="flex justify-end gap-2 mt-4">
-              <button onClick={() => setPopupRegion(null)} className="px-4 py-2 bg-gray-300 rounded">إلغاء</button>
-              <button onClick={handleSaveNotes} className="px-4 py-2 bg-blue-600 text-white rounded">حفظ</button>
+              <button
+                onClick={() => setPopupRegion(null)}
+                className="px-4 py-2 bg-gray-300 rounded"
+              >
+                إلغاء
+              </button>
+              <button
+                onClick={handleSaveNotes}
+                className="px-4 py-2 bg-blue-600 text-white rounded"
+              >
+                حفظ
+              </button>
             </div>
           </div>
         </div>
