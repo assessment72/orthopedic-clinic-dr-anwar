@@ -18,11 +18,22 @@ import {
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
 import { useTranslations } from '../../hooks/useTranslations';
+import SkeletonMap from '../../components/SkeletonMap'; // NEW
+import { useLocale } from 'next-intl'; // NEW
+
+// NEW: تعريف النوع للمنطقة المختارة
+interface SelectedRegion {
+  id: string;
+  notes?: string;
+  diagnosis?: string;
+  xray?: string;
+}
 
 export default function NewPatientPage() {
   const { t } = useTranslations();
+  const locale = useLocale(); // NEW
+
   const [formData, setFormData] = useState({
-    // Personal Information
     firstName: '',
     lastName: '',
     dateOfBirth: '',
@@ -32,22 +43,17 @@ export default function NewPatientPage() {
     city: '',
     state: '',
     zipCode: '',
-    
-    // User Login Information
     email: '',
     password: '',
-    
-    // Medical Information
     bloodType: '',
     allergies: '',
     medications: '',
     medicalHistory: '',
     familyHistory: '',
-    
-    // Orthopedic Information
     orthopedicHistory: '',
     chiefComplaint: '',
     injurySite: '',
+    injuryNotes: '', // NEW
     injuryType: '',
     affectedJoint: '',
     painLevel: '',
@@ -58,12 +64,13 @@ export default function NewPatientPage() {
     treatmentPlan: '',
     imaging: '',
     followUpDate: '',
-    
-    // Emergency Contact
     emergencyName: '',
     emergencyPhone: '',
     emergencyRelationship: ''
   });
+
+  // NEW: حالة المناطق المختارة
+  const [selectedRegions, setSelectedRegions] = useState<SelectedRegion[]>([]);
 
   const [activeSection, setActiveSection] = useState('personal');
 
@@ -75,20 +82,89 @@ export default function NewPatientPage() {
     }));
   };
 
+  // NEW: دوال خريطة الهيكل العظمي
+  const getRegionName = (id: string) => {
+    const names: Record<string, Record<'ar' | 'en', string>> = {
+      skull: { ar: 'الجمجمة', en: 'Skull' },
+      jaw: { ar: 'الفك', en: 'Jaw' },
+      neck: { ar: 'الرقبة', en: 'Neck' },
+      shoulderRight: { ar: 'الكتف الأيمن', en: 'Right Shoulder' },
+      shoulderLeft: { ar: 'الكتف الأيسر', en: 'Left Shoulder' },
+      armRight: { ar: 'العضد الأيمن', en: 'Right Arm' },
+      armLeft: { ar: 'العضد الأيسر', en: 'Left Arm' },
+      elbowRight: { ar: 'المرفق الأيمن', en: 'Right Elbow' },
+      elbowLeft: { ar: 'المرفق الأيسر', en: 'Left Elbow' },
+      forearmRight: { ar: 'الساعد الأيمن', en: 'Right Forearm' },
+      forearmLeft: { ar: 'الساعد الأيسر', en: 'Left Forearm' },
+      wristRight: { ar: 'الرسغ الأيمن', en: 'Right Wrist' },
+      wristLeft: { ar: 'الرسغ الأيسر', en: 'Left Wrist' },
+      handRight: { ar: 'اليد اليمنى', en: 'Right Hand' },
+      handLeft: { ar: 'اليد اليسرى', en: 'Left Hand' },
+      fingersRight: { ar: 'أصابع اليد اليمنى', en: 'Right Fingers' },
+      fingersLeft: { ar: 'أصابع اليد اليسرى', en: 'Left Fingers' },
+      cervicalSpine: { ar: 'العمود الفقري العنقي', en: 'Cervical Spine' },
+      thoracicSpine: { ar: 'العمود الفقري الصدري', en: 'Thoracic Spine' },
+      lumbarSpine: { ar: 'العمود الفقري القطني', en: 'Lumbar Spine' },
+      pelvis: { ar: 'الحوض', en: 'Pelvis' },
+      hipRight: { ar: 'الورك الأيمن', en: 'Right Hip' },
+      hipLeft: { ar: 'الورك الأيسر', en: 'Left Hip' },
+      thighRight: { ar: 'الفخذ الأيمن', en: 'Right Thigh' },
+      thighLeft: { ar: 'الفخذ الأيسر', en: 'Left Thigh' },
+      kneeRight: { ar: 'الركبة اليمنى', en: 'Right Knee' },
+      kneeLeft: { ar: 'الركبة اليسرى', en: 'Left Knee' },
+      legRight: { ar: 'الساق الأيمن', en: 'Right Leg' },
+      legLeft: { ar: 'الساق الأيسر', en: 'Left Leg' },
+      ankleRight: { ar: 'الكاحل الأيمن', en: 'Right Ankle' },
+      ankleLeft: { ar: 'الكاحل الأيسر', en: 'Left Ankle' },
+      footRight: { ar: 'القدم اليمنى', en: 'Right Foot' },
+      footLeft: { ar: 'القدم اليسرى', en: 'Left Foot' },
+      toesRight: { ar: 'أصابع القدم اليمنى', en: 'Right Toes' },
+      toesLeft: { ar: 'أصابع القدم اليسرى', en: 'Left Toes' },
+    };
+    return names[id]?.[locale as 'ar' | 'en'] || id;
+  };
+
+  const handleSelectRegion = (region: SelectedRegion) => {
+    const name = getRegionName(region.id);
+    setFormData(prev => ({
+      ...prev,
+      injurySite: prev.injurySite ? `${prev.injurySite}, ${name}` : name,
+    }));
+    setSelectedRegions(prev => [...prev, region]);
+  };
+
+  const handleDeselectRegion = (id: string) => {
+    const name = getRegionName(id);
+    setFormData(prev => ({
+      ...prev,
+      injurySite: prev.injurySite.split(', ').filter(item => item !== name).join(', '),
+    }));
+    setSelectedRegions(prev => prev.filter(r => r.id !== id));
+  };
+
+  const handleUpdateRegionNotes = (id: string, notes: string) => {
+    setSelectedRegions(prev =>
+      prev.map(r => (r.id === id ? { ...r, notes } : r))
+    );
+  };
+
+  const handleClearAllRegions = () => {
+    setFormData(prev => ({ ...prev, injurySite: '' }));
+    setSelectedRegions([]);
+  };
+
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // Validate required fields: name, email, birthdate, phone, and gender
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.dateOfBirth || !formData.phone || !formData.gender) {
       alert(t('patients.newPatient.validation.requiredFields'));
       setIsSubmitting(false);
       return;
     }
     
-    // If password is provided, validate it
     if (formData.password && formData.password.length < 6) {
       alert('Password must be at least 6 characters long');
       setIsSubmitting(false);
@@ -96,7 +172,6 @@ export default function NewPatientPage() {
     }
     
     try {
-      // Prepare the data for the API
       const addressParts = [formData.address, formData.city, formData.state, formData.zipCode].filter(Boolean);
       const addressString = addressParts.length > 0 ? addressParts.join(', ') : undefined;
       
@@ -111,7 +186,6 @@ export default function NewPatientPage() {
         currentMedications: formData.medications ? [formData.medications] : [],
       };
       
-      // Add password if provided (for patient login)
       if (formData.password) {
         patientData.password = formData.password;
       }
@@ -134,7 +208,6 @@ export default function NewPatientPage() {
         patientData.bloodType = formData.bloodType;
       }
 
-      // Add orthopedic fields
       if (formData.orthopedicHistory) {
         patientData.orthopedicHistory = [formData.orthopedicHistory];
       }
@@ -143,6 +216,13 @@ export default function NewPatientPage() {
       }
       if (formData.injurySite) {
         patientData.injurySite = formData.injurySite;
+      }
+      // NEW: إضافة injuryNotes و injuryLocations
+      if (formData.injuryNotes) {
+        patientData.injuryNotes = formData.injuryNotes;
+      }
+      if (selectedRegions.length > 0) {
+        patientData.injuryLocations = selectedRegions;
       }
       if (formData.injuryType) {
         patientData.injuryType = formData.injuryType;
@@ -187,7 +267,6 @@ export default function NewPatientPage() {
 
       if (response.ok) {
         alert(t('patients.newPatient.success.patientAdded'));
-        // Reset form
         setFormData({
           firstName: '',
           lastName: '',
@@ -208,6 +287,7 @@ export default function NewPatientPage() {
           orthopedicHistory: '',
           chiefComplaint: '',
           injurySite: '',
+          injuryNotes: '',
           injuryType: '',
           affectedJoint: '',
           painLevel: '',
@@ -222,11 +302,10 @@ export default function NewPatientPage() {
           emergencyPhone: '',
           emergencyRelationship: ''
         });
+        setSelectedRegions([]);
         setActiveSection('personal');
-        // Redirect to patients list
         window.location.href = '/patients';
       } else {
-        // Try to parse error response
         let errorMessage = 'Failed to create patient';
         try {
           const errorText = await response.text();
@@ -265,7 +344,6 @@ export default function NewPatientPage() {
         description={t('patients.newPatient.description')}
         dense
       >
-        {/* Header */}
         <div className="mb-2 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link
@@ -278,9 +356,7 @@ export default function NewPatientPage() {
           </div>
         </div>
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-3">
-          {/* Section Navigation */}
           <div className="rounded-lg border border-gray-100 bg-white p-2.5 shadow-sm">
             <div className="flex flex-wrap gap-1.5">
               {sections.map((section) => (
@@ -576,6 +652,34 @@ export default function NewPatientPage() {
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+
+                {/* NEW: خريطة موضع الإصابة */}
+                <div className="md:col-span-2">
+                  <h4 className="text-sm font-semibold mb-2">{t('patients.newPatient.sections.injuryMap')}</h4>
+                  <SkeletonMap
+                    selectedRegions={selectedRegions}
+                    onSelectRegion={handleSelectRegion}
+                    onDeselectRegion={handleDeselectRegion}
+                    onClearAll={handleClearAllRegions}
+                    onUpdateRegionNotes={handleUpdateRegionNotes}
+                    lang={locale}
+                  />
+                  <div className="mt-3">
+                    <label htmlFor="injuryNotes" className="block text-xs font-medium text-gray-700 sm:text-sm">
+                      {t('patients.newPatient.fields.injuryNotes')}
+                    </label>
+                    <textarea
+                      id="injuryNotes"
+                      name="injuryNotes"
+                      value={formData.injuryNotes}
+                      onChange={handleInputChange}
+                      rows={2}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                      placeholder={t('patients.newPatient.placeholders.injuryNotes')}
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label htmlFor="injurySite" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.injurySite')}
@@ -793,7 +897,6 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          {/* Action Buttons */}
           <div className="flex gap-2">
             <button
               type="submit"
