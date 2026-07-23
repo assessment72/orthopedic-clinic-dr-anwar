@@ -87,6 +87,12 @@ export async function POST(request: NextRequest) {
     if (body.injurySite) {
       cleanedData.injurySite = body.injurySite;
     }
+    if (body.injuryNotes) {
+      cleanedData.injuryNotes = body.injuryNotes;
+    }
+    if (body.injuryLocations) {
+      cleanedData.injuryLocations = body.injuryLocations;
+    }
     if (body.injuryType) {
       cleanedData.injuryType = body.injuryType;
     }

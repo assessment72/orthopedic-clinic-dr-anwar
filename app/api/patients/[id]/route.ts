@@ -111,6 +111,22 @@ export async function PUT(
     if (typeof body.injurySite === 'string') {
       patient.injurySite = body.injurySite.trim() || undefined;
     }
+    if (typeof body.injuryNotes === 'string') {
+      patient.injuryNotes = body.injuryNotes.trim() || undefined;
+    }
+    if (typeof body.injuryLocations === 'object' && body.injuryLocations !== null && Array.isArray(body.injuryLocations)) {
+      patient.injuryLocations = body.injuryLocations.map((item: any) => {
+        if (typeof item === 'object' && item !== null) {
+          return {
+            id: typeof item.id === 'string' ? item.id.trim() : '',
+            notes: typeof item.notes === 'string' ? item.notes.trim() : undefined,
+            diagnosis: typeof item.diagnosis === 'string' ? item.diagnosis.trim() : undefined,
+            xray: typeof item.xray === 'string' ? item.xray.trim() : undefined,
+          };
+        }
+        return { id: String(item) };
+      }).filter((item: any) => item.id);
+    }
     if (typeof body.injuryType === 'string') {
       patient.injuryType = body.injuryType.trim() || undefined;
     }

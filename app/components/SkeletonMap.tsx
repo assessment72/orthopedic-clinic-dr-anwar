@@ -104,7 +104,7 @@ export default function SkeletonMap({ selectedRegions, onSelectRegion, onDeselec
 
   const currentRegions = view === 'front' ? regionsData.front : regionsData.back;
 
-  const handleRegionClick = (region: any) => {
+  const handleRegionClick = (region: { id: string; label: string; path: string }) => {
     const existing = selectedRegions.find(r => r.id === region.id);
     if (existing) {
       setPopupRegion(existing);
@@ -198,4 +198,4 @@ export default function SkeletonMap({ selectedRegions, onSelectRegion, onDeselec
       )}
     </div>
   );
-        }
+}

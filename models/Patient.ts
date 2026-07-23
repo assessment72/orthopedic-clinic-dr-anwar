@@ -25,6 +25,13 @@ export interface IPatient {
   orthopedicHistory?: string[]; // تاريخ طبي خاص بالعظام (كسور سابقة، عمليات، أمراض مزمنة بالعظام)
   chiefComplaint?: string; // الشكوى الرئيسية الحالية للمريض (سبب الزيارة)
   injurySite?: string; // موضع الإصابة
+  injuryNotes?: string; // ملاحظات على الإصابة
+  injuryLocations?: Array<{ // مواقع الإصابة من خريطة الهيكل العظمي
+    id: string;
+    notes?: string;
+    diagnosis?: string;
+    xray?: string;
+  }>;
   injuryType?: string; // نوع الكسر أو الإصابة
   affectedJoint?: string; // المفصل المصاب
   painLevel?: number; // مستوى الألم (0-10)
@@ -148,6 +155,17 @@ const patientSchema = new mongoose.Schema<IPatient>(
       type: String,
       trim: true,
     },
+    injuryNotes: {
+      type: String,
+      required: false,
+      trim: true,
+    },
+    injuryLocations: [{
+      id: { type: String, required: true },
+      notes: { type: String, trim: true },
+      diagnosis: { type: String, trim: true },
+      xray: { type: String, trim: true },
+    }],
     injuryType: {
       type: String,
       trim: true,
