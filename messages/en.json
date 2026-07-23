@@ -3073,7 +3073,8 @@
           "appointmentOptimizer": "Appointment Optimizer",
           "riskAssessment": "Risk Assessment",
           "voiceTranscription": "Voice Transcription"
-        }
+        },
+        "followUpAppointments": "Follow-up Appointments"
       }
     },
     "noPatientsFound": "No patients found",

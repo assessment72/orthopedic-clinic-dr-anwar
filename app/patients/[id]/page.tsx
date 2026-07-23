@@ -633,15 +633,23 @@ export default function PatientViewPage() {
           )}
 
           {/* Medical History */}
-          {patient.medicalHistory && (
+          {(patient.medicalHistory && (Array.isArray(patient.medicalHistory) ? patient.medicalHistory.length > 0 : patient.medicalHistory)) && (
                     <div>
                       <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('patients.newPatient.view.medicalHistory')}</h2>
-                      <p className="text-sm text-gray-900">{patient.medicalHistory}</p>
+                      {Array.isArray(patient.medicalHistory) ? (
+                        <ul className="list-disc pl-5 space-y-1">
+                          {patient.medicalHistory.map((item: string, idx: number) => (
+                            <li key={idx} className="text-sm text-gray-900">{item}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-sm text-gray-900">{patient.medicalHistory}</p>
+                      )}
                     </div>
                   )}
 
           {/* Orthopedic Information */}
-          {(patient.orthopedicHistory || patient.chiefComplaint || patient.injurySite || patient.injuryType || patient.affectedJoint || patient.painLevel || patient.splintOrCast || patient.surgicalOperations || patient.physicalTherapy || patient.diagnosis || patient.treatmentPlan || patient.imagingStudies) && (
+          {(patient.orthopedicHistory || patient.chiefComplaint || patient.injurySite || patient.injuryType || patient.affectedJoint || patient.painLevel || patient.splintOrCast || patient.surgicalOperations || patient.physicalTherapy || patient.diagnosis || patient.treatmentPlan || patient.imagingStudies || patient.followUpAppointments) && (
             <div className="mt-6 border-t pt-6">
               <h2 className="mb-4 text-lg font-semibold text-gray-900">{t('patients.newPatient.view.orthopedicInfo')}</h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -716,9 +724,28 @@ export default function PatientViewPage() {
                     <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.imagingStudies')}</p>
                     <div className="space-y-1">
                       {patient.imagingStudies.map((study: any, index: number) => (
-                        <p key={index} className="text-sm text-gray-900">
-                          {study.type} - {new Date(study.date).toLocaleDateString()}
-                        </p>
+                        <div key={index} className="rounded border border-gray-200 bg-gray-50 p-2">
+                          <p className="text-sm font-medium text-gray-900">{study.type}</p>
+                          <p className="text-xs text-gray-500">{new Date(study.date).toLocaleDateString()}</p>
+                          {study.resultsSummary && (
+                            <p className="text-sm text-gray-700 mt-1">{study.resultsSummary}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {patient.followUpAppointments && patient.followUpAppointments.length > 0 && (
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">{t('patients.newPatient.view.followUpAppointments')}</p>
+                    <div className="space-y-1">
+                      {patient.followUpAppointments.map((appt: any, index: number) => (
+                        <div key={index} className="rounded border border-blue-200 bg-blue-50 p-2">
+                          <p className="text-sm font-medium text-blue-900">{new Date(appt.date).toLocaleDateString()}</p>
+                          {appt.notes && (
+                            <p className="text-sm text-blue-700 mt-1">{appt.notes}</p>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>

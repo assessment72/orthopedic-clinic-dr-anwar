@@ -61,7 +61,8 @@ export default function PatientEditPage() {
     physicalTherapy: '',
     diagnosis: '',
     treatmentPlan: '',
-    imaging: ''
+    imaging: '',
+    followUpDate: ''
   });
 
   useEffect(() => {
@@ -92,6 +93,10 @@ export default function PatientEditPage() {
           const imagingType = Array.isArray(data.imagingStudies) && data.imagingStudies.length > 0
             ? data.imagingStudies[0].type
             : '';
+          // Get the most recent followUp appointment date
+          const followUpDateStr = Array.isArray(data.followUpAppointments) && data.followUpAppointments.length > 0
+            ? new Date(data.followUpAppointments[data.followUpAppointments.length - 1].date).toISOString().split('T')[0]
+            : '';
 
           setFormData({
             name: data.name || '',
@@ -120,7 +125,8 @@ export default function PatientEditPage() {
             physicalTherapy: data.physicalTherapy || '',
             diagnosis: diagnosisStr,
             treatmentPlan: treatmentPlanStr,
-            imaging: imagingType
+            imaging: imagingType,
+            followUpDate: followUpDateStr
           });
         } else {
           setError(t('patients.newPatient.edit.patientNotFound'));
@@ -221,6 +227,9 @@ export default function PatientEditPage() {
           type: formData.imaging,
           date: new Date().toISOString()
         }];
+      }
+      if (formData.followUpDate) {
+        updateData.followUpDate = formData.followUpDate;
       }
 
       const response = await fetch(`/api/patients/${params.id}`, {
@@ -709,6 +718,19 @@ export default function PatientEditPage() {
                       <option value="CT Scan">CT Scan</option>
                       <option value="Ultrasound">Ultrasound</option>
                     </select>
+                  </div>
+                  <div>
+                    <label htmlFor="followUpDate" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
+                      {t('patients.newPatient.fields.followUpDate')}
+                    </label>
+                    <input
+                      type="date"
+                      id="followUpDate"
+                      name="followUpDate"
+                      value={formData.followUpDate}
+                      onChange={handleInputChange}
+                      className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    />
                   </div>
                 </div>
               </div>

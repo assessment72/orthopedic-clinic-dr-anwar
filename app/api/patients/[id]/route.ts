@@ -157,12 +157,50 @@ export async function PUT(
       patient.imagingStudies = body.imagingStudies;
     }
     if (typeof body.followUpAppointments === 'string') {
-      patient.followUpAppointments = body.followUpAppointments
-        .split('\n')
-        .map((line: string) => line.trim())
-        .filter(Boolean);
+      // Parse string as JSON or treat as a single date string
+      try {
+        const parsed = JSON.parse(body.followUpAppointments);
+        if (Array.isArray(parsed)) {
+          patient.followUpAppointments = parsed.map((item: any) => {
+            if (typeof item === 'object' && item !== null) {
+              return {
+                date: item.date ? new Date(item.date) : new Date(),
+                notes: typeof item.notes === 'string' ? item.notes.trim() : undefined,
+              };
+            }
+            return { date: new Date(item), notes: undefined };
+          }).filter((item: any) => !Number.isNaN(item.date.getTime()));
+        }
+      } catch {
+        // If it's not valid JSON, treat as a single date
+        const d = new Date(body.followUpAppointments);
+        if (!Number.isNaN(d.getTime())) {
+          patient.followUpAppointments = [{ date: d, notes: undefined }];
+        }
+      }
     } else if (Array.isArray(body.followUpAppointments)) {
-      patient.followUpAppointments = body.followUpAppointments.map(String).map((s: string) => s.trim()).filter(Boolean);
+      patient.followUpAppointments = body.followUpAppointments.map((item: any) => {
+        if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
+          return {
+            date: item.date ? new Date(String(item.date)) : new Date(),
+            notes: typeof item.notes === 'string' ? item.notes.trim() : undefined,
+          };
+        }
+        const d = new Date(String(item));
+        return { date: d, notes: undefined };
+      }).filter((item: any) => !Number.isNaN(item.date.getTime()));
+    }
+    if (body.followUpDate) {
+      const d = new Date(String(body.followUpDate));
+      if (!Number.isNaN(d.getTime())) {
+        // Add or update the followUpAppointments array
+        const existing = Array.isArray(patient.followUpAppointments) ? patient.followUpAppointments : [];
+        const newEntry = { date: d, notes: undefined };
+        if (!existing.some((e: any) => new Date(e.date).getTime() === d.getTime())) {
+          existing.push(newEntry);
+        }
+        patient.followUpAppointments = existing;
+      }
     }
 
     await patient.save();

@@ -1674,7 +1674,8 @@
           "appointmentOptimizer": "تحسين المواعيد",
           "riskAssessment": "تقييم المخاطر",
           "voiceTranscription": "التفريغ الصوتي"
-        }
+        },
+        "followUpAppointments": "مواعيد المتابعة"
       }
     }
   },
