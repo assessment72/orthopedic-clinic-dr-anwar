@@ -1,16 +1,17 @@
 'use client';
+
 export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation'; // بدلاً من useLocale
 import { 
   Users, 
   ArrowLeft, 
   Save, 
-  Plus,
   Phone,
   Mail,
   MapPin,
-  Calendar,
   FileText,
   Lock,
   AlertCircle
@@ -18,10 +19,8 @@ import {
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
 import { useTranslations } from '../../hooks/useTranslations';
-import SkeletonMap from '../../components/SkeletonMap'; // NEW
-import { useLocale } from 'next-intl'; // NEW
+import SkeletonMap from '../../components/SkeletonMap';
 
-// NEW: تعريف النوع للمنطقة المختارة
 interface SelectedRegion {
   id: string;
   notes?: string;
@@ -31,7 +30,9 @@ interface SelectedRegion {
 
 export default function NewPatientPage() {
   const { t } = useTranslations();
-  const locale = useLocale(); // NEW
+  const pathname = usePathname();
+  // استخراج اللغة من المسار (مثل /ar/patients/new → 'ar')
+  const locale = pathname?.split('/')[1] || 'ar';
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -53,7 +54,7 @@ export default function NewPatientPage() {
     orthopedicHistory: '',
     chiefComplaint: '',
     injurySite: '',
-    injuryNotes: '', // NEW
+    injuryNotes: '',
     injuryType: '',
     affectedJoint: '',
     painLevel: '',
@@ -69,20 +70,16 @@ export default function NewPatientPage() {
     emergencyRelationship: ''
   });
 
-  // NEW: حالة المناطق المختارة
   const [selectedRegions, setSelectedRegions] = useState<SelectedRegion[]>([]);
-
   const [activeSection, setActiveSection] = useState('personal');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // NEW: دوال خريطة الهيكل العظمي
+  // دوال خريطة الهيكل العظمي
   const getRegionName = (id: string) => {
     const names: Record<string, Record<'ar' | 'en', string>> = {
       skull: { ar: 'الجمجمة', en: 'Skull' },
@@ -153,8 +150,6 @@ export default function NewPatientPage() {
     setSelectedRegions([]);
   };
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -217,7 +212,6 @@ export default function NewPatientPage() {
       if (formData.injurySite) {
         patientData.injurySite = formData.injurySite;
       }
-      // NEW: إضافة injuryNotes و injuryLocations
       if (formData.injuryNotes) {
         patientData.injuryNotes = formData.injuryNotes;
       }
@@ -255,13 +249,9 @@ export default function NewPatientPage() {
         }];
       }
 
-      console.log('Form data being sent:', patientData);
-
       const response = await fetch('/api/patients', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(patientData),
       });
 
@@ -318,7 +308,6 @@ export default function NewPatientPage() {
         } catch (parseError) {
           errorMessage = `Server error: ${response.status} ${response.statusText}`;
         }
-        console.error('Error response status:', response.status, 'Message:', errorMessage);
         alert(`Error: ${errorMessage}`);
       }
     } catch (error) {
@@ -385,6 +374,7 @@ export default function NewPatientPage() {
                 {t('patients.newPatient.sections.personal')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
+                {/* ... نفس الحقول السابقة ... */}
                 <div>
                   <label htmlFor="firstName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.firstName')} *
@@ -653,7 +643,7 @@ export default function NewPatientPage() {
                   />
                 </div>
 
-                {/* NEW: خريطة موضع الإصابة */}
+                {/* خريطة موضع الإصابة */}
                 <div className="md:col-span-2">
                   <h4 className="text-sm font-semibold mb-2">{t('patients.newPatient.sections.injuryMap')}</h4>
                   <SkeletonMap
@@ -917,4 +907,4 @@ export default function NewPatientPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-}
+                            }
