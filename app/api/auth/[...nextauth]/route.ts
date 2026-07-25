@@ -6,6 +6,7 @@ import dbConnect from '../../../../lib/mongodb';
 import User from '../../../../models/User';
 import Patient from '../../../../models/Patient';
 import bcrypt from 'bcryptjs';
+import { logLoginActivity } from '../../../../lib/auth-logger';
 
 /** Demo/staff emails must authenticate via User, not Patient — avoids wrong portal when DB is mis-seeded */
 const STAFF_ONLY_EMAILS = new Set(['admin@aidoc.com', 'doctor@aidoc.com', 'staff@aidoc.com']);
@@ -45,14 +46,34 @@ export const authOptions: AuthOptions = {
                 const safeRole = ['admin', 'doctor', 'staff', 'patient'].includes(role)
                   ? role
                   : 'doctor';
-                return {
+                const userData = {
                   id: user._id.toString(),
                   email: user.email,
                   name: user.name,
                   role: safeRole,
                   image: user.image,
                 };
+
+                // Log successful login
+                await logLoginActivity({
+                  email: user.email,
+                  role: safeRole,
+                  status: 'success',
+                  userId: user._id.toString(),
+                  userName: user.name,
+                  req: credentials,
+                });
+
+                return userData;
             }
+            // Log failed login (wrong password)
+            await logLoginActivity({
+              email,
+              role: user.role || 'unknown',
+              status: 'failed',
+              reason: 'Invalid password',
+              req: credentials,
+            });
             return null;
           }
 
@@ -75,7 +96,7 @@ export const authOptions: AuthOptions = {
             
               const isValidPassword = await bcrypt.compare(credentials.password, patient.password);
               if (isValidPassword) {
-                return {
+                const patientData = {
                   id: patient._id.toString(),
                   email: patient.email,
                   name: patient.name,
@@ -83,9 +104,38 @@ export const authOptions: AuthOptions = {
                   image: null,
                   patientId: patient.patientId,
                 };
+
+                // Log successful login
+                await logLoginActivity({
+                  email: patient.email,
+                  role: 'patient',
+                  status: 'success',
+                  userId: patient._id.toString(),
+                  userName: patient.name,
+                  req: credentials,
+                });
+
+                return patientData;
             }
+            // Log failed login (wrong password)
+            await logLoginActivity({
+              email,
+              role: 'patient',
+              status: 'failed',
+              reason: 'Invalid password',
+              req: credentials,
+            });
             return null;
           }
+
+          // User/Patient not found - log failed login
+          await logLoginActivity({
+            email,
+            role: 'unknown',
+            status: 'failed',
+            reason: 'User not found',
+            req: credentials,
+          });
 
           return null;
         } catch (error) {

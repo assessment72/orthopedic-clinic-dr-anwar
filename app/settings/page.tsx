@@ -19,7 +19,8 @@ import {
   MapPin,
   Shield,
   Palette,
-  ImageIcon
+  ImageIcon,
+  History
 } from 'lucide-react';
 import { getCurrencySelectOptions } from '@/lib/currencies';
 
@@ -404,6 +405,14 @@ export default function SettingsPage() {
                     <ImageIcon className="h-4 w-4 shrink-0" />
                     <span>{t('settings.invoiceLogo')}</span>
                   </button>
+
+                  <Link
+                    href="/settings/login-activity"
+                    className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                  >
+                    <History className="h-4 w-4 shrink-0" />
+                    <span>{t('settings.loginActivity')}</span>
+                  </Link>
                 </nav>
               </div>
             </div>
