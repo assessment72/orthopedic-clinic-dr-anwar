@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/mongodb';
 import Patient from '@/models/Patient';
+import { logActivity } from '@/lib/activity-logger';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 const BLOOD_TYPES = new Set(['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']);
 const GENDERS = new Set(['male', 'female', 'other', 'prefer-not-to-say']);
@@ -221,9 +224,42 @@ export async function PUT(
 
     await patient.save();
 
+    // Log activity
+    const session = await getServerSession(authOptions);
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'update_patient',
+      target: id,
+      targetType: 'patient',
+      details: { patientName: patient.name, patientEmail: patient.email },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json(patient);
   } catch (error: unknown) {
     console.error('Error updating patient:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      const { id: failId } = await params;
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'update_patient',
+        target: failId,
+        targetType: 'patient',
+        status: 'failed',
+        error: (error as any)?.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
     const err = error as { name?: string; code?: number; errors?: Record<string, { message: string }>; message?: string };
     if (err.name === 'ValidationError' && err.errors) {
       const details = Object.values(err.errors).map((e) => e.message);
@@ -258,9 +294,43 @@ export async function DELETE(
       );
     }
     
+    // Log activity
+    const session = await getServerSession(authOptions);
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'delete_patient',
+      target: id,
+      targetType: 'patient',
+      details: { patientName: patient.name, patientEmail: patient.email },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json({ message: 'Patient deleted successfully' });
   } catch (error) {
     console.error('Error deleting patient:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      const { id: failId } = await params;
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'delete_patient',
+        target: failId,
+        targetType: 'patient',
+        status: 'failed',
+        error: (error as any)?.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: 'Failed to delete patient' },
       { status: 500 }

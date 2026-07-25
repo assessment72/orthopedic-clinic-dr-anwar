@@ -5,6 +5,7 @@ import dbConnect from '@/lib/mongodb';
 import Invoice from '@/models/Invoice';
 import Payment from '@/models/Payment';
 import Patient from '@/models/Patient';
+import { logActivity } from '@/lib/activity-logger';
 
 export async function GET(
   request: NextRequest,
@@ -121,9 +122,49 @@ export async function PUT(
 
     await invoice.save();
 
+    // Log activity — detect pay vs update
+    const isPay = body.status === 'paid' || (body.paymentMethod);
+    const action: 'update_invoice' | 'pay_invoice' = isPay ? 'pay_invoice' : 'update_invoice';
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action,
+      target: id,
+      targetType: 'invoice',
+      details: {
+        invoiceNumber: invoice.invoiceNumber,
+        patientName: invoice.patientName,
+        total: invoice.total,
+        newStatus: invoice.status,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json({ invoice });
   } catch (error: any) {
     console.error('Error updating invoice:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      const { id: failId } = await params;
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'update_invoice',
+        target: failId,
+        targetType: 'invoice',
+        status: 'failed',
+        error: error.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: error.message || 'Failed to update invoice' },
       { status: 500 }
@@ -163,9 +204,46 @@ export async function DELETE(
 
     await Invoice.findByIdAndDelete(id);
 
+    // Log activity
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'delete_invoice',
+      target: id,
+      targetType: 'invoice',
+      details: {
+        invoiceNumber: invoice.invoiceNumber,
+        patientName: invoice.patientName,
+        total: invoice.total,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json({ message: 'Invoice deleted successfully' });
   } catch (error: any) {
     console.error('Error deleting invoice:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      const { id: failId } = await params;
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'delete_invoice',
+        target: failId,
+        targetType: 'invoice',
+        status: 'failed',
+        error: error.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: error.message || 'Failed to delete invoice' },
       { status: 500 }

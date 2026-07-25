@@ -4,6 +4,7 @@ import { authOptions } from '../../auth/[...nextauth]/route';
 import dbConnect from '@/lib/mongodb';
 import Payment from '@/models/Payment';
 import Invoice from '@/models/Invoice';
+import { logActivity } from '@/lib/activity-logger';
 
 export async function GET(request: NextRequest) {
   try {
@@ -134,9 +135,47 @@ export async function POST(request: NextRequest) {
 
     await invoice.save();
 
+    // Log activity
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'pay_invoice',
+      target: invoiceId,
+      targetType: 'invoice',
+      details: {
+        paymentNumber,
+        invoiceNumber: invoice.invoiceNumber,
+        patientName: invoice.patientName,
+        amount,
+        paymentMethod,
+        newInvoiceStatus: invoice.status,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json({ payment }, { status: 201 });
   } catch (error: any) {
     console.error('Error creating payment:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'pay_invoice',
+        targetType: 'invoice',
+        status: 'failed',
+        error: error.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: error.message || 'Failed to create payment' },
       { status: 500 }

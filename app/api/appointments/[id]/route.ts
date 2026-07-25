@@ -6,6 +6,9 @@ import {
   normalizeTimeLabel,
 } from '@/lib/appointmentSlotting';
 import TelemedicineSession from '../../../../models/TelemedicineSession';
+import { logActivity } from '@/lib/activity-logger';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../../auth/[...nextauth]/route';
 
 export async function GET(
   request: NextRequest,
@@ -137,7 +140,29 @@ export async function PUT(
         _id: result._id?.toString?.() ?? result._id,
         location: result.location ?? '',
       };
-      
+
+      // Log activity — detect cancel vs update
+      const newStatus = String(body.status || result.status || '').toLowerCase();
+      const isCancel = newStatus === 'cancelled' || newStatus === 'canceled';
+      const session = await getServerSession(authOptions);
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: isCancel ? 'cancel_appointment' : 'update_appointment',
+        target: id,
+        targetType: 'appointment',
+        details: {
+          patientName: body.patientName || result.patientName,
+          doctorName: body.doctorName || result.doctorName,
+          appointmentDate: body.appointmentDate || result.appointmentDate,
+          appointmentTime: body.appointmentTime || result.appointmentTime,
+          newStatus: result.status,
+        },
+        status: 'success',
+        req: request,
+      });
+
       return NextResponse.json(response);
     }
     
@@ -160,10 +185,52 @@ export async function PUT(
       _id: (fallbackAppointment as any)._id?.toString?.() ?? (fallbackAppointment as any)._id,
       location: (fallbackAppointment as any).location ?? '',
     };
-    
+
+    // Log activity — detect cancel vs update
+    const newStatus = String(body.status || fallbackAppointment.status || '').toLowerCase();
+    const isCancel = newStatus === 'cancelled' || newStatus === 'canceled';
+    const session = await getServerSession(authOptions);
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: isCancel ? 'cancel_appointment' : 'update_appointment',
+      target: id,
+      targetType: 'appointment',
+      details: {
+        patientName: body.patientName || fallbackAppointment.patientName,
+        doctorName: body.doctorName || fallbackAppointment.doctorName,
+        appointmentDate: body.appointmentDate || fallbackAppointment.appointmentDate,
+        appointmentTime: body.appointmentTime || fallbackAppointment.appointmentTime,
+        newStatus: fallbackAppointment.status,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json(response);
   } catch (error) {
     console.error('Error updating appointment:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      const { id: failId } = await params;
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'update_appointment',
+        target: failId,
+        targetType: 'appointment',
+        status: 'failed',
+        error: (error as any)?.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: 'Failed to update appointment' },
       { status: 500 }
@@ -194,12 +261,51 @@ export async function DELETE(
 
     await Appointment.findByIdAndDelete(id);
 
+    // Log activity
+    const session = await getServerSession(authOptions);
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'delete_appointment',
+      target: id,
+      targetType: 'appointment',
+      details: {
+        patientName: (appointment as any).patientName,
+        doctorName: (appointment as any).doctorName,
+        appointmentDate: (appointment as any).appointmentDate,
+        appointmentTime: (appointment as any).appointmentTime,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json({
       message: 'Appointment deleted successfully',
       telemedicineDeleted: !!telemedicineSessionId,
     });
   } catch (error) {
     console.error('Error deleting appointment:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      const { id: failId } = await params;
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'delete_appointment',
+        target: failId,
+        targetType: 'appointment',
+        status: 'failed',
+        error: (error as any)?.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: 'Failed to delete appointment' },
       { status: 500 }

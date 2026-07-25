@@ -4,6 +4,7 @@ import { authOptions } from '../../auth/[...nextauth]/route';
 import dbConnect from '@/lib/mongodb';
 import Invoice from '@/models/Invoice';
 import Patient from '@/models/Patient';
+import { logActivity } from '@/lib/activity-logger';
 import { sendPaymentDueReminder } from '@/lib/notifications/notification-service';
 
 export async function GET(request: NextRequest) {
@@ -149,9 +150,46 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Log activity
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'create_invoice',
+      target: (invoice._id as any).toString(),
+      targetType: 'invoice',
+      details: {
+        invoiceNumber,
+        patientName: patient.name,
+        patientEmail: patient.email,
+        total: finalTotal,
+        status,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json({ invoice }, { status: 201 });
   } catch (error: any) {
     console.error('Error creating invoice:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'create_invoice',
+        targetType: 'invoice',
+        status: 'failed',
+        error: error.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: error.message || 'Failed to create invoice' },
       { status: 500 }

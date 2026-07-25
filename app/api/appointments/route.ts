@@ -6,6 +6,7 @@ import dbConnect from '@/lib/mongodb';
 import Appointment from '@/models/Appointment';
 import TelemedicineSession from '@/models/TelemedicineSession';
 import { scheduleAppointmentReminder } from '@/lib/notifications/notification-service';
+import { logActivity } from '@/lib/activity-logger';
 import { getSystemCurrency } from '@/lib/getSystemCurrency';
 import {
   normalizeAppointmentDateForStorage,
@@ -354,9 +355,45 @@ export async function POST(request: NextRequest) {
       }
     }
     
+    // Log activity
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'create_appointment',
+      target: (response as any)._id?.toString?.() ?? (response as any)._id,
+      targetType: 'appointment',
+      details: {
+        patientName: body.patientName,
+        doctorName: body.doctorName,
+        appointmentDate: body.appointmentDate,
+        appointmentTime: body.appointmentTime,
+      },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json(response, { status: 201 });
   } catch (error) {
     console.error('Error creating appointment:', error);
+
+    // Log failed activity
+    try {
+      const session = await getServerSession(authOptions);
+      await logActivity({
+        userId: session?.user?.id,
+        userEmail: session?.user?.email,
+        userName: session?.user?.name,
+        action: 'create_appointment',
+        targetType: 'appointment',
+        status: 'failed',
+        error: (error as any)?.message,
+        req: request,
+      });
+    } catch {
+      // ignore logging failure
+    }
+
     return NextResponse.json(
       { error: 'Failed to create appointment' },
       { status: 500 }

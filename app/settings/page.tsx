@@ -12,7 +12,7 @@ import Link from 'next/link';
 import { 
   ArrowLeft, 
   Save, 
-  RotateCcw, 
+  RotateCcw,
   Settings as SettingsIcon,
   Bell,
   Clock,
@@ -20,7 +20,8 @@ import {
   Shield,
   Palette,
   ImageIcon,
-  History
+  History,
+  Activity as ActivityIcon
 } from 'lucide-react';
 import { getCurrencySelectOptions } from '@/lib/currencies';
 
@@ -412,6 +413,14 @@ export default function SettingsPage() {
                   >
                     <History className="h-4 w-4 shrink-0" />
                     <span>{t('settings.loginActivity')}</span>
+                  </Link>
+
+                  <Link
+                    href="/settings/activity-logs"
+                    className="flex w-full items-center gap-2 rounded-md px-2.5 py-2 text-left text-xs font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-gray-900"
+                  >
+                    <ActivityIcon className="h-4 w-4 shrink-0" />
+                    <span>{t('activity.logs.title')}</span>
                   </Link>
                 </nav>
               </div>

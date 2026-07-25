@@ -3,6 +3,9 @@ import dbConnect from '@/lib/mongodb';
 import Patient from '@/models/Patient';
 import User from '@/models/User';
 import bcrypt from 'bcryptjs';
+import { logActivity } from '@/lib/activity-logger';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '../auth/[...nextauth]/route';
 
 export async function GET() {
   try {
@@ -211,9 +214,37 @@ export async function POST(request: NextRequest) {
       }
     }
     
+    // Log activity
+    const session = await getServerSession(authOptions);
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'create_patient',
+      target: (patient._id as any).toString(),
+      targetType: 'patient',
+      details: { patientName: patient.name, patientEmail: patient.email, patientId: patient.patientId },
+      status: 'success',
+      req: request,
+    });
+
     return NextResponse.json(patient, { status: 201 });
   } catch (error: any) {
     console.error('Error creating patient:', error);
+
+    // Log failed activity
+    const session = await getServerSession(authOptions);
+    await logActivity({
+      userId: session?.user?.id,
+      userEmail: session?.user?.email,
+      userName: session?.user?.name,
+      action: 'create_patient',
+      targetType: 'patient',
+      details: { errorDetail: error.message },
+      status: 'failed',
+      error: error.message,
+      req: request,
+    });
     
     // Handle duplicate key error (e.g., duplicate email)
     if (error.code === 11000) {
