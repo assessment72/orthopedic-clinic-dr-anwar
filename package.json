@@ -25,7 +25,7 @@
     "cookies-next": "^6.1.0",
     "dicom-parser": "^1.8.21",
     "html2canvas": "^1.4.1",
-    "jspdf": "^4.0.0",
+    "jspdf": "^2.5.1",
     "libphonenumber-js": "^1.12.41",
     "lucide-react": "^0.555.0",
     "mongodb": "^6.18.0",
