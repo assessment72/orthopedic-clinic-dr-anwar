@@ -1443,7 +1443,14 @@
       "endDate": "تاريخ النهاية",
       "searchBtn": "بحث",
       "showing": "عرض صفحة",
-      "of": "من"
+      "of": "من",
+      "export": "تصدير",
+      "exportPDF": "تصدير PDF",
+      "exportExcel": "تصدير Excel",
+      "exporting": "جاري التصدير...",
+      "role": "الدور",
+      "allRoles": "جميع الأدوار",
+      "noData": "لا توجد بيانات للتصدير"
     }
   },
   "calendar": {

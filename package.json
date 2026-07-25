@@ -40,7 +40,9 @@
     "react-hot-toast": "^2.6.0",
     "recharts": "^3.7.0",
     "twilio": "^5.12.1",
-    "ua-parser-js": "^2.0.0"
+    "ua-parser-js": "^2.0.0",
+    "jspdf-autotable": "^3.8.4",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^0.1.0",

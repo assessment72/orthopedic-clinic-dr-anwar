@@ -17,8 +17,13 @@ import {
   Globe,
   Clock,
   Filter,
+  FileText,
+  FileSpreadsheet,
+  Download,
 } from 'lucide-react';
 import Link from 'next/link';
+import { jsPDF } from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const ACTION_ENUM = [
   'login_success',
@@ -49,10 +54,11 @@ const TARGET_TYPE_ENUM = [
 export default function ActivityLogsPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const { t, translationsLoaded } = useTranslations();
+  const { t, translationsLoaded, currentLanguage } = useTranslations();
   const [activities, setActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [pagination, setPagination] = useState<any>({ currentPage: 1, pages: 1 });
+  const [exporting, setExporting] = useState<'pdf' | 'excel' | null>(null);
   const [filters, setFilters] = useState({
     search: '',
     action: '',
@@ -149,6 +155,138 @@ export default function ActivityLogsPage() {
     return parts.length > 0 ? parts.join(' ') : '-';
   };
 
+  // Fetch all filtered data for export
+  const fetchAllForExport = async () => {
+    const queryParams = new URLSearchParams({
+      export: '1',
+      search: filters.search,
+      action: filters.action,
+      targetType: filters.targetType,
+      status: filters.status,
+      role: filters.role,
+    });
+    if (filters.startDate) queryParams.set('startDate', filters.startDate);
+    if (filters.endDate) queryParams.set('endDate', filters.endDate);
+
+    const res = await fetch(`/api/admin/activity-logs?${queryParams}`);
+    const data = await res.json();
+    return data.activities || [];
+  };
+
+  const getExportTimestamp = () => {
+    return new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
+  };
+
+  const handleExportPDF = async () => {
+    setExporting('pdf');
+    try {
+      const allActivities = await fetchAllForExport();
+      if (!allActivities.length) {
+        alert(t('activity.logs.noData') || 'No data to export');
+        return;
+      }
+
+      const doc = new jsPDF('landscape', 'mm', 'a4');
+      const isRtl = currentLanguage === 'ar';
+
+      // Title
+      doc.setFontSize(16);
+      doc.text(isRtl ? 'سجل الأنشطة' : 'Activity Logs', 14, 16);
+      doc.setFontSize(9);
+      doc.setTextColor(128);
+      doc.text(
+        `${new Date().toLocaleDateString('en-US')} — ${allActivities.length} records`,
+        14,
+        23
+      );
+
+      // Table data
+      const head = [
+        [isRtl ? 'المستخدم' : 'User', isRtl ? 'الدور' : 'Role', isRtl ? 'الإجراء' : 'Action', isRtl ? 'الهدف' : 'Target', isRtl ? 'التفاصيل' : 'Details', isRtl ? 'عنوان IP' : 'IP Address', isRtl ? 'الحالة' : 'Status', isRtl ? 'التاريخ والوقت' : 'Date & Time'],
+      ];
+
+      const body = allActivities.map((act: any) => [
+        `${act.userName || 'Unknown'}\n${act.userEmail || '-'}`,
+        act.userRole || '-',
+        t(`activity.actions.${act.action}`) || act.action,
+        targetDisplay(act),
+        renderDetails(act.details),
+        act.ip || 'N/A',
+        act.status === 'success' ? (isRtl ? 'ناجح' : 'Success') : (isRtl ? 'فشل' : 'Failed'),
+        formatDate(act.timestamp),
+      ]);
+
+      autoTable(doc, {
+        head,
+        body,
+        startY: 28,
+        styles: { fontSize: 7, cellPadding: 2 },
+        headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [245, 247, 250] },
+        columnStyles: {
+          0: { cellWidth: 40 },
+          1: { cellWidth: 20 },
+          2: { cellWidth: 30 },
+          3: { cellWidth: 25 },
+          4: { cellWidth: 50 },
+          5: { cellWidth: 25 },
+          6: { cellWidth: 20 },
+          7: { cellWidth: 35 },
+        },
+        margin: { left: 10, right: 10 },
+      });
+
+      doc.save(`activity-logs-${getExportTimestamp()}.pdf`);
+    } catch (error) {
+      console.error('PDF export failed:', error);
+    } finally {
+      setExporting(null);
+    }
+  };
+
+  const handleExportExcel = async () => {
+    setExporting('excel');
+    try {
+      const allActivities = await fetchAllForExport();
+      if (!allActivities.length) {
+        alert(t('activity.logs.noData') || 'No data to export');
+        return;
+      }
+
+      const XLSX = await import('xlsx');
+
+      const data = allActivities.map((act: any) => ({
+        [t('activity.logs.user') || 'User']: `${act.userName || 'Unknown'} (${act.userEmail || '-'})`,
+        [t('activity.logs.role') || 'Role']: act.userRole || '-',
+        [t('activity.logs.action') || 'Action']: t(`activity.actions.${act.action}`) || act.action,
+        [t('activity.logs.target') || 'Target']: targetDisplay(act),
+        [t('activity.logs.details') || 'Details']: renderDetails(act.details),
+        [t('activity.logs.ip') || 'IP Address']: act.ip || 'N/A',
+        [t('activity.logs.status') || 'Status']: act.status === 'success'
+          ? (t('activity.logs.success') || 'Success')
+          : (t('activity.logs.failed') || 'Failed'),
+        [t('activity.logs.date') || 'Date & Time']: formatDate(act.timestamp),
+        'Error': act.error || '',
+      }));
+
+      const ws = XLSX.utils.json_to_sheet(data);
+
+      // Auto-width columns
+      const colWidths = Object.keys(data[0]).map((key) => ({
+        wch: Math.max(key.length + 2, 15),
+      }));
+      ws['!cols'] = colWidths;
+
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, t('activity.logs.title') || 'Activity Logs');
+      XLSX.writeFile(wb, `activity-logs-${getExportTimestamp()}.xlsx`);
+    } catch (error) {
+      console.error('Excel export failed:', error);
+    } finally {
+      setExporting(null);
+    }
+  };
+
   if (status === 'loading' || (loading && activities.length === 0)) {
     return (
       <ProtectedRoute>
@@ -179,6 +317,44 @@ export default function ActivityLogsPage() {
               <ArrowLeft className="mr-2 h-4 w-4" />
               {t('activity.logs.backToSettings') || 'Back to Settings'}
             </Link>
+
+            {/* Export Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleExportPDF}
+                disabled={exporting !== null}
+                className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              >
+                {exporting === 'pdf' ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-500 border-t-transparent" />
+                    {t('activity.logs.exporting') || 'Exporting...'}
+                  </>
+                ) : (
+                  <>
+                    <FileText className="h-4 w-4 text-red-500" />
+                    {t('activity.logs.exportPDF') || 'Export PDF'}
+                  </>
+                )}
+              </button>
+              <button
+                onClick={handleExportExcel}
+                disabled={exporting !== null}
+                className="flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+              >
+                {exporting === 'excel' ? (
+                  <>
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-green-500 border-t-transparent" />
+                    {t('activity.logs.exporting') || 'Exporting...'}
+                  </>
+                ) : (
+                  <>
+                    <FileSpreadsheet className="h-4 w-4 text-green-600" />
+                    {t('activity.logs.exportExcel') || 'Export Excel'}
+                  </>
+                )}
+              </button>
+            </div>
           </div>
 
           {/* Filters */}

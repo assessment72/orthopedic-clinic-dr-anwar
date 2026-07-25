@@ -57,7 +57,14 @@
       "endDate": "End Date",
       "searchBtn": "Search",
       "showing": "Showing page",
-      "of": "of"
+      "of": "of",
+      "export": "Export",
+      "exportPDF": "Export PDF",
+      "exportExcel": "Export Excel",
+      "exporting": "Exporting...",
+      "role": "Role",
+      "allRoles": "All Roles",
+      "noData": "No data to export"
     }
   },
   "ai": {
