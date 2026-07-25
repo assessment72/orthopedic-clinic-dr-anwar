@@ -33,6 +33,7 @@ interface LogActivityParams {
   userId?: string;
   userEmail?: string;
   userName?: string;
+  userRole?: string;
   action: ActivityAction;
   target?: string;
   targetType?: TargetType;
@@ -95,6 +96,7 @@ export async function logActivity(params: LogActivityParams): Promise<void> {
       user: params.userId,
       userEmail: params.userEmail,
       userName: params.userName,
+      userRole: params.userRole,
       action: params.action,
       target: params.target,
       targetType: params.targetType,
@@ -128,6 +130,7 @@ export function logFromSession(
     userId: session?.user?.id,
     userEmail: session?.user?.email ?? undefined,
     userName: session?.user?.name ?? undefined,
+    userRole: session?.user?.role ?? undefined,
     action,
     target,
     targetType,

@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     const action = searchParams.get('action') || '';
     const targetType = searchParams.get('targetType') || '';
     const status = searchParams.get('status') || '';
+    const role = searchParams.get('role') || '';
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
@@ -29,6 +30,10 @@ export async function GET(req: NextRequest) {
     // Non-admin users can only see their own activities
     if (session.user.role !== 'admin') {
       query.userEmail = session.user.email;
+    }
+
+    if (role && session.user.role === 'admin') {
+      query.userRole = role;
     }
 
     if (search) {

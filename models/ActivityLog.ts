@@ -32,7 +32,8 @@ export interface IActivityLog {
   user?: mongoose.Types.ObjectId;
   userEmail?: string;
   userName?: string;
-  action: (typeof ACTION_ENUM)[number];
+  userRole?: string;
+  action: (typeof ACTION_ENUM)[number]
   target?: string;
   targetType?: (typeof TARGET_TYPE_ENUM)[number];
   details?: Record<string, any>;
@@ -53,6 +54,9 @@ const activityLogSchema = new mongoose.Schema<IActivityLog>(
       type: String,
     },
     userName: {
+      type: String,
+    },
+    userRole: {
       type: String,
     },
     action: {
@@ -101,6 +105,7 @@ activityLogSchema.index({ userEmail: 1, timestamp: -1 });
 activityLogSchema.index({ targetType: 1, timestamp: -1 });
 activityLogSchema.index({ status: 1, timestamp: -1 });
 activityLogSchema.index({ user: 1, timestamp: -1 });
+activityLogSchema.index({ userRole: 1, timestamp: -1 });
 
 export default mongoose.models.ActivityLog ||
   mongoose.model<IActivityLog>('ActivityLog', activityLogSchema);

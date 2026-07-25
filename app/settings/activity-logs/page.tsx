@@ -58,6 +58,7 @@ export default function ActivityLogsPage() {
     action: '',
     targetType: '',
     status: '',
+    role: '',
     startDate: '',
     endDate: '',
     page: 1,
@@ -80,6 +81,7 @@ export default function ActivityLogsPage() {
         action: filters.action,
         targetType: filters.targetType,
         status: filters.status,
+        role: filters.role,
       });
       if (filters.startDate) queryParams.set('startDate', filters.startDate);
       if (filters.endDate) queryParams.set('endDate', filters.endDate);
@@ -101,7 +103,7 @@ export default function ActivityLogsPage() {
     if (translationsLoaded && session?.user?.role && ['admin', 'doctor', 'staff'].includes(session.user.role)) {
       fetchActivities();
     }
-  }, [filters.page, filters.action, filters.targetType, filters.status, session, translationsLoaded]);
+  }, [filters.page, filters.action, filters.targetType, filters.status, filters.role, session, translationsLoaded]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -233,6 +235,21 @@ export default function ActivityLogsPage() {
                 <option value="failed">{t('activity.logs.failed') || 'Failed'}</option>
               </select>
 
+              {/* Role filter (admin only) */}
+              {session?.user?.role === 'admin' && (
+                <select
+                  className="rounded-lg border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
+                  value={filters.role}
+                  onChange={(e) => setFilters({ ...filters, role: e.target.value })}
+                >
+                  <option value="">{t('activity.logs.allRoles') || 'All Roles'}</option>
+                  <option value="admin">Admin</option>
+                  <option value="doctor">Doctor</option>
+                  <option value="staff">Staff</option>
+                  <option value="patient">Patient</option>
+                </select>
+              )}
+
               {/* Date filters */}
               <input
                 type="date"
@@ -266,6 +283,7 @@ export default function ActivityLogsPage() {
                 <thead className="bg-gray-50 text-xs font-semibold uppercase text-gray-600">
                   <tr>
                     <th className="px-4 py-3">{t('activity.logs.user') || 'User'}</th>
+                    <th className="px-4 py-3">{t('activity.logs.role') || 'Role'}</th>
                     <th className="px-4 py-3">{t('activity.logs.action') || 'Action'}</th>
                     <th className="px-4 py-3">{t('activity.logs.target') || 'Target'}</th>
                     <th className="px-4 py-3">{t('activity.logs.details') || 'Details'}</th>
@@ -283,6 +301,13 @@ export default function ActivityLogsPage() {
                           {activity.userName || 'Unknown'}
                         </div>
                         <div className="text-xs text-gray-500">{activity.userEmail || '-'}</div>
+                      </td>
+
+                      {/* Role */}
+                      <td className="px-4 py-3">
+                        <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">
+                          {activity.userRole || '-'}
+                        </span>
                       </td>
 
                       {/* Action */}
@@ -341,7 +366,7 @@ export default function ActivityLogsPage() {
                   ))}
                   {activities.length === 0 && !loading && (
                     <tr>
-                      <td colSpan={7} className="px-6 py-10 text-center text-gray-500">
+                      <td colSpan={8} className="px-6 py-10 text-center text-gray-500">
                         {t('activity.logs.noResults') || 'No activity logs found'}
                       </td>
                     </tr>
