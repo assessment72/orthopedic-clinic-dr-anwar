@@ -177,30 +177,109 @@ export default function ActivityLogsPage() {
     return new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   };
 
+  // ===================== PDF EXPORT WITH CLINIC INFO =====================
   const handleExportPDF = async () => {
     setExporting('pdf');
     try {
+      // 1. Fetch all activities
       const allActivities = await fetchAllForExport();
       if (!allActivities.length) {
         alert(t('activity.logs.noData') || 'No data to export');
         return;
       }
 
+      // 2. Fetch clinic settings
+      let clinic = { systemTitle: '', address: '', phone: '', email: '', invoiceLogoUrl: '' };
+      try {
+        const clinicRes = await fetch('/api/settings');
+        const data = await clinicRes.json();
+        clinic = {
+          systemTitle: data.systemTitle || (currentLanguage === 'ar' ? 'عيادتي' : 'My Clinic'),
+          address: data.address || '',
+          phone: data.phone || '',
+          email: data.email || '',
+          invoiceLogoUrl: data.invoiceLogoUrl || '',
+        };
+      } catch (e) {
+        console.warn('Could not fetch clinic settings, using defaults.', e);
+      }
+
       const doc = new jsPDF('landscape', 'mm', 'a4');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const pageHeight = doc.internal.pageSize.getHeight();
       const isRtl = currentLanguage === 'ar';
+      const margin = 14;
+      let y = margin;
 
-      // Title
-      doc.setFontSize(16);
-      doc.text(isRtl ? 'سجل الأنشطة' : 'Activity Logs', 14, 16);
-      doc.setFontSize(9);
-      doc.setTextColor(128);
-      doc.text(
-        `${new Date().toLocaleDateString('en-US')} — ${allActivities.length} records`,
-        14,
-        23
-      );
+      // Helper: draw header (clinic name, address, date, record count)
+      const drawHeader = (pageNum: number, totalPages: number) => {
+        // Clinic name
+        doc.setFontSize(20);
+        doc.setTextColor(37, 99, 235);
+        doc.text(clinic.systemTitle, pageWidth / 2, y, { align: 'center' });
+        y += 7;
 
-      // Table data
+        // Address
+        if (clinic.address) {
+          doc.setFontSize(10);
+          doc.setTextColor(80);
+          doc.text(clinic.address, pageWidth / 2, y, { align: 'center' });
+          y += 5;
+        }
+
+        // Phone & Email (if available)
+        let contactParts: string[] = [];
+        if (clinic.phone) contactParts.push(clinic.phone);
+        if (clinic.email) contactParts.push(clinic.email);
+        if (contactParts.length) {
+          doc.setFontSize(9);
+          doc.setTextColor(100);
+          doc.text(contactParts.join(' | '), pageWidth / 2, y, { align: 'center' });
+          y += 5;
+        }
+
+        // Date and record count
+        doc.setFontSize(9);
+        doc.setTextColor(100);
+        const dateStr = new Date().toLocaleDateString('en-US', {
+          year: 'numeric', month: 'long', day: 'numeric'
+        });
+        doc.text(
+          `${t('activity.logs.generatedOn') || 'Generated on'}: ${dateStr}`,
+          margin,
+          y
+        );
+        doc.text(
+          `${t('activity.logs.recordsCount') || 'Records'}: ${allActivities.length}`,
+          pageWidth - margin,
+          y,
+          { align: 'right' }
+        );
+
+        y += 5;
+        // Separator line
+        doc.setDrawColor(200);
+        doc.line(margin, y, pageWidth - margin, y);
+        y += 4;
+      };
+
+      // Helper: draw footer (page number)
+      const drawFooter = (pageNum: number, totalPages: number) => {
+        const footerY = pageHeight - 10;
+        doc.setFontSize(8);
+        doc.setTextColor(150);
+        doc.text(
+          `${t('activity.logs.page') || 'Page'} ${pageNum} ${t('activity.logs.of') || 'of'} ${totalPages}`,
+          pageWidth / 2,
+          footerY,
+          { align: 'center' }
+        );
+      };
+
+      // Draw header on first page
+      drawHeader(1, 1); // totalPages will be updated later
+
+      // Build table data
       const head = [
         [isRtl ? 'المستخدم' : 'User', isRtl ? 'الدور' : 'Role', isRtl ? 'الإجراء' : 'Action', isRtl ? 'الهدف' : 'Target', isRtl ? 'التفاصيل' : 'Details', isRtl ? 'عنوان IP' : 'IP Address', isRtl ? 'الحالة' : 'Status', isRtl ? 'التاريخ والوقت' : 'Date & Time'],
       ];
@@ -216,26 +295,60 @@ export default function ActivityLogsPage() {
         formatDate(act.timestamp),
       ]);
 
+      // Generate table with autoTable
       autoTable(doc, {
         head,
         body,
-        startY: 28,
-        styles: { fontSize: 7, cellPadding: 2 },
-        headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold' },
+        startY: y,
+        styles: {
+          fontSize: 7,
+          cellPadding: 2,
+          valign: 'middle',
+          lineColor: [220, 220, 220],
+          lineWidth: 0.1,
+        },
+        headStyles: {
+          fillColor: [37, 99, 235],
+          textColor: [255, 255, 255],
+          fontStyle: 'bold',
+          halign: 'center',
+        },
         alternateRowStyles: { fillColor: [245, 247, 250] },
         columnStyles: {
-          0: { cellWidth: 40 },
-          1: { cellWidth: 20 },
-          2: { cellWidth: 30 },
-          3: { cellWidth: 25 },
-          4: { cellWidth: 50 },
-          5: { cellWidth: 25 },
-          6: { cellWidth: 20 },
-          7: { cellWidth: 35 },
+          0: { cellWidth: 35, fontSize: 6.5 },
+          1: { cellWidth: 18, halign: 'center' },
+          2: { cellWidth: 28 },
+          3: { cellWidth: 22 },
+          4: { cellWidth: 40 },
+          5: { cellWidth: 22, halign: 'center' },
+          6: { cellWidth: 18, halign: 'center' },
+          7: { cellWidth: 28, halign: 'center' },
         },
-        margin: { left: 10, right: 10 },
+        margin: { left: margin, right: margin },
+        // Callback to draw footer and re-draw header on every page
+        didDrawPage: (data) => {
+          const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
+          const total = doc.internal.getNumberOfPages();
+          drawFooter(pageNum, total);
+          // If not first page, re-draw header
+          if (pageNum > 1) {
+            // We need to draw the header at top of page, but autoTable already placed content
+            // We'll store the current cursor Y and restore after drawing header
+            const currentY = data.cursor.y;
+            const headerY = margin;
+            // Temporarily set y to headerY and draw header
+            const oldY = y;
+            y = headerY;
+            drawHeader(pageNum, total);
+            // Restore y
+            y = oldY;
+            // Update cursor.y to continue after header
+            data.cursor.y = headerY + 20; // approximate height of header
+          }
+        },
       });
 
+      // Save file
       doc.save(`activity-logs-${getExportTimestamp()}.pdf`);
     } catch (error) {
       console.error('PDF export failed:', error);
@@ -244,6 +357,7 @@ export default function ActivityLogsPage() {
     }
   };
 
+  // ===================== EXCEL EXPORT (unchanged) =====================
   const handleExportExcel = async () => {
     setExporting('excel');
     try {
@@ -581,4 +695,4 @@ export default function ActivityLogsPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-}
+                    }
