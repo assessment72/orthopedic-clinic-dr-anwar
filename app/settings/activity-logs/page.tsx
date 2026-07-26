@@ -13,13 +13,11 @@ import {
   ChevronRight,
   ShieldCheck,
   ShieldAlert,
-  Calendar,
   Globe,
   Clock,
   Filter,
   FileText,
   FileSpreadsheet,
-  Download,
 } from 'lucide-react';
 import Link from 'next/link';
 import { jsPDF } from 'jspdf';
@@ -141,7 +139,6 @@ export default function ActivityLogsPage() {
       if (details.newStatus) parts.push(`→ ${details.newStatus}`);
       if (details.newInvoiceStatus) parts.push(`→ ${details.newInvoiceStatus}`);
       if (parts.length > 0) return parts.join(' | ');
-      // Fallback: show as JSON snippet
       const json = JSON.stringify(details);
       return json.length > 60 ? json.slice(0, 60) + '...' : json;
     }
@@ -177,111 +174,88 @@ export default function ActivityLogsPage() {
     return new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   };
 
-  // ===================== PDF EXPORT WITH CLINIC INFO =====================
+  // ===================== PDF EXPORT (FIXED) =====================
   const handleExportPDF = async () => {
     setExporting('pdf');
     try {
-      // 1. Fetch all activities
       const allActivities = await fetchAllForExport();
       if (!allActivities.length) {
         alert(t('activity.logs.noData') || 'No data to export');
         return;
       }
 
-      // 2. Fetch clinic settings
-      let clinic = { systemTitle: '', address: '', phone: '', email: '', invoiceLogoUrl: '' };
+      // Fetch clinic info (with safe fallback)
+      let clinic = { systemTitle: '', address: '', phone: '', email: '' };
       try {
-        const clinicRes = await fetch('/api/settings');
-        const data = await clinicRes.json();
-        clinic = {
-          systemTitle: data.systemTitle || (currentLanguage === 'ar' ? 'عيادتي' : 'My Clinic'),
-          address: data.address || '',
-          phone: data.phone || '',
-          email: data.email || '',
-          invoiceLogoUrl: data.invoiceLogoUrl || '',
-        };
+        const res = await fetch('/api/settings');
+        if (res.ok) {
+          const data = await res.json();
+          clinic = {
+            systemTitle: data.systemTitle || (currentLanguage === 'ar' ? 'عيادتي' : 'My Clinic'),
+            address: data.address || '',
+            phone: data.phone || '',
+            email: data.email || '',
+          };
+        }
       } catch (e) {
-        console.warn('Could not fetch clinic settings, using defaults.', e);
+        console.warn('Could not fetch clinic settings, using defaults.');
+        clinic.systemTitle = currentLanguage === 'ar' ? 'عيادتي' : 'My Clinic';
       }
 
       const doc = new jsPDF('landscape', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
-      const pageHeight = doc.internal.pageSize.getHeight();
       const isRtl = currentLanguage === 'ar';
-      const margin = 14;
-      let y = margin;
 
-      // Helper: draw header (clinic name, address, date, record count)
-      const drawHeader = (pageNum: number, totalPages: number) => {
-        // Clinic name
-        doc.setFontSize(20);
-        doc.setTextColor(37, 99, 235);
-        doc.text(clinic.systemTitle, pageWidth / 2, y, { align: 'center' });
-        y += 7;
+      // ---- Header ----
+      doc.setFontSize(20);
+      doc.setTextColor(37, 99, 235);
+      doc.text(clinic.systemTitle, pageWidth / 2, 16, { align: 'center' });
 
-        // Address
-        if (clinic.address) {
-          doc.setFontSize(10);
-          doc.setTextColor(80);
-          doc.text(clinic.address, pageWidth / 2, y, { align: 'center' });
-          y += 5;
-        }
+      let y = 24;
+      if (clinic.address) {
+        doc.setFontSize(10);
+        doc.setTextColor(80);
+        doc.text(clinic.address, pageWidth / 2, y, { align: 'center' });
+        y += 6;
+      }
 
-        // Phone & Email (if available)
-        let contactParts: string[] = [];
-        if (clinic.phone) contactParts.push(clinic.phone);
-        if (clinic.email) contactParts.push(clinic.email);
-        if (contactParts.length) {
-          doc.setFontSize(9);
-          doc.setTextColor(100);
-          doc.text(contactParts.join(' | '), pageWidth / 2, y, { align: 'center' });
-          y += 5;
-        }
-
-        // Date and record count
+      const contactParts: string[] = [];
+      if (clinic.phone) contactParts.push(clinic.phone);
+      if (clinic.email) contactParts.push(clinic.email);
+      if (contactParts.length) {
         doc.setFontSize(9);
         doc.setTextColor(100);
-        const dateStr = new Date().toLocaleDateString('en-US', {
-          year: 'numeric', month: 'long', day: 'numeric'
-        });
-        doc.text(
-          `${t('activity.logs.generatedOn') || 'Generated on'}: ${dateStr}`,
-          margin,
-          y
-        );
-        doc.text(
-          `${t('activity.logs.recordsCount') || 'Records'}: ${allActivities.length}`,
-          pageWidth - margin,
-          y,
-          { align: 'right' }
-        );
+        doc.text(contactParts.join(' | '), pageWidth / 2, y, { align: 'center' });
+        y += 6;
+      }
 
-        y += 5;
-        // Separator line
-        doc.setDrawColor(200);
-        doc.line(margin, y, pageWidth - margin, y);
-        y += 4;
-      };
+      const dateStr = new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
+      doc.setFontSize(9);
+      doc.setTextColor(100);
+      doc.text(`Generated on: ${dateStr}`, 14, y);
+      doc.text(`Records: ${allActivities.length}`, pageWidth - 14, y, { align: 'right' });
+      y += 6;
 
-      // Helper: draw footer (page number)
-      const drawFooter = (pageNum: number, totalPages: number) => {
-        const footerY = pageHeight - 10;
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text(
-          `${t('activity.logs.page') || 'Page'} ${pageNum} ${t('activity.logs.of') || 'of'} ${totalPages}`,
-          pageWidth / 2,
-          footerY,
-          { align: 'center' }
-        );
-      };
+      doc.setDrawColor(200);
+      doc.line(14, y, pageWidth - 14, y);
+      y += 4;
 
-      // Draw header on first page
-      drawHeader(1, 1); // totalPages will be updated later
-
-      // Build table data
+      // ---- Table ----
       const head = [
-        [isRtl ? 'المستخدم' : 'User', isRtl ? 'الدور' : 'Role', isRtl ? 'الإجراء' : 'Action', isRtl ? 'الهدف' : 'Target', isRtl ? 'التفاصيل' : 'Details', isRtl ? 'عنوان IP' : 'IP Address', isRtl ? 'الحالة' : 'Status', isRtl ? 'التاريخ والوقت' : 'Date & Time'],
+        [
+          isRtl ? 'المستخدم' : 'User',
+          isRtl ? 'الدور' : 'Role',
+          isRtl ? 'الإجراء' : 'Action',
+          isRtl ? 'الهدف' : 'Target',
+          isRtl ? 'التفاصيل' : 'Details',
+          isRtl ? 'عنوان IP' : 'IP Address',
+          isRtl ? 'الحالة' : 'Status',
+          isRtl ? 'التاريخ والوقت' : 'Date & Time',
+        ],
       ];
 
       const body = allActivities.map((act: any) => [
@@ -291,11 +265,16 @@ export default function ActivityLogsPage() {
         targetDisplay(act),
         renderDetails(act.details),
         act.ip || 'N/A',
-        act.status === 'success' ? (isRtl ? 'ناجح' : 'Success') : (isRtl ? 'فشل' : 'Failed'),
+        act.status === 'success'
+          ? isRtl
+            ? 'ناجح'
+            : 'Success'
+          : isRtl
+          ? 'فشل'
+          : 'Failed',
         formatDate(act.timestamp),
       ]);
 
-      // Generate table with autoTable
       autoTable(doc, {
         head,
         body,
@@ -324,34 +303,27 @@ export default function ActivityLogsPage() {
           6: { cellWidth: 18, halign: 'center' },
           7: { cellWidth: 28, halign: 'center' },
         },
-        margin: { left: margin, right: margin },
-        // Callback to draw footer and re-draw header on every page
+        margin: { left: 14, right: 14 },
+        // Page footer
         didDrawPage: (data) => {
           const pageNum = doc.internal.getCurrentPageInfo().pageNumber;
           const total = doc.internal.getNumberOfPages();
-          drawFooter(pageNum, total);
-          // If not first page, re-draw header
-          if (pageNum > 1) {
-            // We need to draw the header at top of page, but autoTable already placed content
-            // We'll store the current cursor Y and restore after drawing header
-            const currentY = data.cursor.y;
-            const headerY = margin;
-            // Temporarily set y to headerY and draw header
-            const oldY = y;
-            y = headerY;
-            drawHeader(pageNum, total);
-            // Restore y
-            y = oldY;
-            // Update cursor.y to continue after header
-            data.cursor.y = headerY + 20; // approximate height of header
-          }
+          const footerY = doc.internal.pageSize.getHeight() - 10;
+          doc.setFontSize(8);
+          doc.setTextColor(150);
+          doc.text(
+            `Page ${pageNum} of ${total}`,
+            doc.internal.pageSize.getWidth() / 2,
+            footerY,
+            { align: 'center' }
+          );
         },
       });
 
-      // Save file
       doc.save(`activity-logs-${getExportTimestamp()}.pdf`);
-    } catch (error) {
+    } catch (error: any) {
       console.error('PDF export failed:', error);
+      alert(`PDF export failed: ${error.message || 'Unknown error'}`);
     } finally {
       setExporting(null);
     }
@@ -377,15 +349,14 @@ export default function ActivityLogsPage() {
         [t('activity.logs.details') || 'Details']: renderDetails(act.details),
         [t('activity.logs.ip') || 'IP Address']: act.ip || 'N/A',
         [t('activity.logs.status') || 'Status']: act.status === 'success'
-          ? (t('activity.logs.success') || 'Success')
-          : (t('activity.logs.failed') || 'Failed'),
+          ? t('activity.logs.success') || 'Success'
+          : t('activity.logs.failed') || 'Failed',
         [t('activity.logs.date') || 'Date & Time']: formatDate(act.timestamp),
-        'Error': act.error || '',
+        Error: act.error || '',
       }));
 
       const ws = XLSX.utils.json_to_sheet(data);
 
-      // Auto-width columns
       const colWidths = Object.keys(data[0]).map((key) => ({
         wch: Math.max(key.length + 2, 15),
       }));
@@ -396,6 +367,7 @@ export default function ActivityLogsPage() {
       XLSX.writeFile(wb, `activity-logs-${getExportTimestamp()}.xlsx`);
     } catch (error) {
       console.error('Excel export failed:', error);
+      alert('Excel export failed');
     } finally {
       setExporting(null);
     }
@@ -432,7 +404,6 @@ export default function ActivityLogsPage() {
               {t('activity.logs.backToSettings') || 'Back to Settings'}
             </Link>
 
-            {/* Export Buttons */}
             <div className="flex items-center gap-2">
               <button
                 onClick={handleExportPDF}
@@ -474,7 +445,6 @@ export default function ActivityLogsPage() {
           {/* Filters */}
           <div className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
             <form onSubmit={handleSearch} className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
-              {/* Search */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                 <input
@@ -486,7 +456,6 @@ export default function ActivityLogsPage() {
                 />
               </div>
 
-              {/* Action filter */}
               <select
                 className="rounded-lg border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 value={filters.action}
@@ -500,7 +469,6 @@ export default function ActivityLogsPage() {
                 ))}
               </select>
 
-              {/* Target type filter */}
               <select
                 className="rounded-lg border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 value={filters.targetType}
@@ -514,7 +482,6 @@ export default function ActivityLogsPage() {
                 ))}
               </select>
 
-              {/* Status filter */}
               <select
                 className="rounded-lg border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
                 value={filters.status}
@@ -525,7 +492,6 @@ export default function ActivityLogsPage() {
                 <option value="failed">{t('activity.logs.failed') || 'Failed'}</option>
               </select>
 
-              {/* Role filter (admin only) */}
               {session?.user?.role === 'admin' && (
                 <select
                   className="rounded-lg border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
@@ -540,7 +506,6 @@ export default function ActivityLogsPage() {
                 </select>
               )}
 
-              {/* Date filters */}
               <input
                 type="date"
                 className="rounded-lg border border-gray-200 px-4 py-2 text-sm focus:border-blue-500 focus:outline-none"
@@ -585,47 +550,32 @@ export default function ActivityLogsPage() {
                 <tbody className="divide-y divide-gray-100">
                   {activities.map((activity) => (
                     <tr key={activity._id} className="hover:bg-gray-50/50 transition-colors">
-                      {/* User */}
                       <td className="px-4 py-3">
                         <div className="font-medium text-gray-900">
                           {activity.userName || 'Unknown'}
                         </div>
                         <div className="text-xs text-gray-500">{activity.userEmail || '-'}</div>
                       </td>
-
-                      {/* Role */}
                       <td className="px-4 py-3">
                         <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-gray-100 text-gray-700">
                           {activity.userRole || '-'}
                         </span>
                       </td>
-
-                      {/* Action */}
                       <td className="px-4 py-3">
                         <span className="text-gray-700 text-sm">
                           {t(`activity.actions.${activity.action}`) || activity.action}
                         </span>
                       </td>
-
-                      {/* Target */}
-                      <td className="px-4 py-3 text-xs text-gray-600">
-                        {targetDisplay(activity)}
-                      </td>
-
-                      {/* Details */}
+                      <td className="px-4 py-3 text-xs text-gray-600">{targetDisplay(activity)}</td>
                       <td className="px-4 py-3 text-xs text-gray-500 max-w-[200px] truncate">
                         {renderDetails(activity.details)}
                       </td>
-
-                      {/* IP */}
                       <td className="px-4 py-3">
                         <div className="flex items-center text-gray-700 text-xs">
                           <Globe className="mr-1 h-3.5 w-3.5 text-gray-400" />
                           {activity.ip || 'N/A'}
                         </div>
                       </td>
-
-                      {/* Status */}
                       <td className="px-4 py-3">
                         {activity.status === 'success' ? (
                           <div className="flex items-center text-green-600">
@@ -644,8 +594,6 @@ export default function ActivityLogsPage() {
                           </div>
                         )}
                       </td>
-
-                      {/* Date */}
                       <td className="px-4 py-3">
                         <div className="flex items-center text-gray-900 text-xs">
                           <Clock className="mr-1.5 h-3.5 w-3.5 text-gray-400" />
@@ -665,7 +613,6 @@ export default function ActivityLogsPage() {
               </table>
             </div>
 
-            {/* Pagination */}
             {pagination.pages > 1 && (
               <div className="flex items-center justify-between border-t border-gray-100 px-6 py-4">
                 <div className="text-xs text-gray-500">
@@ -695,4 +642,4 @@ export default function ActivityLogsPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-                    }
+}
