@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import SidebarLayout from '../../components/sidebar-layout';
@@ -202,6 +202,12 @@ export default function ActivityLogsPage() {
         clinic.systemTitle = currentLanguage === 'ar' ? 'عيادتي' : 'My Clinic';
       }
 
+      // تحويل جميع القيم إلى نصوص صريحة لتجنب أخطاء "object"
+      const title = String(clinic.systemTitle || (currentLanguage === 'ar' ? 'عيادتي' : 'My Clinic'));
+      const address = String(clinic.address || '');
+      const phone = String(clinic.phone || '');
+      const email = String(clinic.email || '');
+
       const doc = new jsPDF('landscape', 'mm', 'a4');
       const pageWidth = doc.internal.pageSize.getWidth();
       const isRtl = currentLanguage === 'ar';
@@ -209,19 +215,19 @@ export default function ActivityLogsPage() {
       // ---- Header ----
       doc.setFontSize(20);
       doc.setTextColor(37, 99, 235);
-      doc.text(clinic.systemTitle, pageWidth / 2, 16, { align: 'center' });
+      doc.text(title, pageWidth / 2, 16, { align: 'center' });
 
       let y = 24;
-      if (clinic.address) {
+      if (address) {
         doc.setFontSize(10);
         doc.setTextColor(80);
-        doc.text(clinic.address, pageWidth / 2, y, { align: 'center' });
+        doc.text(address, pageWidth / 2, y, { align: 'center' });
         y += 6;
       }
 
       const contactParts: string[] = [];
-      if (clinic.phone) contactParts.push(clinic.phone);
-      if (clinic.email) contactParts.push(clinic.email);
+      if (phone) contactParts.push(phone);
+      if (email) contactParts.push(email);
       if (contactParts.length) {
         doc.setFontSize(9);
         doc.setTextColor(100);
@@ -259,20 +265,14 @@ export default function ActivityLogsPage() {
       ];
 
       const body = allActivities.map((act: any) => [
-        `${act.userName || 'Unknown'}\n${act.userEmail || '-'}`,
-        act.userRole || '-',
-        t(`activity.actions.${act.action}`) || act.action,
-        targetDisplay(act),
-        renderDetails(act.details),
-        act.ip || 'N/A',
-        act.status === 'success'
-          ? isRtl
-            ? 'ناجح'
-            : 'Success'
-          : isRtl
-          ? 'فشل'
-          : 'Failed',
-        formatDate(act.timestamp),
+        String(`${act.userName || 'Unknown'}\n${act.userEmail || '-'}`),
+        String(act.userRole || '-'),
+        String(t(`activity.actions.${act.action}`) || act.action),
+        String(targetDisplay(act)),
+        String(renderDetails(act.details)),
+        String(act.ip || 'N/A'),
+        String(act.status === 'success' ? (isRtl ? 'ناجح' : 'Success') : (isRtl ? 'فشل' : 'Failed')),
+        String(formatDate(act.timestamp)),
       ]);
 
       autoTable(doc, {
@@ -329,7 +329,7 @@ export default function ActivityLogsPage() {
     }
   };
 
-  // ===================== EXCEL EXPORT (unchanged) =====================
+  // ===================== EXCEL EXPORT =====================
   const handleExportExcel = async () => {
     setExporting('excel');
     try {
@@ -642,4 +642,4 @@ export default function ActivityLogsPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-}
+  }
