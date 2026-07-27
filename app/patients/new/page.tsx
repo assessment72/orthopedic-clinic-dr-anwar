@@ -70,9 +70,47 @@ export default function NewPatientPage() {
   const [activeSection, setActiveSection] = useState('personal');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // حالات لتتبع التعديل اليدوي للبريد وكلمة المرور
+  const [isEmailManuallyEdited, setIsEmailManuallyEdited] = useState(false);
+  const [isPasswordManuallyEdited, setIsPasswordManuallyEdited] = useState(false);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    setFormData(prev => {
+      const newData = { ...prev, [name]: value };
+
+      // معالجة حقل رقم الجوال
+      if (name === 'phone') {
+        if (!isEmailManuallyEdited) {
+          const newEmail = `${value}@gmail.com`;
+          newData.email = newEmail;
+          if (!isPasswordManuallyEdited) {
+            newData.password = newEmail;
+          }
+        } else {
+          // إذا كان البريد معدلاً يدوياً، نحدّث كلمة المرور فقط إذا لم تُعدّل يدوياً
+          if (!isPasswordManuallyEdited) {
+            newData.password = newData.email;
+          }
+        }
+      }
+
+      // معالجة حقل البريد الإلكتروني
+      if (name === 'email') {
+        setIsEmailManuallyEdited(true);
+        if (!isPasswordManuallyEdited) {
+          newData.password = value;
+        }
+      }
+
+      // معالجة حقل كلمة المرور
+      if (name === 'password') {
+        setIsPasswordManuallyEdited(true);
+      }
+
+      return newData;
+    });
   };
 
   // دوال خريطة الهيكل العظمي (نفسها)
@@ -146,7 +184,7 @@ export default function NewPatientPage() {
     setSelectedRegions([]);
   };
 
-  // ------------------ تعريف خيارات القوائم المنسدلة (المضافة من الكود الأول) ------------------
+  // خيارات القوائم المنسدلة
   const injuryTypeOptions = [
     { value: '', label: t('patients.newPatient.fields.injuryTypeOptions.select') || 'اختر نوع الإصابة' },
     { value: 'fracture', label: t('patients.newPatient.fields.injuryTypeOptions.fracture') || 'كسر' },
@@ -233,7 +271,7 @@ export default function NewPatientPage() {
     { value: 'rehabilitation', label: t('patients.newPatient.fields.treatmentPlanOptions.rehabilitation') || 'إعادة تأهيل' }
   ];
 
-  // ------------------ دالة الإرسال (نفسها كما في الكود الثاني) ------------------
+  // دالة الإرسال (نفسها)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -375,6 +413,9 @@ export default function NewPatientPage() {
         });
         setSelectedRegions([]);
         setActiveSection('personal');
+        // إعادة تعيين حالات التعديل اليدوي
+        setIsEmailManuallyEdited(false);
+        setIsPasswordManuallyEdited(false);
         window.location.href = '/patients';
       } else {
         let errorMessage = 'Failed to create patient';
@@ -577,6 +618,9 @@ export default function NewPatientPage() {
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                     />
                   </div>
+                  <p className="mt-1 text-xs text-gray-500">
+                    {t('patients.newPatient.hints.emailAuto') || 'سيتم توليد البريد تلقائياً من رقم الجوال'}
+                  </p>
                 </div>
                 <div className="md:col-span-2">
                   <label htmlFor="password" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
@@ -590,6 +634,9 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
+                  <p className="mt-1 text-xs text-gray-500">
+                    {t('patients.newPatient.hints.passwordAuto') || 'سيتم توليد كلمة المرور تلقائياً'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -762,6 +809,7 @@ export default function NewPatientPage() {
                     onChange={handleInputChange}
                     placeholder={t('patients.newPatient.placeholders.injurySite')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                    readOnly
                   />
                 </div>
 
@@ -1017,4 +1065,4 @@ export default function NewPatientPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-      }
+     }
