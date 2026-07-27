@@ -4,11 +4,11 @@ export const dynamic = 'force-dynamic';
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // بدلاً من useLocale
-import { 
-  Users, 
-  ArrowLeft, 
-  Save, 
+import { usePathname } from 'next/navigation';
+import {
+  Users,
+  ArrowLeft,
+  Save,
   Phone,
   Mail,
   MapPin,
@@ -31,7 +31,6 @@ interface SelectedRegion {
 export default function NewPatientPage() {
   const { t } = useTranslations();
   const pathname = usePathname();
-  // استخراج اللغة من المسار (مثل /ar/patients/new → 'ar')
   const locale = pathname?.split('/')[1] || 'ar';
 
   const [formData, setFormData] = useState({
@@ -41,9 +40,6 @@ export default function NewPatientPage() {
     gender: '',
     phone: '',
     address: '',
-    city: '',
-    state: '',
-    zipCode: '',
     email: '',
     password: '',
     bloodType: '',
@@ -79,7 +75,7 @@ export default function NewPatientPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // دوال خريطة الهيكل العظمي
+  // دوال خريطة الهيكل العظمي (نفسها)
   const getRegionName = (id: string) => {
     const names: Record<string, Record<'ar' | 'en', string>> = {
       skull: { ar: 'الجمجمة', en: 'Skull' },
@@ -150,26 +146,114 @@ export default function NewPatientPage() {
     setSelectedRegions([]);
   };
 
+  // ------------------ تعريف خيارات القوائم المنسدلة (المضافة من الكود الأول) ------------------
+  const injuryTypeOptions = [
+    { value: '', label: t('patients.newPatient.fields.injuryTypeOptions.select') || 'اختر نوع الإصابة' },
+    { value: 'fracture', label: t('patients.newPatient.fields.injuryTypeOptions.fracture') || 'كسر' },
+    { value: 'dislocation', label: t('patients.newPatient.fields.injuryTypeOptions.dislocation') || 'خلع' },
+    { value: 'sprain', label: t('patients.newPatient.fields.injuryTypeOptions.sprain') || 'التواء' },
+    { value: 'strain', label: t('patients.newPatient.fields.injuryTypeOptions.strain') || 'إجهاد عضلي' },
+    { value: 'tear', label: t('patients.newPatient.fields.injuryTypeOptions.tear') || 'تمزق' },
+    { value: 'crush', label: t('patients.newPatient.fields.injuryTypeOptions.crush') || 'سحق' },
+    { value: 'burn', label: t('patients.newPatient.fields.injuryTypeOptions.burn') || 'حرق' },
+    { value: 'other', label: t('patients.newPatient.fields.injuryTypeOptions.other') || 'أخرى' }
+  ];
+
+  const affectedJointOptions = [
+    { value: '', label: t('patients.newPatient.fields.affectedJointOptions.select') || 'اختر المفصل' },
+    { value: 'shoulder', label: t('patients.newPatient.fields.affectedJointOptions.shoulder') || 'الكتف' },
+    { value: 'elbow', label: t('patients.newPatient.fields.affectedJointOptions.elbow') || 'المرفق' },
+    { value: 'wrist', label: t('patients.newPatient.fields.affectedJointOptions.wrist') || 'الرسغ' },
+    { value: 'hand', label: t('patients.newPatient.fields.affectedJointOptions.hand') || 'اليد' },
+    { value: 'hip', label: t('patients.newPatient.fields.affectedJointOptions.hip') || 'الورك' },
+    { value: 'knee', label: t('patients.newPatient.fields.affectedJointOptions.knee') || 'الركبة' },
+    { value: 'ankle', label: t('patients.newPatient.fields.affectedJointOptions.ankle') || 'الكاحل' },
+    { value: 'foot', label: t('patients.newPatient.fields.affectedJointOptions.foot') || 'القدم' },
+    { value: 'spine', label: t('patients.newPatient.fields.affectedJointOptions.spine') || 'العمود الفقري' }
+  ];
+
+  const splintOrCastOptions = [
+    { value: '', label: t('patients.newPatient.fields.splintOrCastOptions.select') || 'اختر' },
+    { value: 'no', label: t('patients.newPatient.fields.splintOrCastOptions.no') || 'لا' },
+    { value: 'splint', label: t('patients.newPatient.fields.splintOrCastOptions.splint') || 'جبيرة' },
+    { value: 'cast', label: t('patients.newPatient.fields.splintOrCastOptions.cast') || 'جبس' },
+    { value: 'both', label: t('patients.newPatient.fields.splintOrCastOptions.both') || 'جبيرة وجبس' }
+  ];
+
+  const surgicalOperationsOptions = [
+    { value: '', label: t('patients.newPatient.fields.surgicalOperationsOptions.select') || 'اختر العملية' },
+    { value: 'arthroscopy', label: t('patients.newPatient.fields.surgicalOperationsOptions.arthroscopy') || 'تنظير مفصلي' },
+    { value: 'open_reduction', label: t('patients.newPatient.fields.surgicalOperationsOptions.open_reduction') || 'رد مفتوح' },
+    { value: 'internal_fixation', label: t('patients.newPatient.fields.surgicalOperationsOptions.internal_fixation') || 'تثبيت داخلي' },
+    { value: 'external_fixation', label: t('patients.newPatient.fields.surgicalOperationsOptions.external_fixation') || 'تثبيت خارجي' },
+    { value: 'reconstruction', label: t('patients.newPatient.fields.surgicalOperationsOptions.reconstruction') || 'إعادة بناء' },
+    { value: 'fusion', label: t('patients.newPatient.fields.surgicalOperationsOptions.fusion') || 'دمج فقري' },
+    { value: 'replacement', label: t('patients.newPatient.fields.surgicalOperationsOptions.replacement') || 'استبدال مفصلي' },
+    { value: 'none', label: t('patients.newPatient.fields.surgicalOperationsOptions.none') || 'لا توجد عمليات' }
+  ];
+
+  const physicalTherapyOptions = [
+    { value: '', label: t('patients.newPatient.fields.physicalTherapyOptions.select') || 'اختر نوع العلاج' },
+    { value: 'range_of_motion', label: t('patients.newPatient.fields.physicalTherapyOptions.range_of_motion') || 'تمارين المدى الحركي' },
+    { value: 'strengthening', label: t('patients.newPatient.fields.physicalTherapyOptions.strengthening') || 'تمارين التقوية' },
+    { value: 'stretching', label: t('patients.newPatient.fields.physicalTherapyOptions.stretching') || 'تمارين الاستطالة' },
+    { value: 'balance', label: t('patients.newPatient.fields.physicalTherapyOptions.balance') || 'تمارين التوازن' },
+    { value: 'gait_training', label: t('patients.newPatient.fields.physicalTherapyOptions.gait_training') || 'تدريب المشي' },
+    { value: 'hydrotherapy', label: t('patients.newPatient.fields.physicalTherapyOptions.hydrotherapy') || 'العلاج المائي' },
+    { value: 'electrotherapy', label: t('patients.newPatient.fields.physicalTherapyOptions.electrotherapy') || 'العلاج الكهربائي' },
+    { value: 'manual_therapy', label: t('patients.newPatient.fields.physicalTherapyOptions.manual_therapy') || 'العلاج اليدوي' },
+    { value: 'none', label: t('patients.newPatient.fields.physicalTherapyOptions.none') || 'لا يوجد' }
+  ];
+
+  const diagnosisOptions = [
+    { value: '', label: t('patients.newPatient.fields.diagnosisOptions.select') || 'اختر التشخيص' },
+    { value: 'simple_fracture', label: t('patients.newPatient.fields.diagnosisOptions.simple_fracture') || 'كسر بسيط' },
+    { value: 'compound_fracture', label: t('patients.newPatient.fields.diagnosisOptions.compound_fracture') || 'كسر مركب' },
+    { value: 'comminuted_fracture', label: t('patients.newPatient.fields.diagnosisOptions.comminuted_fracture') || 'كسر محطم' },
+    { value: 'anterior_dislocation', label: t('patients.newPatient.fields.diagnosisOptions.anterior_dislocation') || 'خلع أمامي' },
+    { value: 'posterior_dislocation', label: t('patients.newPatient.fields.diagnosisOptions.posterior_dislocation') || 'خلع خلفي' },
+    { value: 'meniscus_tear', label: t('patients.newPatient.fields.diagnosisOptions.meniscus_tear') || 'تمزق الغضروف الهلالي' },
+    { value: 'acl_tear', label: t('patients.newPatient.fields.diagnosisOptions.acl_tear') || 'تمزق الرباط الصليبي الأمامي' },
+    { value: 'rotator_cuff_tear', label: t('patients.newPatient.fields.diagnosisOptions.rotator_cuff_tear') || 'تمزق الكفة المدورة' },
+    { value: 'osteoarthritis', label: t('patients.newPatient.fields.diagnosisOptions.osteoarthritis') || 'هشاشة العظام' },
+    { value: 'rheumatoid_arthritis', label: t('patients.newPatient.fields.diagnosisOptions.rheumatoid_arthritis') || 'التهاب المفاصل الروماتويدي' },
+    { value: 'bursitis', label: t('patients.newPatient.fields.diagnosisOptions.bursitis') || 'التهاب الجراب' },
+    { value: 'tendinitis', label: t('patients.newPatient.fields.diagnosisOptions.tendinitis') || 'التهاب الأوتار' },
+    { value: 'other', label: t('patients.newPatient.fields.diagnosisOptions.other') || 'أخرى' }
+  ];
+
+  const treatmentPlanOptions = [
+    { value: '', label: t('patients.newPatient.fields.treatmentPlanOptions.select') || 'اختر خطة العلاج' },
+    { value: 'conservative', label: t('patients.newPatient.fields.treatmentPlanOptions.conservative') || 'علاج محافظ' },
+    { value: 'surgical', label: t('patients.newPatient.fields.treatmentPlanOptions.surgical') || 'علاج جراحي' },
+    { value: 'combined', label: t('patients.newPatient.fields.treatmentPlanOptions.combined') || 'علاج مدمج' },
+    { value: 'physical_therapy_only', label: t('patients.newPatient.fields.treatmentPlanOptions.physical_therapy_only') || 'علاج طبيعي فقط' },
+    { value: 'medication_only', label: t('patients.newPatient.fields.treatmentPlanOptions.medication_only') || 'أدوية فقط' },
+    { value: 'immobilization', label: t('patients.newPatient.fields.treatmentPlanOptions.immobilization') || 'تثبيت' },
+    { value: 'rehabilitation', label: t('patients.newPatient.fields.treatmentPlanOptions.rehabilitation') || 'إعادة تأهيل' }
+  ];
+
+  // ------------------ دالة الإرسال (نفسها كما في الكود الثاني) ------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
     if (!formData.firstName || !formData.lastName || !formData.email || !formData.dateOfBirth || !formData.phone || !formData.gender) {
       alert(t('patients.newPatient.validation.requiredFields'));
       setIsSubmitting(false);
       return;
     }
-    
+
     if (formData.password && formData.password.length < 6) {
       alert('Password must be at least 6 characters long');
       setIsSubmitting(false);
       return;
     }
-    
+
     try {
-      const addressParts = [formData.address, formData.city, formData.state, formData.zipCode].filter(Boolean);
+      const addressParts = [formData.address].filter(Boolean);
       const addressString = addressParts.length > 0 ? addressParts.join(', ') : undefined;
-      
+
       const patientData: any = {
         name: `${formData.firstName} ${formData.lastName}`,
         email: formData.email,
@@ -180,7 +264,7 @@ export default function NewPatientPage() {
         allergies: formData.allergies ? [formData.allergies] : [],
         currentMedications: formData.medications ? [formData.medications] : [],
       };
-      
+
       if (formData.password) {
         patientData.password = formData.password;
       }
@@ -264,9 +348,6 @@ export default function NewPatientPage() {
           gender: '',
           phone: '',
           address: '',
-          city: '',
-          state: '',
-          zipCode: '',
           email: '',
           password: '',
           bloodType: '',
@@ -374,7 +455,6 @@ export default function NewPatientPage() {
                 {t('patients.newPatient.sections.personal')}
               </h3>
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
-                {/* ... نفس الحقول السابقة ... */}
                 <div>
                   <label htmlFor="firstName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.firstName')} *
@@ -684,34 +764,43 @@ export default function NewPatientPage() {
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+
+                {/* نوع الإصابة - Dropdown */}
                 <div>
                   <label htmlFor="injuryType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.injuryType')}
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="injuryType"
                     name="injuryType"
                     value={formData.injuryType}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.injuryType')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {injuryTypeOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* المفصل المصاب - Dropdown */}
                 <div>
                   <label htmlFor="affectedJoint" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.affectedJoint')}
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="affectedJoint"
                     name="affectedJoint"
                     value={formData.affectedJoint}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.affectedJoint')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {affectedJointOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
                 <div>
                   <label htmlFor="painLevel" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.painLevel')}
@@ -727,76 +816,97 @@ export default function NewPatientPage() {
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
+
+                {/* الجبيرة أو الجبس - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="splintOrCast" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.splintOrCast')}
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="splintOrCast"
                     name="splintOrCast"
                     value={formData.splintOrCast}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.splintOrCast')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {splintOrCastOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* العمليات الجراحية - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="surgicalOperations" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.surgicalOperations')}
                   </label>
-                  <textarea
+                  <select
                     id="surgicalOperations"
                     name="surgicalOperations"
                     value={formData.surgicalOperations}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.surgicalOperations')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {surgicalOperationsOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* العلاج الطبيعي - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="physicalTherapy" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.physicalTherapy')}
                   </label>
-                  <textarea
+                  <select
                     id="physicalTherapy"
                     name="physicalTherapy"
                     value={formData.physicalTherapy}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.physicalTherapy')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {physicalTherapyOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* التشخيص - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="diagnosis" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.diagnosis')}
                   </label>
-                  <textarea
+                  <select
                     id="diagnosis"
                     name="diagnosis"
                     value={formData.diagnosis}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.diagnosis')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {diagnosisOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* خطة العلاج - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="treatmentPlan" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.treatmentPlan')}
                   </label>
-                  <textarea
+                  <select
                     id="treatmentPlan"
                     name="treatmentPlan"
                     value={formData.treatmentPlan}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.treatmentPlan')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {treatmentPlanOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
+
                 <div>
                   <label htmlFor="imaging" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.imaging')}
@@ -907,4 +1017,4 @@ export default function NewPatientPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-                            }
+      }
