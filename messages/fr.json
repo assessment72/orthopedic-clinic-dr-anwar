@@ -1319,7 +1319,8 @@
         "personal": "Informations Personnelles",
         "login": "Informations de Connexion",
         "medical": "Informations Médicales",
-        "emergency": "Contact d'Urgence"
+        "emergency": "Contact d'Urgence",
+        "injuryMap": "Carte de l'emplacement de la blessure"
       },
       "fields": {
         "firstName": "Prénom",
@@ -1358,14 +1359,98 @@
         "familyHistory": "Antécédents Médicaux Familiaux",
         "emergencyName": "Nom du Contact d'Urgence",
         "emergencyPhone": "Téléphone du Contact d'Urgence",
-        "emergencyRelationship": "Relation avec le Patient"
+        "emergencyRelationship": "Relation avec le Patient",
+        "injuryNotes": "Notes sur la blessure",
+        "imagingOptions": {
+          "select": "Sélectionner le type d'imagerie"
+        },
+        "injuryTypeOptions": {
+          "select": "Sélectionner le type de blessure",
+          "fracture": "Fracture",
+          "dislocation": "Luxation",
+          "sprain": "Entorse",
+          "strain": "Élongation musculaire",
+          "tear": "Déchirure",
+          "crush": "Lésion par écrasement",
+          "burn": "Brûlure",
+          "other": "Autre"
+        },
+        "affectedJointOptions": {
+          "select": "Sélectionner l'articulation",
+          "shoulder": "Épaule",
+          "elbow": "Coude",
+          "wrist": "Poignet",
+          "hand": "Main",
+          "hip": "Hanche",
+          "knee": "Genou",
+          "ankle": "Cheville",
+          "foot": "Pied",
+          "spine": "Colonne vertébrale"
+        },
+        "splintOrCastOptions": {
+          "select": "Sélectionner",
+          "no": "Non",
+          "splint": "Attelle",
+          "cast": "Plâtre",
+          "both": "Attelle et Plâtre"
+        },
+        "surgicalOperationsOptions": {
+          "select": "Sélectionner l'opération",
+          "arthroscopy": "Arthroscopie",
+          "open_reduction": "Réduction ouverte",
+          "internal_fixation": "Fixation interne",
+          "external_fixation": "Fixation externe",
+          "reconstruction": "Reconstruction",
+          "fusion": "Fusion vertébrale",
+          "replacement": "Remplacement articulaire",
+          "none": "Pas d'opérations"
+        },
+        "physicalTherapyOptions": {
+          "select": "Sélectionner le type de thérapie",
+          "range_of_motion": "Exercices de mobilité articulaire",
+          "strengthening": "Exercices de renforcement",
+          "stretching": "Exercices d'étirement",
+          "balance": "Exercices d'équilibre",
+          "gait_training": "Entraînement à la marche",
+          "hydrotherapy": "Hydrothérapie",
+          "electrotherapy": "Électrothérapie",
+          "manual_therapy": "Thérapie manuelle",
+          "none": "Aucun"
+        },
+        "diagnosisOptions": {
+          "select": "Sélectionner le diagnostic",
+          "simple_fracture": "Fracture simple",
+          "compound_fracture": "Fracture composée",
+          "comminuted_fracture": "Fracture comminutive",
+          "anterior_dislocation": "Luxation antérieure",
+          "posterior_dislocation": "Luxation postérieure",
+          "meniscus_tear": "Déchirure du ménisque",
+          "acl_tear": "Déchirure du LCA",
+          "rotator_cuff_tear": "Déchirure de la coiffe des rotateurs",
+          "osteoarthritis": "Arthrose",
+          "rheumatoid_arthritis": "Arthrite rhumatoïde",
+          "bursitis": "Bursite",
+          "tendinitis": "Tendinite",
+          "other": "Autre"
+        },
+        "treatmentPlanOptions": {
+          "select": "Sélectionner le plan de traitement",
+          "conservative": "Traitement conservateur",
+          "surgical": "Traitement chirurgical",
+          "combined": "Traitement combiné",
+          "physical_therapy_only": "Physiothérapie uniquement",
+          "medication_only": "Médication uniquement",
+          "immobilization": "Immobilisation",
+          "rehabilitation": "Rééducation"
+        }
       },
       "placeholders": {
         "allergies": "ex., Pénicilline, Arachides",
         "medications": "Liste des médicaments actuels, dosages et fréquence",
         "medicalHistory": "Chirurgies précédentes, conditions chroniques, maladies graves",
         "familyHistory": "Conditions médicales familiales pertinentes",
-        "emergencyRelationship": "ex., Conjoint, Parent, Enfant"
+        "emergencyRelationship": "ex., Conjoint, Parent, Enfant",
+        "injuryNotes": "Entrez des notes détaillées sur la blessure"
       },
       "buttons": {
         "cancel": "Annuler",
@@ -2656,7 +2741,7 @@
     }
   },
   "documents": {
-    "title": "Gestion des Documents",
+    "title": "Titre",
     "description": "Gérer les documents, formulaires de consentement et dossiers légaux",
     "totalDocuments": "Total Documents",
     "activeDocuments": "Actifs",
@@ -2687,7 +2772,6 @@
     "dragAndDrop": "Glissez-déposez un fichier ici, ou cliquez pour parcourir",
     "supportedFormats": "PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG, GIF",
     "documentInfo": "Informations du Document",
-    "title": "Titre",
     "titlePlaceholder": "Entrez le titre du document",
     "descriptionLabel": "Description",
     "descriptionPlaceholder": "Entrez la description du document",

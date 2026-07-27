@@ -109,21 +109,21 @@
     "portalSuccessHint": "يمكنك تسجيل الدخول إلى بوابة المريض باستخدام هذا البريد الإلكتروني وكلمة المرور التي قمت بإنشائها."
   },
   "login": {
-  "title": "تسجيل الدخول",
-  "subtitle": "مرحبًا بك في عيادة الدكتور أنور لتخصص جراحة العظام والمفاصل",
-  "description": "سجل الدخول للوصول إلى نظام إدارة عيادة الدكتور أنور لتخصص العظام",
-  "email": "عنوان البريد الإلكتروني",
-  "password": "كلمة المرور",
-  "signIn": "تسجيل الدخول",
-  "signingIn": "جارٍ تسجيل الدخول...",
-  "forgotPassword": "هل نسيت كلمة المرور؟",
-  "noAccount": "ليس لديك حساب؟",
-  "contactAdmin": "تواصل مع مسؤول النظام",
-  "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-  "signInSuccess": "تم تسجيل الدخول بنجاح!",
-  "signInError": "فشل تسجيل الدخول، يرجى المحاولة مرة أخرى.",
-  "required": "هذا الحقل مطلوب",
-  "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح"
+    "title": "تسجيل الدخول",
+    "subtitle": "مرحبًا بك في عيادة الدكتور أنور لتخصص جراحة العظام والمفاصل",
+    "description": "سجل الدخول للوصول إلى نظام إدارة عيادة الدكتور أنور لتخصص العظام",
+    "email": "عنوان البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "signIn": "تسجيل الدخول",
+    "signingIn": "جارٍ تسجيل الدخول...",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "noAccount": "ليس لديك حساب؟",
+    "contactAdmin": "تواصل مع مسؤول النظام",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "signInSuccess": "تم تسجيل الدخول بنجاح!",
+    "signInError": "فشل تسجيل الدخول، يرجى المحاولة مرة أخرى.",
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "يرجى إدخال عنوان بريد إلكتروني صحيح"
   },
   "landing": {
     "badge": "منصة الرعاية الصحية الحديثة",
@@ -1551,7 +1551,8 @@
         "login": "معلومات تسجيل الدخول",
         "medical": "المعلومات الطبية",
         "orthopedic": "معلومات جراحة العظام",
-        "emergency": "الاتصال في حالات الطوارئ"
+        "emergency": "الاتصال في حالات الطوارئ",
+        "injuryMap": "خريطة موضع الإصابة"
       },
       "fields": {
         "firstName": "الاسم الأول",
@@ -1603,7 +1604,90 @@
         "emergencyPhone": "هاتف الاتصال في حالات الطوارئ",
         "emergencyRelationship": "العلاقة بالمريض",
         "diagnosis": "التشخيص",
-        "treatmentPlan": "خطة العلاج"
+        "treatmentPlan": "خطة العلاج",
+        "injuryNotes": "ملاحظات الإصابة",
+        "imagingOptions": {
+          "select": "اختر نوع الأشعة"
+        },
+        "injuryTypeOptions": {
+          "select": "اختر نوع الإصابة",
+          "fracture": "كسر",
+          "dislocation": "خلع",
+          "sprain": "التواء",
+          "strain": "إجهاد عضلي",
+          "tear": "تمزق",
+          "crush": "سحق",
+          "burn": "حرق",
+          "other": "أخرى"
+        },
+        "affectedJointOptions": {
+          "select": "اختر المفصل",
+          "shoulder": "الكتف",
+          "elbow": "المرفق",
+          "wrist": "الرسغ",
+          "hand": "اليد",
+          "hip": "الورك",
+          "knee": "الركبة",
+          "ankle": "الكاحل",
+          "foot": "القدم",
+          "spine": "العمود الفقري"
+        },
+        "splintOrCastOptions": {
+          "select": "اختر",
+          "no": "لا",
+          "splint": "جبيرة",
+          "cast": "جبس",
+          "both": "جبيرة وجبس"
+        },
+        "surgicalOperationsOptions": {
+          "select": "اختر العملية",
+          "arthroscopy": "تنظير مفصلي",
+          "open_reduction": "رد مفتوح",
+          "internal_fixation": "تثبيت داخلي",
+          "external_fixation": "تثبيت خارجي",
+          "reconstruction": "إعادة بناء",
+          "fusion": "دمج فقري",
+          "replacement": "استبدال مفصلي",
+          "none": "لا توجد عمليات"
+        },
+        "physicalTherapyOptions": {
+          "select": "اختر نوع العلاج",
+          "range_of_motion": "تمارين المدى الحركي",
+          "strengthening": "تمارين التقوية",
+          "stretching": "تمارين الاستطالة",
+          "balance": "تمارين التوازن",
+          "gait_training": "تدريب المشي",
+          "hydrotherapy": "العلاج المائي",
+          "electrotherapy": "العلاج الكهربائي",
+          "manual_therapy": "العلاج اليدوي",
+          "none": "لا يوجد"
+        },
+        "diagnosisOptions": {
+          "select": "اختر التشخيص",
+          "simple_fracture": "كسر بسيط",
+          "compound_fracture": "كسر مركب",
+          "comminuted_fracture": "كسر محطم",
+          "anterior_dislocation": "خلع أمامي",
+          "posterior_dislocation": "خلع خلفي",
+          "meniscus_tear": "تمزق الغضروف الهلالي",
+          "acl_tear": "تمزق الرباط الصليبي الأمامي",
+          "rotator_cuff_tear": "تمزق الكفة المدورة",
+          "osteoarthritis": "هشاشة العظام",
+          "rheumatoid_arthritis": "التهاب المفاصل الروماتويدي",
+          "bursitis": "التهاب الجراب",
+          "tendinitis": "التهاب الأوتار",
+          "other": "أخرى"
+        },
+        "treatmentPlanOptions": {
+          "select": "اختر خطة العلاج",
+          "conservative": "علاج محافظ",
+          "surgical": "علاج جراحي",
+          "combined": "علاج مدمج",
+          "physical_therapy_only": "علاج طبيعي فقط",
+          "medication_only": "أدوية فقط",
+          "immobilization": "تثبيت",
+          "rehabilitation": "إعادة تأهيل"
+        }
       },
       "placeholders": {
         "allergies": "على سبيل المثال، البنسلين والفول السوداني",
@@ -1620,7 +1704,8 @@
         "physicalTherapy": "تفاصيل جلسات العلاج الطبيعي",
         "emergencyRelationship": "على سبيل المثال، الزوج، الوالد، الطفل",
         "diagnosis": "أدخل التشخيص الطبي",
-        "treatmentPlan": "أدخل خطة العلاج المقترحة"
+        "treatmentPlan": "أدخل خطة العلاج المقترحة",
+        "injuryNotes": "أدخل ملاحظات تفصيلية حول الإصابة"
       },
       "buttons": {
         "cancel": "إلغاء",
