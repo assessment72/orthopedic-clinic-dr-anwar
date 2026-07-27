@@ -1442,7 +1442,52 @@
           "medication_only": "Solo medicación",
           "immobilization": "Inmovilización",
           "rehabilitation": "Rehabilitación"
-        }
+        },
+        "allergiesOptions": {
+          "select": "Seleccionar tipo de alergia",
+          "none": "Ninguno",
+          "medications": "Medicamentos",
+          "food": "Comida",
+          "animals": "Animales",
+          "pollen": "Polen",
+          "dust": "Polvo",
+          "latex": "Látex",
+          "other": "Otro"
+        },
+        "medicationsOptions": {
+          "select": "Seleccionar tipo de medicamento",
+          "none": "Ninguno",
+          "painkillers": "Analgésicos",
+          "antibiotics": "Antibióticos",
+          "anti_inflammatory": "Antiinflamatorios",
+          "blood_thinners": "Anticoagulantes",
+          "blood_pressure": "Medicación para la presión arterial",
+          "diabetes": "Medicación para la diabetes",
+          "other": "Otro"
+        },
+        "medicalHistoryOptions": {
+          "select": "Seleccionar historial médico",
+          "none": "Ninguno",
+          "hypertension": "Hipertensión",
+          "diabetes": "Diabetes",
+          "heart_disease": "Enfermedades cardíacas",
+          "respiratory": "Enfermedad respiratoria",
+          "liver_disease": "Enfermedad hepática",
+          "kidney_disease": "Enfermedad renal",
+          "cancer": "Cáncer",
+          "other": "Otro"
+        },
+        "familyHistoryOptions": {
+          "select": "Seleccionar historial familiar",
+          "none": "Ninguno",
+          "heart_disease": "Enfermedades cardíacas",
+          "diabetes": "Diabetes",
+          "cancer": "Cáncer",
+          "hypertension": "Hipertensión",
+          "genetic": "Enfermedades genéticas",
+          "other": "Otro"
+        },
+        "password": "Contraseña"
       },
       "placeholders": {
         "allergies": "ej., Penicilina, Cacahuetes",
@@ -1466,6 +1511,10 @@
       "errors": {
         "addPatientError": "Error al agregar paciente: {error}",
         "genericError": "Error al agregar paciente. Por favor inténtelo de nuevo."
+      },
+      "hints": {
+        "emailAuto": "El correo electrónico se generará automáticamente a partir del número de teléfono",
+        "passwordAuto": "La contraseña se generará automáticamente"
       }
     }
   },

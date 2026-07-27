@@ -3086,7 +3086,52 @@
           "medication_only": "Medication Only",
           "immobilization": "Immobilization",
           "rehabilitation": "Rehabilitation"
-        }
+        },
+        "allergiesOptions": {
+          "select": "Select allergy type",
+          "none": "None",
+          "medications": "Medications",
+          "food": "Food",
+          "animals": "Animals",
+          "pollen": "Pollen",
+          "dust": "Dust",
+          "latex": "Latex",
+          "other": "Other"
+        },
+        "medicationsOptions": {
+          "select": "Select medication type",
+          "none": "None",
+          "painkillers": "Painkillers",
+          "antibiotics": "Antibiotics",
+          "anti_inflammatory": "Anti-inflammatory",
+          "blood_thinners": "Blood Thinners",
+          "blood_pressure": "Blood Pressure Medication",
+          "diabetes": "Diabetes Medication",
+          "other": "Other"
+        },
+        "medicalHistoryOptions": {
+          "select": "Select medical history",
+          "none": "None",
+          "hypertension": "Hypertension",
+          "diabetes": "Diabetes",
+          "heart_disease": "Heart Disease",
+          "respiratory": "Respiratory Disease",
+          "liver_disease": "Liver Disease",
+          "kidney_disease": "Kidney Disease",
+          "cancer": "Cancer",
+          "other": "Other"
+        },
+        "familyHistoryOptions": {
+          "select": "Select family history",
+          "none": "None",
+          "heart_disease": "Heart Disease",
+          "diabetes": "Diabetes",
+          "cancer": "Cancer",
+          "hypertension": "Hypertension",
+          "genetic": "Genetic Diseases",
+          "other": "Other"
+        },
+        "password": "Password"
       },
       "placeholders": {
         "allergies": "e.g., Penicillin, Peanuts",
@@ -3219,6 +3264,10 @@
           "voiceTranscription": "Voice Transcription"
         },
         "followUpAppointments": "Follow-up Appointments"
+      },
+      "hints": {
+        "emailAuto": "Email will be auto-generated from phone number",
+        "passwordAuto": "Password will be auto-generated"
       }
     },
     "noPatientsFound": "No patients found",

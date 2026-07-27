@@ -1442,7 +1442,52 @@
           "medication_only": "Médication uniquement",
           "immobilization": "Immobilisation",
           "rehabilitation": "Rééducation"
-        }
+        },
+        "allergiesOptions": {
+          "select": "Sélectionner le type d'allergie",
+          "none": "Aucun",
+          "medications": "Médicaments",
+          "food": "Aliments",
+          "animals": "Animaux",
+          "pollen": "Pollen",
+          "dust": "Poussière",
+          "latex": "Latex",
+          "other": "Autre"
+        },
+        "medicationsOptions": {
+          "select": "Sélectionner le type de médicament",
+          "none": "Aucun",
+          "painkillers": "Analgésiques",
+          "antibiotics": "Antibiotiques",
+          "anti_inflammatory": "Anti-inflammatoires",
+          "blood_thinners": "Anticoagulants",
+          "blood_pressure": "Médicaments pour la tension artérielle",
+          "diabetes": "Médicaments pour le diabète",
+          "other": "Autre"
+        },
+        "medicalHistoryOptions": {
+          "select": "Sélectionner l'historique médical",
+          "none": "Aucun",
+          "hypertension": "Hypertension",
+          "diabetes": "Diabète",
+          "heart_disease": "Maladies cardiaques",
+          "respiratory": "Maladie respiratoire",
+          "liver_disease": "Maladie du foie",
+          "kidney_disease": "Maladie rénale",
+          "cancer": "Cancer",
+          "other": "Autre"
+        },
+        "familyHistoryOptions": {
+          "select": "Sélectionner l'historique familial",
+          "none": "Aucun",
+          "heart_disease": "Maladies cardiaques",
+          "diabetes": "Diabète",
+          "cancer": "Cancer",
+          "hypertension": "Hypertension",
+          "genetic": "Maladies génétiques",
+          "other": "Autre"
+        },
+        "password": "Mot de passe"
       },
       "placeholders": {
         "allergies": "ex., Pénicilline, Arachides",
@@ -1466,6 +1511,10 @@
       "errors": {
         "addPatientError": "Erreur lors de l'ajout du patient : {error}",
         "genericError": "Erreur lors de l'ajout du patient. Veuillez réessayer."
+      },
+      "hints": {
+        "emailAuto": "L'email sera généré automatiquement à partir du numéro de téléphone",
+        "passwordAuto": "Le mot de passe sera généré automatiquement"
       }
     }
   },
