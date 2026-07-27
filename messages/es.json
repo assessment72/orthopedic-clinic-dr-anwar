@@ -625,7 +625,7 @@
     "addVitals": "Agregar signos vitales",
     "noVitals": "No hay signos vitales registrados",
     "dateTime": "Fecha/Hora",
-    "bp": "TA", 
+    "bp": "TA",
     "pulse": "Pulso",
     "temp": "Temp.",
     "spo2": "SpO₂",
@@ -1319,7 +1319,8 @@
         "personal": "Información Personal",
         "login": "Información de Inicio de Sesión",
         "medical": "Información Médica",
-        "emergency": "Contacto de Emergencia"
+        "emergency": "Contacto de Emergencia",
+        "injuryMap": "Mapa de ubicación de la lesión"
       },
       "fields": {
         "firstName": "Nombre",
@@ -1358,14 +1359,98 @@
         "familyHistory": "Historial Médico Familiar",
         "emergencyName": "Nombre del Contacto de Emergencia",
         "emergencyPhone": "Teléfono del Contacto de Emergencia",
-        "emergencyRelationship": "Relación con el Paciente"
+        "emergencyRelationship": "Relación con el Paciente",
+        "injuryNotes": "Notas de la lesión",
+        "imagingOptions": {
+          "select": "Seleccionar tipo de imagen"
+        },
+        "injuryTypeOptions": {
+          "select": "Seleccionar tipo de lesión",
+          "fracture": "Fractura",
+          "dislocation": "Luxación",
+          "sprain": "Esguince",
+          "strain": "Distensión muscular",
+          "tear": "Desgarro",
+          "crush": "Lesión por aplastamiento",
+          "burn": "Quemadura",
+          "other": "Otro"
+        },
+        "affectedJointOptions": {
+          "select": "Seleccionar articulación",
+          "shoulder": "Hombro",
+          "elbow": "Codo",
+          "wrist": "Muñeca",
+          "hand": "Mano",
+          "hip": "Cadera",
+          "knee": "Rodilla",
+          "ankle": "Tobillo",
+          "foot": "Pie",
+          "spine": "Columna vertebral"
+        },
+        "splintOrCastOptions": {
+          "select": "Seleccionar",
+          "no": "No",
+          "splint": "Férula",
+          "cast": "Yeso",
+          "both": "Férula y Yeso"
+        },
+        "surgicalOperationsOptions": {
+          "select": "Seleccionar operación",
+          "arthroscopy": "Artroscopía",
+          "open_reduction": "Reducción abierta",
+          "internal_fixation": "Fijación interna",
+          "external_fixation": "Fijación externa",
+          "reconstruction": "Reconstrucción",
+          "fusion": "Fusión espinal",
+          "replacement": "Reemplazo articular",
+          "none": "Sin operaciones"
+        },
+        "physicalTherapyOptions": {
+          "select": "Seleccionar tipo de terapia",
+          "range_of_motion": "Ejercicios de rango de movimiento",
+          "strengthening": "Ejercicios de fortalecimiento",
+          "stretching": "Ejercicios de estiramiento",
+          "balance": "Ejercicios de equilibrio",
+          "gait_training": "Entrenamiento de la marcha",
+          "hydrotherapy": "Hidroterapia",
+          "electrotherapy": "Electroterapia",
+          "manual_therapy": "Terapia manual",
+          "none": "Ninguno"
+        },
+        "diagnosisOptions": {
+          "select": "Seleccionar diagnóstico",
+          "simple_fracture": "Fractura simple",
+          "compound_fracture": "Fractura compuesta",
+          "comminuted_fracture": "Fractura conminuta",
+          "anterior_dislocation": "Luxación anterior",
+          "posterior_dislocation": "Luxación posterior",
+          "meniscus_tear": "Desgarro de menisco",
+          "acl_tear": "Desgarro del LCA",
+          "rotator_cuff_tear": "Desgarro del manguito rotador",
+          "osteoarthritis": "Osteoartritis",
+          "rheumatoid_arthritis": "Artritis reumatoide",
+          "bursitis": "Bursitis",
+          "tendinitis": "Tendinitis",
+          "other": "Otro"
+        },
+        "treatmentPlanOptions": {
+          "select": "Seleccionar plan de tratamiento",
+          "conservative": "Tratamiento conservador",
+          "surgical": "Tratamiento quirúrgico",
+          "combined": "Tratamiento combinado",
+          "physical_therapy_only": "Solo fisioterapia",
+          "medication_only": "Solo medicación",
+          "immobilization": "Inmovilización",
+          "rehabilitation": "Rehabilitación"
+        }
       },
       "placeholders": {
         "allergies": "ej., Penicilina, Cacahuetes",
         "medications": "Lista de medicamentos actuales, dosis y frecuencia",
         "medicalHistory": "Cirugías previas, condiciones crónicas, enfermedades graves",
         "familyHistory": "Condiciones médicas familiares relevantes",
-        "emergencyRelationship": "ej., Cónyuge, Padre, Hijo"
+        "emergencyRelationship": "ej., Cónyuge, Padre, Hijo",
+        "injuryNotes": "Ingrese notas detalladas de la lesión"
       },
       "buttons": {
         "cancel": "Cancelar",
@@ -2641,7 +2726,7 @@
     }
   },
   "documents": {
-    "title": "Gestión de Documentos",
+    "title": "Título",
     "description": "Gestionar documentos, formularios de consentimiento y archivos legales",
     "totalDocuments": "Total Documentos",
     "activeDocuments": "Activos",
@@ -2672,7 +2757,6 @@
     "dragAndDrop": "Arrastre y suelte un archivo aquí, o haga clic para buscar",
     "supportedFormats": "PDF, DOC, DOCX, XLS, XLSX, TXT, JPG, PNG, GIF",
     "documentInfo": "Información del Documento",
-    "title": "Título",
     "titlePlaceholder": "Ingrese el título del documento",
     "descriptionLabel": "Descripción",
     "descriptionPlaceholder": "Ingrese la descripción del documento",

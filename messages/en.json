@@ -2720,22 +2720,22 @@
     "title": "Clinical operations, unified."
   },
   "login": {
-  "contactAdmin": "Contact Clinic Administration",
-  "description": "Sign in to access Dr. Anwar Orthopedic Clinic Management System",
-  "email": "Email Address",
-  "forgotPassword": "Forgot Password?",
-  "invalidCredentials": "Invalid email or password",
-  "invalidEmail": "Please enter a valid email address",
-  "noAccount": "Don't have an account?",
-  "password": "Password",
-  "required": "This field is required",
-  "signIn": "Sign In",
-  "signInError": "Failed to sign in. Please try again.",
-  "signingIn": "Signing In...",
-  "signInSuccess": "Successfully signed in!",
-  "subtitle": "Welcome to Dr. Anwar Orthopedic Clinic",
-  "title": "Sign In"
-},
+    "contactAdmin": "Contact Clinic Administration",
+    "description": "Sign in to access Dr. Anwar Orthopedic Clinic Management System",
+    "email": "Email Address",
+    "forgotPassword": "Forgot Password?",
+    "invalidCredentials": "Invalid email or password",
+    "invalidEmail": "Please enter a valid email address",
+    "noAccount": "Don't have an account?",
+    "password": "Password",
+    "required": "This field is required",
+    "signIn": "Sign In",
+    "signInError": "Failed to sign in. Please try again.",
+    "signingIn": "Signing In...",
+    "signInSuccess": "Successfully signed in!",
+    "subtitle": "Welcome to Dr. Anwar Orthopedic Clinic",
+    "title": "Sign In"
+  },
   "navigation": {
     "admins": "Administrators",
     "aiAppointmentOptimizer": "AI Appointment Optimizer",
@@ -3003,7 +3003,90 @@
         "imaging": "Imaging Studies",
         "followUpDate": "Follow-up Date",
         "diagnosis": "Diagnosis",
-        "treatmentPlan": "Treatment Plan"
+        "treatmentPlan": "Treatment Plan",
+        "injuryNotes": "Injury Notes",
+        "imagingOptions": {
+          "select": "Select imaging type"
+        },
+        "injuryTypeOptions": {
+          "select": "Select injury type",
+          "fracture": "Fracture",
+          "dislocation": "Dislocation",
+          "sprain": "Sprain",
+          "strain": "Muscle Strain",
+          "tear": "Tear",
+          "crush": "Crush Injury",
+          "burn": "Burn",
+          "other": "Other"
+        },
+        "affectedJointOptions": {
+          "select": "Select joint",
+          "shoulder": "Shoulder",
+          "elbow": "Elbow",
+          "wrist": "Wrist",
+          "hand": "Hand",
+          "hip": "Hip",
+          "knee": "Knee",
+          "ankle": "Ankle",
+          "foot": "Foot",
+          "spine": "Spine"
+        },
+        "splintOrCastOptions": {
+          "select": "Select",
+          "no": "No",
+          "splint": "Splint",
+          "cast": "Cast",
+          "both": "Both Splint and Cast"
+        },
+        "surgicalOperationsOptions": {
+          "select": "Select operation",
+          "arthroscopy": "Arthroscopy",
+          "open_reduction": "Open Reduction",
+          "internal_fixation": "Internal Fixation",
+          "external_fixation": "External Fixation",
+          "reconstruction": "Reconstruction",
+          "fusion": "Spinal Fusion",
+          "replacement": "Joint Replacement",
+          "none": "No operations"
+        },
+        "physicalTherapyOptions": {
+          "select": "Select therapy type",
+          "range_of_motion": "Range of Motion Exercises",
+          "strengthening": "Strengthening Exercises",
+          "stretching": "Stretching Exercises",
+          "balance": "Balance Exercises",
+          "gait_training": "Gait Training",
+          "hydrotherapy": "Hydrotherapy",
+          "electrotherapy": "Electrotherapy",
+          "manual_therapy": "Manual Therapy",
+          "none": "None"
+        },
+        "diagnosisOptions": {
+          "select": "Select diagnosis",
+          "simple_fracture": "Simple Fracture",
+          "compound_fracture": "Compound Fracture",
+          "comminuted_fracture": "Comminuted Fracture",
+          "anterior_dislocation": "Anterior Dislocation",
+          "posterior_dislocation": "Posterior Dislocation",
+          "meniscus_tear": "Meniscus Tear",
+          "acl_tear": "ACL Tear",
+          "rotator_cuff_tear": "Rotator Cuff Tear",
+          "osteoarthritis": "Osteoarthritis",
+          "rheumatoid_arthritis": "Rheumatoid Arthritis",
+          "bursitis": "Bursitis",
+          "tendinitis": "Tendinitis",
+          "other": "Other"
+        },
+        "treatmentPlanOptions": {
+          "select": "Select treatment plan",
+          "conservative": "Conservative Treatment",
+          "surgical": "Surgical Treatment",
+          "combined": "Combined Treatment",
+          "physical_therapy_only": "Physical Therapy Only",
+          "medication_only": "Medication Only",
+          "immobilization": "Immobilization",
+          "rehabilitation": "Rehabilitation"
+        }
       },
       "placeholders": {
         "allergies": "e.g., Penicillin, Peanuts",
@@ -3020,14 +3103,16 @@
         "surgicalOperations": "Enter surgical operations performed...",
         "physicalTherapy": "Enter physical therapy details...",
         "diagnosis": "Enter diagnosis...",
-        "treatmentPlan": "Enter treatment plan..."
+        "treatmentPlan": "Enter treatment plan...",
+        "injuryNotes": "Enter detailed injury notes"
       },
       "sections": {
         "emergency": "Emergency Contact",
         "login": "User Login Information",
         "medical": "Medical Information",
         "personal": "Personal Information",
-        "orthopedic": "Orthopedic Information"
+        "orthopedic": "Orthopedic Information",
+        "injuryMap": "Injury Location Map"
       },
       "success": {
         "patientAdded": "Patient added successfully!"
