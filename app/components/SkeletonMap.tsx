@@ -21,57 +21,62 @@ interface SkeletonMapProps {
 // تعريف المناطق مع إحداثيات نسبية (بالنسبة المئوية) - متوافقة مع صورة الهيكل العظمي
 const regions = [
   // الرأس والرقبة
-  { id: 'skull', label: 'الجمجمة', x: 35, y: 2, w: 30, h: 15 },
-  { id: 'jaw', label: 'الفك', x: 38, y: 17, w: 24, h: 5 },
-  { id: 'neck', label: 'الرقبة', x: 43, y: 22, w: 14, h: 6 },
-  
+  { id: 'skull', label: 'الجمجمة', x: 35, y: 2, w: 32, h: 16 },
+  { id: 'jaw', label: 'الفك', x: 38, y: 17, w: 26, h: 6 },
+  { id: 'neck', label: 'الرقبة', x: 43, y: 22, w: 16, h: 7 },
+
+  // الصدر والأضلاع
+  { id: 'sternum', label: 'القص', x: 43, y: 28, w: 14, h: 10 },
+  { id: 'ribs_right', label: 'الأضلاع اليمنى', x: 58, y: 28, w: 18, h: 12 },
+  { id: 'ribs_left', label: 'الأضلاع اليسرى', x: 24, y: 28, w: 18, h: 12 },
+
   // الكتفين
-  { id: 'shoulderRight', label: 'الكتف الأيمن', x: 68, y: 26, w: 18, h: 8 },
-  { id: 'shoulderLeft', label: 'الكتف الأيسر', x: 14, y: 26, w: 18, h: 8 },
-  
+  { id: 'shoulderRight', label: 'الكتف الأيمن', x: 70, y: 26, w: 20, h: 9 },
+  { id: 'shoulderLeft', label: 'الكتف الأيسر', x: 12, y: 26, w: 20, h: 9 },
+
   // الذراع الأيمن
-  { id: 'armRight', label: 'العضد الأيمن', x: 74, y: 34, w: 8, h: 14 },
-  { id: 'elbowRight', label: 'المرفق الأيمن', x: 72, y: 48, w: 12, h: 5 },
-  { id: 'forearmRight', label: 'الساعد الأيمن', x: 74, y: 53, w: 8, h: 12 },
-  { id: 'wristRight', label: 'الرسغ الأيمن', x: 73, y: 65, w: 10, h: 4 },
-  { id: 'handRight', label: 'اليد اليمنى', x: 72, y: 69, w: 12, h: 7 },
-  { id: 'fingersRight', label: 'أصابع اليد اليمنى', x: 71, y: 76, w: 14, h: 5 },
-  
+  { id: 'armRight', label: 'العضد الأيمن', x: 76, y: 34, w: 10, h: 16 },
+  { id: 'elbowRight', label: 'المرفق الأيمن', x: 74, y: 48, w: 14, h: 6 },
+  { id: 'forearmRight', label: 'الساعد الأيمن', x: 76, y: 53, w: 10, h: 14 },
+  { id: 'wristRight', label: 'الرسغ الأيمن', x: 74, y: 65, w: 12, h: 5 },
+  { id: 'handRight', label: 'اليد اليمنى', x: 73, y: 69, w: 14, h: 8 },
+  { id: 'fingersRight', label: 'أصابع اليد اليمنى', x: 72, y: 76, w: 16, h: 6 },
+
   // الذراع الأيسر
-  { id: 'armLeft', label: 'العضد الأيسر', x: 18, y: 34, w: 8, h: 14 },
-  { id: 'elbowLeft', label: 'المرفق الأيسر', x: 16, y: 48, w: 12, h: 5 },
-  { id: 'forearmLeft', label: 'الساعد الأيسر', x: 18, y: 53, w: 8, h: 12 },
-  { id: 'wristLeft', label: 'الرسغ الأيسر', x: 17, y: 65, w: 10, h: 4 },
-  { id: 'handLeft', label: 'اليد اليسرى', x: 16, y: 69, w: 12, h: 7 },
-  { id: 'fingersLeft', label: 'أصابع اليد اليسرى', x: 15, y: 76, w: 14, h: 5 },
-  
+  { id: 'armLeft', label: 'العضد الأيسر', x: 14, y: 34, w: 10, h: 16 },
+  { id: 'elbowLeft', label: 'المرفق الأيسر', x: 12, y: 48, w: 14, h: 6 },
+  { id: 'forearmLeft', label: 'الساعد الأيسر', x: 14, y: 53, w: 10, h: 14 },
+  { id: 'wristLeft', label: 'الرسغ الأيسر', x: 14, y: 65, w: 12, h: 5 },
+  { id: 'handLeft', label: 'اليد اليسرى', x: 13, y: 69, w: 14, h: 8 },
+  { id: 'fingersLeft', label: 'أصابع اليد اليسرى', x: 12, y: 76, w: 16, h: 6 },
+
   // العمود الفقري
-  { id: 'cervicalSpine', label: 'العمود الفقري العنقي', x: 45, y: 22, w: 10, h: 6 },
-  { id: 'thoracicSpine', label: 'العمود الفقري الصدري', x: 45, y: 28, w: 10, h: 14 },
-  { id: 'lumbarSpine', label: 'العمود الفقري القطني', x: 45, y: 42, w: 10, h: 10 },
-  
+  { id: 'cervicalSpine', label: 'العمود الفقري العنقي', x: 44, y: 22, w: 12, h: 7 },
+  { id: 'thoracicSpine', label: 'العمود الفقري الصدري', x: 44, y: 28, w: 12, h: 16 },
+  { id: 'lumbarSpine', label: 'العمود الفقري القطني', x: 44, y: 42, w: 12, h: 12 },
+
   // الحوض
-  { id: 'pelvis', label: 'الحوض', x: 35, y: 52, w: 30, h: 8 },
-  
+  { id: 'pelvis', label: 'الحوض', x: 34, y: 52, w: 32, h: 10 },
+
   // الوركان
-  { id: 'hipRight', label: 'الورك الأيمن', x: 65, y: 54, w: 12, h: 8 },
-  { id: 'hipLeft', label: 'الورك الأيسر', x: 23, y: 54, w: 12, h: 8 },
-  
+  { id: 'hipRight', label: 'الورك الأيمن', x: 66, y: 54, w: 14, h: 10 },
+  { id: 'hipLeft', label: 'الورك الأيسر', x: 20, y: 54, w: 14, h: 10 },
+
   // الساق اليمنى
-  { id: 'thighRight', label: 'الفخذ الأيمن', x: 62, y: 62, w: 10, h: 14 },
-  { id: 'kneeRight', label: 'الركبة اليمنى', x: 60, y: 76, w: 14, h: 4 },
-  { id: 'legRight', label: 'الساق الأيمن', x: 62, y: 80, w: 10, h: 12 },
-  { id: 'ankleRight', label: 'الكاحل الأيمن', x: 60, y: 92, w: 14, h: 4 },
-  { id: 'footRight', label: 'القدم اليمنى', x: 55, y: 96, w: 22, h: 6 },
-  { id: 'toesRight', label: 'أصابع القدم اليمنى', x: 53, y: 102, w: 26, h: 4 },
-  
+  { id: 'thighRight', label: 'الفخذ الأيمن', x: 63, y: 62, w: 12, h: 16 },
+  { id: 'kneeRight', label: 'الركبة اليمنى', x: 60, y: 76, w: 16, h: 5 },
+  { id: 'legRight', label: 'الساق الأيمن', x: 63, y: 80, w: 12, h: 14 },
+  { id: 'ankleRight', label: 'الكاحل الأيمن', x: 60, y: 92, w: 16, h: 5 },
+  { id: 'footRight', label: 'القدم اليمنى', x: 54, y: 96, w: 24, h: 8 },
+  { id: 'toesRight', label: 'أصابع القدم اليمنى', x: 52, y: 102, w: 28, h: 5 },
+
   // الساق اليسرى
-  { id: 'thighLeft', label: 'الفخذ الأيسر', x: 28, y: 62, w: 10, h: 14 },
-  { id: 'kneeLeft', label: 'الركبة اليسرى', x: 26, y: 76, w: 14, h: 4 },
-  { id: 'legLeft', label: 'الساق الأيسر', x: 28, y: 80, w: 10, h: 12 },
-  { id: 'ankleLeft', label: 'الكاحل الأيسر', x: 26, y: 92, w: 14, h: 4 },
-  { id: 'footLeft', label: 'القدم اليسرى', x: 23, y: 96, w: 22, h: 6 },
-  { id: 'toesLeft', label: 'أصابع القدم اليسرى', x: 21, y: 102, w: 26, h: 4 },
+  { id: 'thighLeft', label: 'الفخذ الأيسر', x: 25, y: 62, w: 12, h: 16 },
+  { id: 'kneeLeft', label: 'الركبة اليسرى', x: 24, y: 76, w: 16, h: 5 },
+  { id: 'legLeft', label: 'الساق الأيسر', x: 25, y: 80, w: 12, h: 14 },
+  { id: 'ankleLeft', label: 'الكاحل الأيسر', x: 24, y: 92, w: 16, h: 5 },
+  { id: 'footLeft', label: 'القدم اليسرى', x: 22, y: 96, w: 24, h: 8 },
+  { id: 'toesLeft', label: 'أصابع القدم اليسرى', x: 20, y: 102, w: 28, h: 5 },
 ];
 
 export default function SkeletonMap({
@@ -116,7 +121,10 @@ export default function SkeletonMap({
     <div className="w-full bg-white p-4 rounded-lg shadow relative">
       {/* أزرار التحكم */}
       <div className="flex justify-center gap-3 mb-4">
-        <button onClick={onClearAll} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">
+        <button
+          onClick={onClearAll}
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+        >
           {lang === 'ar' ? 'مسح الكل' : 'Clear All'}
         </button>
       </div>
@@ -150,19 +158,20 @@ export default function SkeletonMap({
             return (
               <div
                 key={region.id}
-                className="absolute cursor-pointer transition-colors duration-200"
+                className="absolute cursor-pointer transition-all duration-200"
                 style={{
                   left: `${region.x}%`,
                   top: `${region.y}%`,
                   width: `${region.w}%`,
                   height: `${region.h}%`,
                   backgroundColor: isSelected
-                    ? 'rgba(59, 130, 246, 0.4)'
+                    ? 'rgba(59, 130, 246, 0.5)'
                     : isHovered
-                    ? 'rgba(147, 197, 253, 0.3)'
+                    ? 'rgba(147, 197, 253, 0.4)'
                     : 'rgba(0,0,0,0)',
-                  border: isSelected ? '2px solid #3b82f6' : 'none',
-                  borderRadius: '4px',
+                  border: isSelected ? '2px solid #2563eb' : 'none',
+                  borderRadius: '6px',
+                  boxShadow: isSelected ? '0 0 12px rgba(59,130,246,0.3)' : 'none',
                   transition: 'all 0.2s',
                 }}
                 onClick={() => handleRegionClick(region)}
@@ -171,7 +180,7 @@ export default function SkeletonMap({
               >
                 {/* عرض اسم المنطقة عند التمرير */}
                 {isHovered && (
-                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50">
+                  <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50 pointer-events-none">
                     {region.label}
                   </div>
                 )}
