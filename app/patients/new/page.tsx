@@ -113,7 +113,7 @@ export default function NewPatientPage() {
     });
   };
 
-  // دوال خريطة الهيكل العظمي (نفسها)
+  // دوال خريطة الهيكل العظمي
   const getRegionName = (id: string) => {
     const names: Record<string, Record<'ar' | 'en', string>> = {
       skull: { ar: 'الجمجمة', en: 'Skull' },
@@ -184,7 +184,7 @@ export default function NewPatientPage() {
     setSelectedRegions([]);
   };
 
-  // خيارات القوائم المنسدلة
+  // ------------------ خيارات القوائم المنسدلة لقسم العظام ------------------
   const injuryTypeOptions = [
     { value: '', label: t('patients.newPatient.fields.injuryTypeOptions.select') || 'اختر نوع الإصابة' },
     { value: 'fracture', label: t('patients.newPatient.fields.injuryTypeOptions.fracture') || 'كسر' },
@@ -271,7 +271,56 @@ export default function NewPatientPage() {
     { value: 'rehabilitation', label: t('patients.newPatient.fields.treatmentPlanOptions.rehabilitation') || 'إعادة تأهيل' }
   ];
 
-  // دالة الإرسال (نفسها)
+  // ------------------ خيارات القوائم المنسدلة لقسم المعلومات الطبية (جديدة) ------------------
+  const allergiesOptions = [
+    { value: '', label: t('patients.newPatient.fields.allergiesOptions.select') || 'اختر نوع الحساسية' },
+    { value: 'none', label: t('patients.newPatient.fields.allergiesOptions.none') || 'لا يوجد' },
+    { value: 'medications', label: t('patients.newPatient.fields.allergiesOptions.medications') || 'أدوية' },
+    { value: 'food', label: t('patients.newPatient.fields.allergiesOptions.food') || 'طعام' },
+    { value: 'animals', label: t('patients.newPatient.fields.allergiesOptions.animals') || 'حيوانات' },
+    { value: 'pollen', label: t('patients.newPatient.fields.allergiesOptions.pollen') || 'حبوب لقاح' },
+    { value: 'dust', label: t('patients.newPatient.fields.allergiesOptions.dust') || 'غبار' },
+    { value: 'latex', label: t('patients.newPatient.fields.allergiesOptions.latex') || 'لاتكس' },
+    { value: 'other', label: t('patients.newPatient.fields.allergiesOptions.other') || 'أخرى' }
+  ];
+
+  const medicationsOptions = [
+    { value: '', label: t('patients.newPatient.fields.medicationsOptions.select') || 'اختر نوع الدواء' },
+    { value: 'none', label: t('patients.newPatient.fields.medicationsOptions.none') || 'لا يوجد' },
+    { value: 'painkillers', label: t('patients.newPatient.fields.medicationsOptions.painkillers') || 'مسكنات' },
+    { value: 'antibiotics', label: t('patients.newPatient.fields.medicationsOptions.antibiotics') || 'مضادات حيوية' },
+    { value: 'anti_inflammatory', label: t('patients.newPatient.fields.medicationsOptions.anti_inflammatory') || 'مضادات التهابات' },
+    { value: 'blood_thinners', label: t('patients.newPatient.fields.medicationsOptions.blood_thinners') || 'مميعات دم' },
+    { value: 'blood_pressure', label: t('patients.newPatient.fields.medicationsOptions.blood_pressure') || 'أدوية ضغط' },
+    { value: 'diabetes', label: t('patients.newPatient.fields.medicationsOptions.diabetes') || 'أدوية سكري' },
+    { value: 'other', label: t('patients.newPatient.fields.medicationsOptions.other') || 'أخرى' }
+  ];
+
+  const medicalHistoryOptions = [
+    { value: '', label: t('patients.newPatient.fields.medicalHistoryOptions.select') || 'اختر التاريخ الطبي' },
+    { value: 'none', label: t('patients.newPatient.fields.medicalHistoryOptions.none') || 'لا يوجد' },
+    { value: 'hypertension', label: t('patients.newPatient.fields.medicalHistoryOptions.hypertension') || 'ارتفاع ضغط الدم' },
+    { value: 'diabetes', label: t('patients.newPatient.fields.medicalHistoryOptions.diabetes') || 'السكري' },
+    { value: 'heart_disease', label: t('patients.newPatient.fields.medicalHistoryOptions.heart_disease') || 'أمراض قلبية' },
+    { value: 'respiratory', label: t('patients.newPatient.fields.medicalHistoryOptions.respiratory') || 'أمراض تنفسية' },
+    { value: 'liver_disease', label: t('patients.newPatient.fields.medicalHistoryOptions.liver_disease') || 'أمراض كبدية' },
+    { value: 'kidney_disease', label: t('patients.newPatient.fields.medicalHistoryOptions.kidney_disease') || 'أمراض كلوية' },
+    { value: 'cancer', label: t('patients.newPatient.fields.medicalHistoryOptions.cancer') || 'سرطانات' },
+    { value: 'other', label: t('patients.newPatient.fields.medicalHistoryOptions.other') || 'أخرى' }
+  ];
+
+  const familyHistoryOptions = [
+    { value: '', label: t('patients.newPatient.fields.familyHistoryOptions.select') || 'اختر التاريخ العائلي' },
+    { value: 'none', label: t('patients.newPatient.fields.familyHistoryOptions.none') || 'لا يوجد' },
+    { value: 'heart_disease', label: t('patients.newPatient.fields.familyHistoryOptions.heart_disease') || 'أمراض قلبية' },
+    { value: 'diabetes', label: t('patients.newPatient.fields.familyHistoryOptions.diabetes') || 'سكري' },
+    { value: 'cancer', label: t('patients.newPatient.fields.familyHistoryOptions.cancer') || 'سرطانات' },
+    { value: 'hypertension', label: t('patients.newPatient.fields.familyHistoryOptions.hypertension') || 'ارتفاع ضغط الدم' },
+    { value: 'genetic', label: t('patients.newPatient.fields.familyHistoryOptions.genetic') || 'أمراض وراثية' },
+    { value: 'other', label: t('patients.newPatient.fields.familyHistoryOptions.other') || 'أخرى' }
+  ];
+
+  // ------------------ دالة الإرسال ------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -413,7 +462,6 @@ export default function NewPatientPage() {
         });
         setSelectedRegions([]);
         setActiveSection('personal');
-        // إعادة تعيين حالات التعديل اليدوي
         setIsEmailManuallyEdited(false);
         setIsPasswordManuallyEdited(false);
         window.location.href = '/patients';
@@ -642,7 +690,7 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          {/* Medical Information Section */}
+          {/* Medical Information Section - تم تعديله إلى قوائم منسدلة */}
           {activeSection === 'medical' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
@@ -673,67 +721,79 @@ export default function NewPatientPage() {
                     <option value="none">{t('patients.newPatient.fields.bloodTypeOptions.none')}</option>
                   </select>
                 </div>
+
                 <div>
                   <label htmlFor="allergies" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.allergies')}
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="allergies"
                     name="allergies"
                     value={formData.allergies}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.allergies')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {allergiesOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
-                <div className="md:col-span-2">
+
+                <div>
                   <label htmlFor="medications" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.currentMedications')}
                   </label>
-                  <input
-                    type="text"
+                  <select
                     id="medications"
                     name="medications"
                     value={formData.medications}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.medications')}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {medicationsOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
-                <div className="md:col-span-2">
+
+                <div>
                   <label htmlFor="medicalHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.medicalHistory')}
                   </label>
-                  <textarea
+                  <select
                     id="medicalHistory"
                     name="medicalHistory"
                     value={formData.medicalHistory}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.medicalHistory')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {medicalHistoryOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
-                <div className="md:col-span-2">
+
+                <div>
                   <label htmlFor="familyHistory" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.familyHistory')}
                   </label>
-                  <textarea
+                  <select
                     id="familyHistory"
                     name="familyHistory"
                     value={formData.familyHistory}
                     onChange={handleInputChange}
-                    placeholder={t('patients.newPatient.placeholders.familyHistory')}
-                    rows={2}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
-                  />
+                  >
+                    {familyHistoryOptions.map(option => (
+                      <option key={option.value} value={option.value}>{option.label}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Orthopedic Information Section */}
+          {/* Orthopedic Information Section (نفسه كما كان) */}
           {activeSection === 'orthopedic' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
@@ -813,7 +873,6 @@ export default function NewPatientPage() {
                   />
                 </div>
 
-                {/* نوع الإصابة - Dropdown */}
                 <div>
                   <label htmlFor="injuryType" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.injuryType')}
@@ -831,7 +890,6 @@ export default function NewPatientPage() {
                   </select>
                 </div>
 
-                {/* المفصل المصاب - Dropdown */}
                 <div>
                   <label htmlFor="affectedJoint" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.affectedJoint')}
@@ -865,7 +923,6 @@ export default function NewPatientPage() {
                   />
                 </div>
 
-                {/* الجبيرة أو الجبس - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="splintOrCast" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.splintOrCast')}
@@ -883,7 +940,6 @@ export default function NewPatientPage() {
                   </select>
                 </div>
 
-                {/* العمليات الجراحية - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="surgicalOperations" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.surgicalOperations')}
@@ -901,7 +957,6 @@ export default function NewPatientPage() {
                   </select>
                 </div>
 
-                {/* العلاج الطبيعي - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="physicalTherapy" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.physicalTherapy')}
@@ -919,7 +974,6 @@ export default function NewPatientPage() {
                   </select>
                 </div>
 
-                {/* التشخيص - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="diagnosis" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.diagnosis')}
@@ -937,7 +991,6 @@ export default function NewPatientPage() {
                   </select>
                 </div>
 
-                {/* خطة العلاج - Dropdown */}
                 <div className="md:col-span-2">
                   <label htmlFor="treatmentPlan" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
                     {t('patients.newPatient.fields.treatmentPlan')}
@@ -1065,4 +1118,4 @@ export default function NewPatientPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-     }
+          }
