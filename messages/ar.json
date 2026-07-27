@@ -1687,7 +1687,52 @@
           "medication_only": "أدوية فقط",
           "immobilization": "تثبيت",
           "rehabilitation": "إعادة تأهيل"
-        }
+        },
+        "allergiesOptions": {
+          "select": "اختر نوع الحساسية",
+          "none": "لا يوجد",
+          "medications": "أدوية",
+          "food": "طعام",
+          "animals": "حيوانات",
+          "pollen": "حبوب لقاح",
+          "dust": "غبار",
+          "latex": "لاتكس",
+          "other": "أخرى"
+        },
+        "medicationsOptions": {
+          "select": "اختر نوع الدواء",
+          "none": "لا يوجد",
+          "painkillers": "مسكنات",
+          "antibiotics": "مضادات حيوية",
+          "anti_inflammatory": "مضادات التهابات",
+          "blood_thinners": "مميعات دم",
+          "blood_pressure": "أدوية ضغط",
+          "diabetes": "أدوية سكري",
+          "other": "أخرى"
+        },
+        "medicalHistoryOptions": {
+          "select": "اختر التاريخ الطبي",
+          "none": "لا يوجد",
+          "hypertension": "ارتفاع ضغط الدم",
+          "diabetes": "السكري",
+          "heart_disease": "أمراض قلبية",
+          "respiratory": "أمراض تنفسية",
+          "liver_disease": "أمراض كبدية",
+          "kidney_disease": "أمراض كلوية",
+          "cancer": "سرطانات",
+          "other": "أخرى"
+        },
+        "familyHistoryOptions": {
+          "select": "اختر التاريخ العائلي",
+          "none": "لا يوجد",
+          "heart_disease": "أمراض قلبية",
+          "diabetes": "سكري",
+          "cancer": "سرطانات",
+          "hypertension": "ارتفاع ضغط الدم",
+          "genetic": "أمراض وراثية",
+          "other": "أخرى"
+        },
+        "password": "كلمة المرور"
       },
       "placeholders": {
         "allergies": "على سبيل المثال، البنسلين والفول السوداني",
@@ -1820,6 +1865,10 @@
           "voiceTranscription": "التفريغ الصوتي"
         },
         "followUpAppointments": "مواعيد المتابعة"
+      },
+      "hints": {
+        "emailAuto": "سيتم توليد البريد تلقائياً من رقم الجوال",
+        "passwordAuto": "سيتم توليد كلمة المرور تلقائياً"
       }
     }
   },
