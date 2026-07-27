@@ -84,7 +84,7 @@ export default function NewPatientPage() {
     setFormData(prev => {
       const newData = { ...prev, [name]: value };
 
-      // معالجة حقل رقم الجوال
+      // معالجة حقل رقم الجوال – توليد البريد الإلكتروني بالصيغة المطلوبة
       if (name === 'phone') {
         if (!isEmailManuallyEdited) {
           const newEmail = `${value}@gmail.com`;
@@ -185,7 +185,7 @@ export default function NewPatientPage() {
     setSelectedRegions([]);
   };
 
-  // ------------------ خيارات القوائم المنسدلة لقسم العظام ------------------
+  // ------------------ خيارات القوائم المنسدلة ------------------
   const injuryTypeOptions = [
     { value: '', label: t('patients.newPatient.fields.injuryTypeOptions.select') || 'اختر نوع الإصابة' },
     { value: 'fracture', label: t('patients.newPatient.fields.injuryTypeOptions.fracture') || 'كسر' },
@@ -272,7 +272,6 @@ export default function NewPatientPage() {
     { value: 'rehabilitation', label: t('patients.newPatient.fields.treatmentPlanOptions.rehabilitation') || 'إعادة تأهيل' }
   ];
 
-  // ------------------ خيارات القوائم المنسدلة لقسم المعلومات الطبية ------------------
   const allergiesOptions = [
     { value: '', label: t('patients.newPatient.fields.allergiesOptions.select') || 'اختر نوع الحساسية' },
     { value: 'none', label: t('patients.newPatient.fields.allergiesOptions.none') || 'لا يوجد' },
@@ -321,17 +320,12 @@ export default function NewPatientPage() {
     { value: 'other', label: t('patients.newPatient.fields.familyHistoryOptions.other') || 'أخرى' }
   ];
 
-  // ------------------ دالة الإرسال ------------------
+  // ------------------ دالة الإرسال (معدلة – بدون تحقق إلزامي) ------------------
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    if (!formData.firstName || !formData.lastName || !formData.email || !formData.dateOfBirth || !formData.phone || !formData.gender) {
-      alert(t('patients.newPatient.validation.requiredFields'));
-      setIsSubmitting(false);
-      return;
-    }
-
+    // التحقق من كلمة المرور فقط إذا كانت موجودة
     if (formData.password && formData.password.length < 6) {
       alert('Password must be at least 6 characters long');
       setIsSubmitting(false);
@@ -343,15 +337,20 @@ export default function NewPatientPage() {
       const addressString = addressParts.length > 0 ? addressParts.join(', ') : undefined;
 
       const patientData: any = {
-        name: `${formData.firstName} ${formData.lastName}`,
-        email: formData.email,
-        phone: formData.phone,
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender,
+        name: formData.firstName || formData.lastName ? `${formData.firstName} ${formData.lastName}`.trim() : undefined,
+        email: formData.email || undefined,
+        phone: formData.phone || undefined,
+        dateOfBirth: formData.dateOfBirth || undefined,
+        gender: formData.gender || undefined,
         medicalHistory: formData.medicalHistory ? [formData.medicalHistory] : [],
         allergies: formData.allergies ? [formData.allergies] : [],
         currentMedications: formData.medications ? [formData.medications] : [],
       };
+
+      // إزالة الحقول التي قيمتها undefined لتجنب إرسالها
+      Object.keys(patientData).forEach(key => {
+        if (patientData[key] === undefined) delete patientData[key];
+      });
 
       if (formData.password) {
         patientData.password = formData.password;
@@ -494,7 +493,6 @@ export default function NewPatientPage() {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    // عنوان
     doc.setFontSize(18);
     doc.text('تقرير بيانات المريض', pageWidth / 2, 20, { align: 'center' });
     doc.setFontSize(10);
@@ -574,7 +572,6 @@ export default function NewPatientPage() {
     addSection('معلومات جراحة العظام', orthopedicData);
     addSection('جهة اتصال طارئة', emergencyData);
 
-    // إضافة المناطق المحددة
     if (selectedRegions.length > 0) {
       doc.setFontSize(14);
       doc.text('مواقع الإصابة المحددة', 14, y);
@@ -597,7 +594,7 @@ export default function NewPatientPage() {
       });
     }
 
-    doc.save(`بيانات_المريض_${formData.firstName}_${formData.lastName}.pdf`);
+    doc.save(`بيانات_المريض_${formData.firstName || 'مريض'}_${formData.lastName || ''}.pdf`);
   };
 
   const handlePrint = () => {
@@ -662,13 +659,12 @@ export default function NewPatientPage() {
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div>
                   <label htmlFor="firstName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.firstName')} *
+                    {t('patients.newPatient.fields.firstName')}
                   </label>
                   <input
                     type="text"
                     id="firstName"
                     name="firstName"
-                    required
                     value={formData.firstName}
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -676,13 +672,12 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="lastName" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.lastName')} *
+                    {t('patients.newPatient.fields.lastName')}
                   </label>
                   <input
                     type="text"
                     id="lastName"
                     name="lastName"
-                    required
                     value={formData.lastName}
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -690,13 +685,12 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="dateOfBirth" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.dateOfBirth')} *
+                    {t('patients.newPatient.fields.dateOfBirth')}
                   </label>
                   <input
                     type="date"
                     id="dateOfBirth"
                     name="dateOfBirth"
-                    required
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -704,12 +698,11 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="gender" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.gender')} *
+                    {t('patients.newPatient.fields.gender')}
                   </label>
                   <select
                     id="gender"
                     name="gender"
-                    required
                     value={formData.gender}
                     onChange={handleInputChange}
                     className="w-full rounded-md border border-gray-300 px-2.5 py-1 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -723,7 +716,7 @@ export default function NewPatientPage() {
                 </div>
                 <div>
                   <label htmlFor="phone" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.phone')} *
+                    {t('patients.newPatient.fields.phone')}
                   </label>
                   <div className="relative">
                     <Phone className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -731,7 +724,6 @@ export default function NewPatientPage() {
                       type="tel"
                       id="phone"
                       name="phone"
-                      required
                       value={formData.phone}
                       onChange={handleInputChange}
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -768,7 +760,7 @@ export default function NewPatientPage() {
               <div className="grid grid-cols-1 gap-2 md:grid-cols-2 md:gap-3">
                 <div className="md:col-span-2">
                   <label htmlFor="email" className="mb-1 block text-xs font-medium text-gray-700 sm:text-sm">
-                    {t('patients.newPatient.fields.email')} *
+                    {t('patients.newPatient.fields.email')}
                   </label>
                   <div className="relative">
                     <Mail className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -776,7 +768,6 @@ export default function NewPatientPage() {
                       type="email"
                       id="email"
                       name="email"
-                      required
                       value={formData.email}
                       onChange={handleInputChange}
                       className="w-full rounded-md border border-gray-300 py-1.5 pl-9 pr-2.5 text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
@@ -1213,7 +1204,7 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          {/* الأزرار السفلية - مع إضافة PDF والطباعة */}
+          {/* الأزرار السفلية */}
           <div className="flex flex-wrap gap-2 no-print">
             <button
               type="submit"
@@ -1282,4 +1273,4 @@ export default function NewPatientPage() {
       </SidebarLayout>
     </ProtectedRoute>
   );
-      }
+     }
