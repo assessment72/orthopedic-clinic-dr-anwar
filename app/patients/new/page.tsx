@@ -14,8 +14,11 @@ import {
   MapPin,
   FileText,
   Lock,
-  AlertCircle
+  AlertCircle,
+  Printer
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import ProtectedRoute from '../../protected-route';
 import SidebarLayout from '../../components/sidebar-layout';
 import { useTranslations } from '../../hooks/useTranslations';
@@ -26,6 +29,7 @@ interface SelectedRegion {
   notes?: string;
   diagnosis?: string;
   xray?: string;
+  injuryType?: 'fracture' | 'sprain' | 'tumor' | 'inflammation' | 'general';
 }
 
 export default function NewPatientPage() {
@@ -89,14 +93,12 @@ export default function NewPatientPage() {
             newData.password = newEmail;
           }
         } else {
-          // إذا كان البريد معدلاً يدوياً، نحدّث كلمة المرور فقط إذا لم تُعدّل يدوياً
           if (!isPasswordManuallyEdited) {
             newData.password = newData.email;
           }
         }
       }
 
-      // معالجة حقل البريد الإلكتروني
       if (name === 'email') {
         setIsEmailManuallyEdited(true);
         if (!isPasswordManuallyEdited) {
@@ -104,7 +106,6 @@ export default function NewPatientPage() {
         }
       }
 
-      // معالجة حقل كلمة المرور
       if (name === 'password') {
         setIsPasswordManuallyEdited(true);
       }
@@ -271,7 +272,7 @@ export default function NewPatientPage() {
     { value: 'rehabilitation', label: t('patients.newPatient.fields.treatmentPlanOptions.rehabilitation') || 'إعادة تأهيل' }
   ];
 
-  // ------------------ خيارات القوائم المنسدلة لقسم المعلومات الطبية (جديدة) ------------------
+  // ------------------ خيارات القوائم المنسدلة لقسم المعلومات الطبية ------------------
   const allergiesOptions = [
     { value: '', label: t('patients.newPatient.fields.allergiesOptions.select') || 'اختر نوع الحساسية' },
     { value: 'none', label: t('patients.newPatient.fields.allergiesOptions.none') || 'لا يوجد' },
@@ -488,6 +489,121 @@ export default function NewPatientPage() {
     }
   };
 
+  // ------------------ دوال تصدير PDF والطباعة ------------------
+  const handleExportPDF = () => {
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // عنوان
+    doc.setFontSize(18);
+    doc.text('تقرير بيانات المريض', pageWidth / 2, 20, { align: 'center' });
+    doc.setFontSize(10);
+    doc.text(`تاريخ التقرير: ${new Date().toLocaleDateString('ar-EG')}`, pageWidth / 2, 28, { align: 'center' });
+
+    let y = 35;
+
+    const addSection = (title: string, data: { label: string; value: any }[]) => {
+      doc.setFontSize(14);
+      doc.text(title, 14, y);
+      y += 6;
+      const rows = data.map(item => [item.label, item.value || '—']);
+      autoTable(doc, {
+        startY: y,
+        head: [['الحقل', 'القيمة']],
+        body: rows,
+        theme: 'striped',
+        headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
+        styles: { fontSize: 8 },
+        columnStyles: { 0: { cellWidth: 50 }, 1: { cellWidth: 'auto' } },
+        margin: { left: 14, right: 14 },
+        didDrawPage: (data) => {
+          y = data.cursor.y + 5;
+        },
+      });
+      y += 5;
+    };
+
+    const personalData = [
+      { label: 'الاسم الأول', value: formData.firstName },
+      { label: 'الاسم الأخير', value: formData.lastName },
+      { label: 'تاريخ الميلاد', value: formData.dateOfBirth },
+      { label: 'الجنس', value: formData.gender },
+      { label: 'رقم الجوال', value: formData.phone },
+      { label: 'العنوان', value: formData.address },
+    ];
+
+    const loginData = [
+      { label: 'البريد الإلكتروني', value: formData.email },
+      { label: 'كلمة المرور', value: formData.password ? '********' : 'غير محددة' },
+    ];
+
+    const medicalData = [
+      { label: 'فصيلة الدم', value: formData.bloodType },
+      { label: 'الحساسية', value: formData.allergies },
+      { label: 'الأدوية الحالية', value: formData.medications },
+      { label: 'التاريخ الطبي', value: formData.medicalHistory },
+      { label: 'التاريخ العائلي', value: formData.familyHistory },
+    ];
+
+    const orthopedicData = [
+      { label: 'التاريخ العظمي', value: formData.orthopedicHistory },
+      { label: 'الشكوى الرئيسية', value: formData.chiefComplaint },
+      { label: 'موضع الإصابة', value: formData.injurySite },
+      { label: 'ملاحظات الإصابة', value: formData.injuryNotes },
+      { label: 'نوع الإصابة', value: formData.injuryType },
+      { label: 'المفصل المصاب', value: formData.affectedJoint },
+      { label: 'مستوى الألم', value: formData.painLevel },
+      { label: 'الجبيرة/الجبس', value: formData.splintOrCast },
+      { label: 'العمليات الجراحية', value: formData.surgicalOperations },
+      { label: 'العلاج الطبيعي', value: formData.physicalTherapy },
+      { label: 'التشخيص', value: formData.diagnosis },
+      { label: 'خطة العلاج', value: formData.treatmentPlan },
+      { label: 'التصوير', value: formData.imaging },
+      { label: 'موعد المتابعة', value: formData.followUpDate },
+    ];
+
+    const emergencyData = [
+      { label: 'اسم جهة الاتصال', value: formData.emergencyName },
+      { label: 'رقم الهاتف', value: formData.emergencyPhone },
+      { label: 'صلة القرابة', value: formData.emergencyRelationship },
+    ];
+
+    addSection('معلومات شخصية', personalData);
+    addSection('معلومات الدخول', loginData);
+    addSection('معلومات طبية', medicalData);
+    addSection('معلومات جراحة العظام', orthopedicData);
+    addSection('جهة اتصال طارئة', emergencyData);
+
+    // إضافة المناطق المحددة
+    if (selectedRegions.length > 0) {
+      doc.setFontSize(14);
+      doc.text('مواقع الإصابة المحددة', 14, y);
+      y += 6;
+      const regionRows = selectedRegions.map(r => {
+        const name = getRegionName(r.id);
+        const injuryType = r.injuryType || 'عام';
+        const notes = r.notes || '—';
+        return [name, injuryType, notes];
+      });
+      autoTable(doc, {
+        startY: y,
+        head: [['المنطقة', 'نوع الإصابة', 'ملاحظات']],
+        body: regionRows,
+        theme: 'striped',
+        headStyles: { fillColor: [41, 128, 185], textColor: [255, 255, 255] },
+        styles: { fontSize: 8 },
+        columnStyles: { 0: { cellWidth: 40 }, 1: { cellWidth: 30 }, 2: { cellWidth: 'auto' } },
+        margin: { left: 14, right: 14 },
+      });
+    }
+
+    doc.save(`بيانات_المريض_${formData.firstName}_${formData.lastName}.pdf`);
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   const sections = [
     { id: 'personal', label: t('patients.newPatient.sections.personal'), icon: Users },
     { id: 'login', label: t('patients.newPatient.sections.login'), icon: Lock },
@@ -503,7 +619,7 @@ export default function NewPatientPage() {
         description={t('patients.newPatient.description')}
         dense
       >
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex items-center justify-between no-print">
           <div className="flex items-center space-x-4">
             <Link
               href="/patients"
@@ -515,8 +631,8 @@ export default function NewPatientPage() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="rounded-lg border border-gray-100 bg-white p-2.5 shadow-sm">
+        <form onSubmit={handleSubmit} className="space-y-3 print-content">
+          <div className="rounded-lg border border-gray-100 bg-white p-2.5 shadow-sm no-print">
             <div className="flex flex-wrap gap-1.5">
               {sections.map((section) => (
                 <button
@@ -690,7 +806,7 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          {/* Medical Information Section - تم تعديله إلى قوائم منسدلة */}
+          {/* Medical Information Section */}
           {activeSection === 'medical' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
@@ -793,7 +909,7 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          {/* Orthopedic Information Section (نفسه كما كان) */}
+          {/* Orthopedic Information Section */}
           {activeSection === 'orthopedic' && (
             <div className="rounded-lg border border-gray-100 bg-white p-3 shadow-sm">
               <h3 className="mb-2 flex items-center text-sm font-semibold text-gray-900">
@@ -830,7 +946,6 @@ export default function NewPatientPage() {
                   />
                 </div>
 
-                {/* خريطة موضع الإصابة */}
                 <div className="md:col-span-2">
                   <h4 className="text-sm font-semibold mb-2">{t('patients.newPatient.sections.injuryMap')}</h4>
                   <SkeletonMap
@@ -1098,7 +1213,8 @@ export default function NewPatientPage() {
             </div>
           )}
 
-          <div className="flex gap-2">
+          {/* الأزرار السفلية - مع إضافة PDF والطباعة */}
+          <div className="flex flex-wrap gap-2 no-print">
             <button
               type="submit"
               disabled={isSubmitting}
@@ -1107,6 +1223,25 @@ export default function NewPatientPage() {
               <Save className="h-4 w-4" />
               {isSubmitting ? t('patients.newPatient.buttons.saving') : t('patients.newPatient.buttons.savePatient')}
             </button>
+
+            <button
+              type="button"
+              onClick={handleExportPDF}
+              className="flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700"
+            >
+              <FileText className="h-4 w-4" />
+              تصدير PDF
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="flex items-center gap-2 rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-purple-700"
+            >
+              <Printer className="h-4 w-4" />
+              طباعة
+            </button>
+
             <Link
               href="/patients"
               className="flex items-center gap-2 rounded-md bg-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-300"
@@ -1115,7 +1250,36 @@ export default function NewPatientPage() {
             </Link>
           </div>
         </form>
+
+        {/* تنسيق الطباعة */}
+        <style jsx>{`
+          @media print {
+            .no-print {
+              display: none !important;
+            }
+            .print-content {
+              display: block !important;
+            }
+            body {
+              margin: 0.5in;
+            }
+            .bg-white {
+              background: white !important;
+            }
+            input, textarea, select {
+              border: none !important;
+              background: transparent !important;
+            }
+            .rounded-lg {
+              border: 1px solid #ddd !important;
+              box-shadow: none !important;
+            }
+            .shadow-sm {
+              box-shadow: none !important;
+            }
+          }
+        `}</style>
       </SidebarLayout>
     </ProtectedRoute>
   );
-          }
+      }
